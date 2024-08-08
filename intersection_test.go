@@ -109,6 +109,19 @@ func TestRayIntersectWithTransform(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:      "Ray intersects, should return two values",
+			ray:       NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			sphere:    &theSphere,
+			transform: "scale",
+			args:      []float64{0.5, 0.5, 0.5},
+			intersection: Intersections{
+				intersections: []Intersection{
+					{4.5, &theSphere},
+					{5.5, &theSphere},
+				},
+			},
+		},
 
 		{
 			name:      "Ray intersects, should return two values",
@@ -209,6 +222,41 @@ func TestHit(t *testing.T) {
 
 			} else if hit.T != tt.want.T || !reflect.DeepEqual(hit.S, tt.want.S) {
 				t.Errorf("%s did not pass, \nwanted\n%v\ngot%v", tt.name, tt.want, hit)
+			}
+
+		})
+	}
+}
+
+func TestPrepareComputations(t *testing.T) {
+
+	theSphere := NewSphere()
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		sphere       Sphere
+		intersection Intersection
+		want         Computation
+	}{
+		{
+			name:         "A hit should be returned",
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			sphere:       theSphere,
+			intersection: Intersection{4, &theSphere},
+			want:         Computation{T: 4, Object: &theSphere},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			got := Intersections{intersections: []Intersection{}}
+
+			if !true {
+				t.Errorf("")
+				return
+
 			}
 
 		})

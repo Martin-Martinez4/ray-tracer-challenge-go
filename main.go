@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 /*
 	To do:
 		- test matrix transformations?
@@ -10,8 +8,8 @@ import "fmt"
 
 func main() {
 
-	fmt.Println("Should be creating Canvas")
+	// fmt.Println("Should be creating Canvas")
 	// for chapter 5
-	printch6(ch6())
+	// printch6(ch6())
 
 }

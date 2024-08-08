@@ -14,6 +14,15 @@ type Intersections struct {
 	intersections []Intersection
 }
 
+type Computation struct {
+	T       float64
+	Object  *Sphere
+	Point   Tuple
+	Eyev    Tuple
+	Normalv Tuple
+	Inside  bool
+}
+
 func (inters *Intersections) Add(inter Intersection) {
 
 	intersections := append(inters.intersections, inter)
@@ -25,6 +34,7 @@ func (inters *Intersections) Add(inter Intersection) {
 }
 
 func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
+
 	ray = ray.Transform(s.GetTransforms().Inverse())
 
 	sphereToRay := ray.origin.Subtract(Point(0, 0, 0))
@@ -43,12 +53,12 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			intersections := append(inters.intersections, Intersection{d1, s})
-			intersections = append(intersections, Intersection{d2, s})
-			inters.intersections = intersections
+			inters.Add(Intersection{d1, s})
+			inters.Add(Intersection{d2, s})
+
 		} else {
-			intersections := append(inters.intersections, Intersection{d1, s})
-			inters.intersections = intersections
+
+			inters.Add(Intersection{d1, s})
 
 		}
 	}
@@ -122,4 +132,28 @@ func RaySphereInteresect(ray Ray, s *Sphere) [](*Intersection) {
 
 		}
 	}
+}
+
+func prepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Computation {
+	comps := Computation{}
+	comps.T = intersection.T
+	comps.Object = sphere
+
+	comps.Point = Position(ray, intersection.T)
+	comps.Eyev = ray.direction.SMultiply(-1)
+	comps.Normalv = sphere.NormalAt(comps.Point)
+
+	if Dot(comps.Normalv, comps.Eyev) < 0 {
+		comps.Inside = true
+		comps.Normalv = comps.Normalv.SMultiply(-1)
+	} else {
+		comps.Inside = false
+	}
+
+	return comps
+}
+
+func (comp *Computation) Equal(other Computation) bool {
+
+	return AreFloatsEqual(comp.T, other.T) && comp.Point.Equal(other.Point) && comp.Eyev.Equal(other.Eyev) && comp.Normalv.Equal(other.Normalv)
 }
