@@ -14,7 +14,7 @@ type Intersections struct {
 	intersections []Intersection
 }
 
-type Computation struct {
+type Computations struct {
 	T       float64
 	Object  *Sphere
 	Point   Tuple
@@ -84,6 +84,11 @@ func (inters Intersections) Equal(other Intersections) bool {
 }
 
 func (inters *Intersections) Hit() *Intersection {
+
+	if inters == nil || inters.intersections == nil || len(inters.intersections) < 1 {
+		return nil
+	}
+
 	if inters.intersections[0].T < 0 && inters.intersections[len(inters.intersections)-1].T < 0 {
 		return nil
 	}
@@ -134,8 +139,8 @@ func RaySphereInteresect(ray Ray, s *Sphere) [](*Intersection) {
 	}
 }
 
-func prepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Computation {
-	comps := Computation{}
+func PrepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Computations {
+	comps := Computations{}
 	comps.T = intersection.T
 	comps.Object = sphere
 
@@ -153,7 +158,7 @@ func prepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Com
 	return comps
 }
 
-func (comp *Computation) Equal(other Computation) bool {
+func (comp *Computations) Equal(other Computations) bool {
 
 	return AreFloatsEqual(comp.T, other.T) && comp.Point.Equal(other.Point) && comp.Eyev.Equal(other.Eyev) && comp.Normalv.Equal(other.Normalv)
 }

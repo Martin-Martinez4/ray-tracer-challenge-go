@@ -237,24 +237,31 @@ func TestPrepareComputations(t *testing.T) {
 		ray          Ray
 		sphere       Sphere
 		intersection Intersection
-		want         Computation
+		want         Computations
 	}{
 		{
-			name:         "A hit should be returned",
+			name:         "computations for a default world, intersection outside",
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere:       theSphere,
 			intersection: Intersection{4, &theSphere},
-			want:         Computation{T: 4, Object: &theSphere},
+			want:         Computations{T: 4, Object: &theSphere, Point: Point(0, 0, -1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: false},
+		},
+		{
+			name:         "computations for a default world, intersection inside",
+			ray:          NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
+			sphere:       theSphere,
+			intersection: Intersection{1, &theSphere},
+			want:         Computations{T: 1, Object: &theSphere, Point: Point(0, 0, 1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: true},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := Intersections{intersections: []Intersection{}}
+			got := PrepareComputations(tt.ray, &tt.sphere, tt.intersection)
 
-			if !true {
-				t.Errorf("")
+			if !got.Equal(tt.want) {
+				t.Errorf("\n%s failed \nwanted %v \ngot %v\n", tt.name, tt.want, got)
 				return
 
 			}
