@@ -11,6 +11,7 @@ type TestShape struct {
 	id         uuid.UUID
 	Material   Material
 	Transforms Matrix4x4
+	SavedRay   Ray
 }
 
 func (shape *TestShape) GetTransform() Matrix4x4 {
@@ -40,11 +41,11 @@ func (shape *TestShape) SetTransform(mat44 *Matrix4x4) Matrix4x4 {
 	return shape.Transforms
 }
 
-func (shape *TestShape) SetTransforms(mat44 ...*Matrix4x4) {
+func (shape *TestShape) SetTransforms(mat44 []Matrix4x4) {
 
 	for _, transform := range mat44 {
 
-		shape.SetTransform(transform)
+		shape.SetTransform(&transform)
 	}
 
 }
@@ -57,6 +58,13 @@ func (shape *TestShape) GetMaterial() *Material {
 func (shape *TestShape) SetMaterial(material Material) {
 
 	shape.Material = material
+}
+
+func (shape *TestShape) GetSavedRay() Ray {
+	return shape.SavedRay
+}
+func (shape *TestShape) SetSavedRay(ray Ray) {
+	shape.SavedRay = ray
 }
 
 func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
@@ -94,16 +102,20 @@ func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
 
 func (shape *TestShape) Intersect(ray *Ray) Intersections {
 
-	localRay := ray.Transform(shape.Transforms.Inverse())
-	return shape.LocalIntersect(localRay)
+	shape.SetSavedRay(ray.Transform(shape.Transforms.Inverse()))
+	return shape.LocalIntersect(shape.GetSavedRay())
 
+}
+
+func (shape *TestShape) LocalNormalAt(localPoint Tuple) Tuple {
+	return Vector(localPoint.x, localPoint.y, localPoint.z)
 }
 
 func (shape *TestShape) NormalAt(worldPoint Tuple) Tuple {
 	invTransf := shape.GetTransforms().Inverse()
 	objectPoint := invTransf.TupleMultiply(worldPoint)
 
-	objectNormal := objectPoint.Subtract(Point(0, 0, 0))
+	objectNormal := shape.LocalNormalAt(objectPoint)
 
 	invTransfTransposed := invTransf.Transpose()
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
@@ -176,6 +188,84 @@ func TestShapeGetMaterial(t *testing.T) {
 			tt.shape.SetMaterial(tt.material)
 
 			got := tt.shape.GetMaterial()
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%s did not pass: \nGot: %s \nWanted: %s", tt.name, got.Print(), tt.want.Print())
+			}
+
+		})
+	}
+}
+
+func TestShapeSavedRay(t *testing.T) {
+	tests := []struct {
+		name       string
+		ray        Ray
+		shape      Shape
+		transforms []Matrix4x4
+		want       Ray
+	}{
+		{
+			name:       "intersecting a scaled shape with a ray",
+			ray:        NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			shape:      NewTestShape(),
+			transforms: []Matrix4x4{Scale(2, 2, 2)},
+			want:       NewRay([3]float64{0, 0, -2.5}, [3]float64{0, 0, 0.5}),
+		},
+		{
+			name:       "intersecting a translated shape with a ray",
+			ray:        NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			shape:      NewTestShape(),
+			transforms: []Matrix4x4{Translate(5, 0, 0)},
+			want:       NewRay([3]float64{-5, 0, -5}, [3]float64{0, 0, 1}),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			tt.shape.Intersect(&tt.ray)
+
+			got := tt.shape.GetSavedRay()
+
+			if got.Equal(tt.want) {
+				t.Errorf("%s did not pass: \nGot: %s \nWanted: %s", tt.name, got.Print(), tt.want.Print())
+			}
+
+		})
+	}
+}
+
+func TestShapeNormalAt(t *testing.T) {
+	tests := []struct {
+		name       string
+		shape      Shape
+		point      Tuple
+		transforms []Matrix4x4
+		want       Tuple
+	}{
+		{
+			name:       "computing the normal on a translated shape",
+			shape:      NewTestShape(),
+			point:      Point(0, 1.70711, -0.70711),
+			transforms: []Matrix4x4{Translate(0, 1, 0)},
+			want:       Vector(0, 0.70711, -0.70711),
+		},
+		{
+			name:       "computing the normal on a transformed shape",
+			shape:      NewTestShape(),
+			point:      Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2),
+			transforms: []Matrix4x4{RotationAlongZ(math.Pi / 5), Scale(1, 0.5, 1)},
+			want:       Vector(0, 0.97014, -0.24254),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			tt.shape.SetTransforms(tt.transforms)
+
+			got := tt.shape.NormalAt(tt.point)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s did not pass: \nGot: %s \nWanted: %s", tt.name, got.Print(), tt.want.Print())

@@ -16,7 +16,7 @@ import "math"
 type Shape interface {
 	GetTransforms() Matrix4x4
 	SetTransform(transform *Matrix4x4) Matrix4x4
-	SetTransforms(transform ...*Matrix4x4)
+	SetTransforms(transform []Matrix4x4)
 
 	GetMaterial() *Material
 	SetMaterial(material Material)
@@ -24,6 +24,9 @@ type Shape interface {
 	Intersect(ray *Ray) Intersections
 
 	NormalAt(point Tuple) Tuple
+
+	GetSavedRay() Ray
+	SetSavedRay(ray Ray)
 }
 
 // Created functions that return transforms as a Matrix4x4, aids with using the SetTransforms function

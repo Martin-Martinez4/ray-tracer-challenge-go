@@ -10,6 +10,7 @@ type Sphere struct {
 	id         uuid.UUID
 	Material   Material
 	Transforms Matrix4x4
+	SavedRay   Ray
 }
 
 func (sphere *Sphere) GetTransforms() Matrix4x4 {
@@ -35,11 +36,11 @@ func (sphere *Sphere) SetTransform(mat44 *Matrix4x4) Matrix4x4 {
 	return sphere.Transforms
 }
 
-func (sphere *Sphere) SetTransforms(mat44 ...*Matrix4x4) {
+func (sphere *Sphere) SetTransforms(mat44 []Matrix4x4) {
 
 	for _, transform := range mat44 {
 
-		sphere.SetTransform(transform)
+		sphere.SetTransform(&transform)
 	}
 }
 
@@ -84,10 +85,17 @@ func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
 	return inters
 }
 
+func (sphere *Sphere) GetSavedRay() Ray {
+	return sphere.SavedRay
+}
+func (sphere *Sphere) SetSavedRay(ray Ray) {
+	sphere.SavedRay = ray
+}
+
 func (sphere *Sphere) Intersect(ray *Ray) Intersections {
 
-	localRay := ray.Transform(sphere.Transforms.Inverse())
-	return sphere.LocalIntersect(localRay)
+	sphere.SetSavedRay(ray.Transform(sphere.Transforms.Inverse()))
+	return sphere.LocalIntersect(sphere.GetSavedRay())
 
 }
 
@@ -106,11 +114,15 @@ func (sphere *Sphere) RotationAlongZ(rads float64) {
 	sphere.Transforms = newTransform
 }
 
+func (sphere *Sphere) LocalNormalAt(localPoint Tuple) Tuple {
+	return localPoint.Subtract(Point(0, 0, 0))
+}
+
 func (sphere *Sphere) NormalAt(worldPoint Tuple) Tuple {
 	invTransf := sphere.GetTransforms().Inverse()
 	objectPoint := invTransf.TupleMultiply(worldPoint)
 
-	objectNormal := objectPoint.Subtract(Point(0, 0, 0))
+	objectNormal := sphere.LocalNormalAt(objectPoint)
 
 	invTransfTransposed := invTransf.Transpose()
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
