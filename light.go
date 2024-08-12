@@ -23,7 +23,8 @@ func NewLight(position, intensity [3]float64) Light {
 		the normal vectors from the Phong reflection model
 */
 
-func EffectiveLighting(mat Material, light Light, point Tuple, eyeVec Tuple, normalVec Tuple) Color {
+func EffectiveLighting(mat Material, light Light, point Tuple, eyeVec Tuple, normalVec Tuple, inShadow bool) Color {
+
 	effectiveColor := mat.Color.Multiply(light.Intensity)
 
 	lightVec := Normalize(light.Position.Subtract(point))
@@ -54,6 +55,10 @@ func EffectiveLighting(mat Material, light Light, point Tuple, eyeVec Tuple, nor
 			specular = light.Intensity.SMultiply(mat.Specular * factor)
 		}
 
+	}
+
+	if inShadow {
+		return ambient
 	}
 
 	return (ambient.Add(diffuse.Add(specular)))

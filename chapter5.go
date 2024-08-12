@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func CastShadow() string {
+func ch5() string {
 
 	rayOrigin := Point(0, 0, -5)
 	wallZ := 10.0
@@ -29,7 +29,7 @@ func CastShadow() string {
 
 			position := Point(worldX, worldY, wallZ)
 
-			normalized := Normalize(rayOrigin.Subtract(position))
+			normalized := Normalize(position.Subtract(rayOrigin))
 
 			ray := NewRay(
 				[3]float64{rayOrigin.x, rayOrigin.y, rayOrigin.z},
@@ -37,7 +37,7 @@ func CastShadow() string {
 			)
 
 			// intersect
-			xs := RaySphereInteresect(ray, &sphere)
+			xs := RaySphereInteresect(ray, sphere)
 			if xs != nil {
 				canvas.ColorPixel(int32(x), int32(y), shadowColor)
 			}

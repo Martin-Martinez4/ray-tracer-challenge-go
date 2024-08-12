@@ -1,19 +1,14 @@
 package main
 
-import (
-	"fmt"
-	"log"
-	"os"
-)
-
 func ch6() string {
 
-	rayOrigin := Point(0, 0, 3)
+	rayOrigin := Point(0, 0, -5)
 	wallZ := 10.0
 	wallSize := 7.0
 	half := wallSize / 2
 
-	canvasPixels := 200.0
+	canvasPixels := 100.0
+
 	// shadowColor := NewColor(1, 0, 0)
 
 	pixelSize := wallSize / canvasPixels
@@ -25,7 +20,7 @@ func ch6() string {
 
 	// sphere.Scale(1, 2, 1)
 
-	light := NewLight([3]float64{-5, 5, 3.5}, [3]float64{1, 1, 1})
+	light := NewLight([3]float64{-10, 10, -10}, [3]float64{1, 1, 1})
 
 	for y := 0; y < int(canvasPixels); y++ {
 		worldY := half - pixelSize*float64(y)
@@ -35,7 +30,7 @@ func ch6() string {
 
 			position := Point(worldX, worldY, wallZ)
 
-			substractedPosition := rayOrigin.Subtract(position)
+			substractedPosition := position.Subtract(rayOrigin)
 			normalized := Normalize(substractedPosition)
 
 			ray := NewRay(
@@ -44,18 +39,21 @@ func ch6() string {
 			)
 
 			// intersect
-			xs := RaySphereInteresect(ray, &sphere)
+			xs := RaySphereInteresect(ray, sphere)
 			if xs != nil {
 				intersection, found := Hit(xs)
 				if found {
 
 					point := Position(ray, intersection.T)
-					sphere1 := intersection.S
-					normal := intersection.S.NormalAt(point)
+					sphere1, ok := intersection.S.(*Sphere)
+					if !ok {
+						panic("Not a Sphere")
+					}
+					normal := sphere1.NormalAt(point)
 
 					eye := ray.direction.SMultiply(-1)
 
-					color := EffectiveLighting(sphere1.Material, light, point, eye, normal)
+					color := EffectiveLighting(sphere1.Material, light, point, eye, normal, false)
 
 					canvas.ColorPixel(int32(x), int32(y), color)
 				}
@@ -65,23 +63,4 @@ func ch6() string {
 
 	return canvas.Newppm()
 
-}
-
-func printch6(str string) {
-
-	f, err := os.Create("chapter6.ppm")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer f.Close()
-
-	_, err2 := f.WriteString(str)
-
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
-	fmt.Println("done")
 }

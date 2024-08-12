@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -67,14 +66,14 @@ func (ray Ray) Transform(m44 Matrix4x4) Ray {
 }
 
 // Hit finds the first intersection with a positive T (the passed intersections are assumed to have been sorted already)
-func Hit(intersections []*Intersection) (Intersection, bool) {
+func Hit(intersections *Intersections) (Intersection, bool) {
+	inters := intersections.intersections
 
 	// Filter out all negatives
-	for i := 0; i < len(intersections); i++ {
-		fmt.Printf("\n%v\n", intersections[i])
+	for i := 0; i < len(inters); i++ {
 
-		if intersections[i].T > 0 {
-			return *intersections[i], true
+		if inters[i].T > 0 {
+			return inters[i], true
 			//xs = append(xs, i)
 		}
 	}

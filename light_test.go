@@ -81,7 +81,48 @@ func TestEffectiveLighting(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := EffectiveLighting(tt.material, tt.light, tt.point, tt.eyeVec, tt.normalVec)
+			got := EffectiveLighting(tt.material, tt.light, tt.point, tt.eyeVec, tt.normalVec, false)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%s failed\nWanted:\n%v\nGot:\n%v\n", tt.name, tt.want, got)
+			}
+
+		})
+	}
+}
+
+func TestLightingWithShadows(t *testing.T) {
+
+	defaultMat := DefaultMaterial()
+	point := Point(0, 0, 0)
+
+	tests := []struct {
+		name      string
+		material  Material
+		eyeVec    Tuple
+		normalVec Tuple
+		light     Light
+		point     Tuple
+		inShadow  bool
+		want      Color
+	}{
+		{
+
+			name:      "lighting with the surface in shadow",
+			material:  defaultMat,
+			eyeVec:    Vector(0, 0, -1),
+			normalVec: Vector(0, 0, -1),
+			light:     NewLight([3]float64{0, 0, -10}, [3]float64{1, 1, 1}),
+			inShadow:  true,
+			point:     point,
+			want:      NewColor(0.1, 0.1, 0.1),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			got := EffectiveLighting(tt.material, tt.light, tt.point, tt.eyeVec, tt.normalVec, tt.inShadow)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s failed\nWanted:\n%v\nGot:\n%v\n", tt.name, tt.want, got)

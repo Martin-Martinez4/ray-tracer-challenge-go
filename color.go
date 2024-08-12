@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Color struct {
 	r float64
 	g float64
@@ -29,6 +31,10 @@ func (c Color) Multiply(c2 Color) Color {
 func (c Color) Equal(c2 Color) bool {
 
 	return AreFloatsEqual(c.r, c2.r) && AreFloatsEqual(c.g, c2.g) && AreFloatsEqual(c.b, c2.b)
+}
+
+func (color Color) Print() string {
+	return fmt.Sprintf("r: %f, g: %f, b: %f", color.r, color.g, color.b)
 }
 
 func Hadamard_product(c1 Color, c2 Color) Color {

@@ -7,7 +7,7 @@ import (
 
 type Intersection struct {
 	T float64
-	S *Sphere
+	S Shape
 }
 
 type Intersections struct {
@@ -15,12 +15,13 @@ type Intersections struct {
 }
 
 type Computations struct {
-	T       float64
-	Object  *Sphere
-	Point   Tuple
-	Eyev    Tuple
-	Normalv Tuple
-	Inside  bool
+	T         float64
+	Object    Shape
+	Point     Tuple
+	Eyev      Tuple
+	Normalv   Tuple
+	OverPoint Tuple
+	Inside    bool
 }
 
 func (inters *Intersections) Add(inter Intersection) {
@@ -110,7 +111,7 @@ func Position(r Ray, distance float64) Tuple {
 	return pos
 }
 
-func RaySphereInteresect(ray Ray, s *Sphere) [](*Intersection) {
+func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 	ray = ray.Transform(s.GetTransforms().Inverse())
 
 	sphereToRay := ray.origin.Subtract(Point(0, 0, 0))
@@ -119,7 +120,7 @@ func RaySphereInteresect(ray Ray, s *Sphere) [](*Intersection) {
 	b := 2 * Dot(ray.direction, sphereToRay)
 	c := Dot(sphereToRay, sphereToRay) - 1
 
-	discriminant := (b * b) - (4*a)*c
+	discriminant := (b * b) - (4 * a * c)
 
 	if discriminant < 0 {
 		return nil
@@ -129,24 +130,24 @@ func RaySphereInteresect(ray Ray, s *Sphere) [](*Intersection) {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			return [](*Intersection){{d1, s}, {d2, s}}
+			return &Intersections{[]Intersection{{d1, s}, {d2, s}}}
 
 		} else {
 
-			return [](*Intersection){{d1, s}}
+			return &Intersections{[]Intersection{{d1, s}}}
 
 		}
 	}
 }
 
-func PrepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Computations {
+func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Computations {
 	comps := Computations{}
 	comps.T = intersection.T
-	comps.Object = sphere
+	comps.Object = shape
 
 	comps.Point = Position(ray, intersection.T)
 	comps.Eyev = ray.direction.SMultiply(-1)
-	comps.Normalv = sphere.NormalAt(comps.Point)
+	comps.Normalv = shape.NormalAt(comps.Point)
 
 	if Dot(comps.Normalv, comps.Eyev) < 0 {
 		comps.Inside = true
@@ -154,6 +155,10 @@ func PrepareComputations(ray Ray, sphere *Sphere, intersection Intersection) Com
 	} else {
 		comps.Inside = false
 	}
+
+	nvEp := comps.Normalv.SMultiply(Epsilon)
+
+	comps.OverPoint = comps.Point.Add(nvEp)
 
 	return comps
 }

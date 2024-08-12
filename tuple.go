@@ -12,6 +12,8 @@ type Tuple struct {
 	w float64
 }
 
+var Epsilon = 0.00005
+
 func IsPoint(tuple Tuple) bool {
 	return tuple.w == 1
 }
@@ -29,9 +31,8 @@ func Vector(x float64, y float64, z float64) Tuple {
 }
 
 func AreFloatsEqual(first float64, second float64) bool {
-	Eplison := 0.00005
 
-	return math.Abs(float64(first-second)) < Eplison
+	return math.Abs(float64(first-second)) < Epsilon
 }
 
 func (t *Tuple) Equal(compare Tuple) bool {

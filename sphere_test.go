@@ -9,12 +9,52 @@ func TestNormalAt(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		sphere     Sphere
+		sphere     *Sphere
 		transforms []string
 		point      Tuple
 		args       [][]float64
 		want       Tuple
 	}{
+		{
+			name:       "compute the normal at at point on the x-axis",
+			sphere:     NewSphere(),
+			transforms: []string{},
+			point:      Point(1, 0, 0),
+			args:       [][]float64{},
+			want:       Vector(1, 0, 0),
+		},
+		{
+			name:       "compute the normal at at point on the y-axis",
+			sphere:     NewSphere(),
+			transforms: []string{},
+			point:      Point(0, 1, 0),
+			args:       [][]float64{},
+			want:       Vector(0, 1, 0),
+		},
+		{
+			name:       "compute the normal at at point on the z-axis",
+			sphere:     NewSphere(),
+			transforms: []string{},
+			point:      Point(0, 0, 1),
+			args:       [][]float64{},
+			want:       Vector(0, 0, 1),
+		},
+		{
+			name:       "compute the normal at at point on the z-axis",
+			sphere:     NewSphere(),
+			transforms: []string{},
+			point:      Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3),
+			args:       [][]float64{},
+			want:       Vector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3),
+		},
+		{
+			name:       "compute the normal at at point on the z-axis",
+			sphere:     NewSphere(),
+			transforms: []string{},
+			point:      NewSphere().NormalAt(Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3)),
+			args:       [][]float64{},
+			want:       Vector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3),
+		},
 		{
 			name:       "compute the normal on a translated sphere",
 			sphere:     NewSphere(),

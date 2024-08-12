@@ -18,28 +18,28 @@ func TestRayIntersect(t *testing.T) {
 		{
 			name:   "Ray intersects, should return two values",
 			ray:    NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere: &theSphere,
+			sphere: theSphere,
 			intersection: Intersections{
 				intersections: []Intersection{
-					{4, &theSphere},
-					{6, &theSphere},
+					{4, theSphere},
+					{6, theSphere},
 				},
 			},
 		},
 		{
 			name:   "Ray intersects, should return two values",
 			ray:    NewRay([3]float64{0, 1, -5}, [3]float64{0, 0, 1}),
-			sphere: &theSphere,
+			sphere: theSphere,
 			intersection: Intersections{
 				intersections: []Intersection{
-					{5, &theSphere},
+					{5, theSphere},
 				},
 			},
 		},
 		{
 			name:   "Ray misses should return an empty array",
 			ray:    NewRay([3]float64{0, 2, -5}, [3]float64{0, 0, 1}),
-			sphere: &theSphere,
+			sphere: theSphere,
 			intersection: Intersections{
 				intersections: []Intersection{},
 			},
@@ -47,22 +47,22 @@ func TestRayIntersect(t *testing.T) {
 		{
 			name:   "Ray intersects, should return two values",
 			ray:    NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
-			sphere: &theSphere,
+			sphere: theSphere,
 			intersection: Intersections{
 				intersections: []Intersection{
-					{-1, &theSphere},
-					{1, &theSphere},
+					{-1, theSphere},
+					{1, theSphere},
 				},
 			},
 		},
 		{
 			name:   "Ray intersects, should return two negative values",
 			ray:    NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
-			sphere: &theSphere,
+			sphere: theSphere,
 			intersection: Intersections{
 				intersections: []Intersection{
-					{-6, &theSphere},
-					{-4, &theSphere},
+					{-6, theSphere},
+					{-4, theSphere},
 				},
 			},
 		},
@@ -99,26 +99,26 @@ func TestRayIntersectWithTransform(t *testing.T) {
 		{
 			name:      "Ray intersects, should return two values",
 			ray:       NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere:    &theSphere,
+			sphere:    theSphere,
 			transform: "scale",
 			args:      []float64{2, 2, 2},
 			intersection: Intersections{
 				intersections: []Intersection{
-					{3, &theSphere},
-					{7, &theSphere},
+					{3, theSphere},
+					{7, theSphere},
 				},
 			},
 		},
 		{
 			name:      "Ray intersects, should return two values",
 			ray:       NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere:    &theSphere,
+			sphere:    theSphere,
 			transform: "scale",
 			args:      []float64{0.5, 0.5, 0.5},
 			intersection: Intersections{
 				intersections: []Intersection{
-					{4.5, &theSphere},
-					{5.5, &theSphere},
+					{4.5, theSphere},
+					{5.5, theSphere},
 				},
 			},
 		},
@@ -126,7 +126,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 		{
 			name:      "Ray intersects, should return two values",
 			ray:       NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere:    &theSphere,
+			sphere:    theSphere,
 			transform: "translate",
 			args:      []float64{5, 0, 0},
 			intersection: Intersections{
@@ -170,33 +170,33 @@ func TestHit(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		sphere        Sphere
+		sphere        *Sphere
 		intersections []Intersection
 		want          *Intersection
 	}{
 		{
 			name:          "A hit should be returned",
 			sphere:        theSphere,
-			intersections: []Intersection{{1, &theSphere}, {2, &theSphere}},
-			want:          &Intersection{1, &theSphere},
+			intersections: []Intersection{{1, theSphere}, {2, theSphere}},
+			want:          &Intersection{1, theSphere},
 		},
 		{
 			name:          "A hit should be returned",
 			sphere:        theSphere,
-			intersections: []Intersection{{-1, &theSphere}, {1, &theSphere}},
-			want:          &Intersection{1, &theSphere},
+			intersections: []Intersection{{-1, theSphere}, {1, theSphere}},
+			want:          &Intersection{1, theSphere},
 		},
 		{
 			name:          "An nil hit should be returned",
 			sphere:        theSphere,
-			intersections: []Intersection{{-1, &theSphere}, {-2, &theSphere}},
+			intersections: []Intersection{{-1, theSphere}, {-2, theSphere}},
 			want:          nil,
 		},
 		{
 			name:          "A hit should be returned",
 			sphere:        theSphere,
-			intersections: []Intersection{{7, &theSphere}, {7, &theSphere}, {-3, &theSphere}, {2, &theSphere}},
-			want:          &Intersection{2, &theSphere},
+			intersections: []Intersection{{7, theSphere}, {7, theSphere}, {-3, theSphere}, {2, theSphere}},
+			want:          &Intersection{2, theSphere},
 		},
 	}
 
@@ -235,7 +235,7 @@ func TestPrepareComputations(t *testing.T) {
 	tests := []struct {
 		name         string
 		ray          Ray
-		sphere       Sphere
+		sphere       *Sphere
 		intersection Intersection
 		want         Computations
 	}{
@@ -243,25 +243,60 @@ func TestPrepareComputations(t *testing.T) {
 			name:         "computations for a default world, intersection outside",
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere:       theSphere,
-			intersection: Intersection{4, &theSphere},
-			want:         Computations{T: 4, Object: &theSphere, Point: Point(0, 0, -1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: false},
+			intersection: Intersection{4, theSphere},
+			want:         Computations{T: 4, Object: theSphere, Point: Point(0, 0, -1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: false},
 		},
 		{
 			name:         "computations for a default world, intersection inside",
 			ray:          NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
 			sphere:       theSphere,
-			intersection: Intersection{1, &theSphere},
-			want:         Computations{T: 1, Object: &theSphere, Point: Point(0, 0, 1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: true},
+			intersection: Intersection{1, theSphere},
+			want:         Computations{T: 1, Object: theSphere, Point: Point(0, 0, 1), Eyev: Vector(0, 0, -1), Normalv: Vector(0, 0, -1), Inside: true},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := PrepareComputations(tt.ray, &tt.sphere, tt.intersection)
+			got := PrepareComputations(tt.ray, tt.sphere, tt.intersection)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("\n%s failed \nwanted %v \ngot %v\n", tt.name, tt.want, got)
+				return
+
+			}
+
+		})
+	}
+}
+
+func TestPrepareComputationsWithinRange(t *testing.T) {
+
+	theSphere := NewSphere()
+	theSphere.Translate(0, 0, 1)
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		sphere       *Sphere
+		intersection Intersection
+		want         Computations
+	}{
+		{
+			name:         "the hit should offset the point",
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			sphere:       theSphere,
+			intersection: Intersection{5, theSphere},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			got := PrepareComputations(tt.ray, tt.sphere, tt.intersection)
+
+			if !(got.OverPoint.z < -Epsilon/2 && got.Point.z > got.OverPoint.z) {
+				t.Errorf("\n%s failed \nOverPoint value was not within range:\nOverPoint.z < -Epsilon/2 %v \nPoint.z > got.OverPoint.z %v ", tt.name, got.OverPoint.z < -Epsilon/2, got.Point.z > got.OverPoint.z)
 				return
 
 			}
