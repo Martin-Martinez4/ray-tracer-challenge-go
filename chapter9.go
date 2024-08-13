@@ -3,24 +3,10 @@ package main
 import "math"
 
 // Same as ch7 but with shadows
-func ch8() string {
+func ch9() string {
 	// Floor
-	floor := NewSphere()
-	floor.Transforms = floor.Transforms.Scale(10, 0.01, 10)
-	floor.Material.Color = NewColor(1, 0.9, 0.9)
-	floor.Material.Specular = 0
-
-	leftWall := NewSphere()
-	leftWall.Transforms = leftWall.Transforms.Scale(10, 0.01, 10)
-	leftWall.Transforms = leftWall.Transforms.RotationAlongX(math.Pi / 2)
-	leftWall.Transforms = leftWall.Transforms.RotationAlongY(-math.Pi / 4)
-	leftWall.Transforms = leftWall.Transforms.Translate(0, 0, 5)
-
-	rightWall := NewSphere()
-	rightWall.Transforms = rightWall.Transforms.Scale(10, 0.01, 10)
-	rightWall.Transforms = rightWall.Transforms.RotationAlongX(math.Pi / 2)
-	rightWall.Transforms = rightWall.Transforms.RotationAlongY(math.Pi / 4)
-	rightWall.Transforms = rightWall.Transforms.Translate(0, 0, 5)
+	floor := NewPlane()
+	floor.SetTransforms([]Matrix4x4{RotationAlongX(math.Pi / 2), Translate(0, 0, 5)})
 
 	// Spheres
 	middleSphere := NewSphere()
@@ -45,7 +31,7 @@ func ch8() string {
 
 	// Light Source
 	world := NewDefaultWorld()
-	world.Shapes = []Shape{floor, leftWall, rightWall, middleSphere, leftSphere, rightSphere}
+	world.Shapes = []Shape{floor, middleSphere, leftSphere, rightSphere}
 	world.Light = NewLight([3]float64{-10, 10, -10}, [3]float64{1, 1, 1})
 
 	camera := NewCamera(400, 225, math.Pi/3)

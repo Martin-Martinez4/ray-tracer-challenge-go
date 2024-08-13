@@ -65,6 +65,19 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 	}
 }
 
+func (inters *Intersections) RayShapeInteresect(ray Ray, s Shape) {
+
+	intersections := s.Intersect(&ray).intersections
+
+	if intersections == nil {
+		return
+	}
+
+	for _, intersection := range intersections {
+		inters.Add(intersection)
+	}
+}
+
 func (inters Intersections) Equal(other Intersections) bool {
 
 	oriInters := inters.intersections

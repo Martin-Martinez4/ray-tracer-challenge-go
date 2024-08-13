@@ -9,13 +9,13 @@ func TestViewTransformation(T *testing.T) {
 
 	theWorld := NewDefaultWorld()
 
-	outer := theWorld.Spheres[0]
-	outer.Material.Ambient = 1
-	theWorld.Spheres[0] = outer
+	outer := theWorld.Shapes[0]
+	outer.GetMaterial().SetAmbient(1)
+	theWorld.Shapes[0] = outer
 
-	inner := theWorld.Spheres[1]
-	inner.Material.Ambient = 1
-	theWorld.Spheres[0] = inner
+	inner := theWorld.Shapes[1]
+	inner.GetMaterial().SetAmbient(1)
+	theWorld.Shapes[0] = inner
 
 	tests := []struct {
 		name string

@@ -37,6 +37,6 @@ func main() {
 	// for chapter 5
 	// printch6(ch6())
 
-	printToFile(ch8(), "chapter8.ppm")
+	printToFile(ch9(), "chapter9.ppm")
 
 }

@@ -10,13 +10,13 @@ func TestCamera(T *testing.T) {
 
 	theWorld := NewDefaultWorld()
 
-	outer := theWorld.Spheres[0]
-	outer.Material.Ambient = 1
-	theWorld.Spheres[0] = outer
+	outer := theWorld.Shapes[0]
+	outer.GetMaterial().Ambient = 1
+	theWorld.Shapes[0] = outer
 
-	inner := theWorld.Spheres[1]
-	inner.Material.Ambient = 1
-	theWorld.Spheres[0] = inner
+	inner := theWorld.Shapes[1]
+	inner.GetMaterial().Ambient = 1
+	theWorld.Shapes[0] = inner
 
 	tests := []struct {
 		name  string
@@ -28,7 +28,7 @@ func TestCamera(T *testing.T) {
 			name:  "the color with an intersection behind the ray",
 			ray:   NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
 			world: theWorld,
-			want:  inner.Material.Color,
+			want:  inner.GetMaterial().Color,
 		},
 	}
 

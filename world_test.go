@@ -20,10 +20,10 @@ func TestIntersectWorld(T *testing.T) {
 			ray:  NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			want: Intersections{
 				intersections: []Intersection{
-					{S: &theWorld.Spheres[0], T: 4},
-					{S: &theWorld.Spheres[0], T: 4.5},
-					{S: &theWorld.Spheres[1], T: 5.5},
-					{S: &theWorld.Spheres[1], T: 6},
+					{S: theWorld.Shapes[0], T: 4},
+					{S: theWorld.Shapes[0], T: 4.5},
+					{S: theWorld.Shapes[1], T: 5.5},
+					{S: theWorld.Shapes[1], T: 6},
 				},
 			},
 		},
@@ -57,7 +57,7 @@ func TestShadeHit(T *testing.T) {
 	tests := []struct {
 		name         string
 		ray          Ray
-		sphere       Sphere
+		sphere       Shape
 		world        World
 		intersection Intersection
 		want         Color
@@ -65,17 +65,17 @@ func TestShadeHit(T *testing.T) {
 		{
 			name:         "shading an intersection",
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere:       theWorld.Spheres[0],
+			sphere:       theWorld.Shapes[0],
 			world:        theWorld,
-			intersection: Intersection{4, &theWorld.Spheres[0]},
+			intersection: Intersection{4, theWorld.Shapes[0]},
 			want:         NewColor(0.38066, 0.47583, 0.2855),
 		},
 		{
 			name:         "shading an intersection from the inside",
 			ray:          NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
-			sphere:       theOtherWorld.Spheres[1],
+			sphere:       theOtherWorld.Shapes[1],
 			world:        theOtherWorld,
-			intersection: Intersection{0.5, &theOtherWorld.Spheres[1]},
+			intersection: Intersection{0.5, theOtherWorld.Shapes[1]},
 			want:         NewColor(0.90498, 0.90498, 0.90498),
 		},
 	}
@@ -83,7 +83,7 @@ func TestShadeHit(T *testing.T) {
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputations(tt.ray, &tt.sphere, tt.intersection)
+			comps := PrepareComputations(tt.ray, tt.sphere, tt.intersection)
 
 			got := ShadeHit(&tt.world, &comps)
 
@@ -136,13 +136,13 @@ func TestColorAtInner(T *testing.T) {
 
 	theWorld := NewDefaultWorld()
 
-	outer := theWorld.Spheres[0]
-	outer.Material.Ambient = 1
-	theWorld.Spheres[0] = outer
+	outer := theWorld.Shapes[0]
+	outer.GetMaterial().SetAmbient(1)
+	theWorld.Shapes[0] = outer
 
-	inner := theWorld.Spheres[1]
-	inner.Material.Ambient = 1
-	theWorld.Spheres[0] = inner
+	inner := theWorld.Shapes[1]
+	inner.GetMaterial().SetAmbient(1)
+	theWorld.Shapes[0] = inner
 
 	tests := []struct {
 		name  string
@@ -154,7 +154,7 @@ func TestColorAtInner(T *testing.T) {
 			name:  "the color with an intersection behind the ray",
 			ray:   NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
 			world: theWorld,
-			want:  inner.Material.Color,
+			want:  inner.GetMaterial().Color,
 		},
 	}
 
@@ -264,7 +264,7 @@ func TestShadeHitWithShadow(T *testing.T) {
 	s2 := NewSphere()
 	s2.Transforms = s2.Transforms.Translate(0, 0, 10)
 
-	theWorld.Spheres = []Sphere{*NewSphere(), *s2}
+	theWorld.Shapes = []Shape{NewSphere(), s2}
 
 	tests := []struct {
 		name         string

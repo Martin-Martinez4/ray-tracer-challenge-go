@@ -1,8 +1,8 @@
 package main
 
 type World struct {
-	Spheres []Sphere
-	Light   Light
+	Shapes []Shape
+	Light  Light
 }
 
 // Returns a Default world with:
@@ -18,9 +18,9 @@ func NewDefaultWorld() World {
 []Spheres
 Light
 */
-func NewWorld(spheres *[]Sphere, light *Light) World {
+func NewWorld(shapes *[]Shape, light *Light) World {
 
-	if spheres == nil {
+	if shapes == nil {
 		sphere1 := NewSphere()
 		sphere1.Material.Color = NewColor(0.8, 1.0, 0.6)
 		sphere1.Material.Diffuse = 0.7
@@ -31,7 +31,7 @@ func NewWorld(spheres *[]Sphere, light *Light) World {
 		// Need to make better
 		sphere2.Transforms = sphere2.Transforms.Scale(0.5, 0.5, 0.5)
 
-		spheres = &[]Sphere{*sphere1, *sphere2}
+		shapes = &[]Shape{sphere1, sphere2}
 
 	}
 
@@ -41,16 +41,16 @@ func NewWorld(spheres *[]Sphere, light *Light) World {
 		light = &newLight
 	}
 
-	return World{Spheres: *spheres, Light: *light}
+	return World{Shapes: *shapes, Light: *light}
 }
 
 func RayWorldIntersect(ray Ray, world World) Intersections {
 
 	inters := Intersections{intersections: []Intersection{}}
 
-	for i := 0; i < len(world.Spheres); i++ {
+	for i := 0; i < len(world.Shapes); i++ {
 
-		inters.RaySphereInteresect(ray, &world.Spheres[i])
+		inters.RayShapeInteresect(ray, world.Shapes[i])
 	}
 
 	return inters

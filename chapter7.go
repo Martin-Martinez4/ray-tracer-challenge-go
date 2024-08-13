@@ -44,7 +44,7 @@ func ch7() string {
 
 	// Light Source
 	world := NewDefaultWorld()
-	world.Spheres = []Sphere{*floor, *leftWall, *rightWall, *middleSphere, *leftSphere, *rightSphere}
+	world.Shapes = []Shape{floor, leftWall, rightWall, middleSphere, leftSphere, rightSphere}
 	world.Light = NewLight([3]float64{-10, 10, -10}, [3]float64{1, 1, 1})
 
 	camera := NewCamera(100, 50, math.Pi/3)
