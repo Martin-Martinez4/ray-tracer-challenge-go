@@ -6,7 +6,7 @@ type Stripes struct {
 	Transforms Matrix4x4
 }
 
-func Stripe(color1, color2 Color) *Stripes {
+func NewStripe(color1, color2 Color) *Stripes {
 
 	return &Stripes{Color1: color1, Color2: color2, Transforms: IdentitiyMatrix4x4()}
 }
