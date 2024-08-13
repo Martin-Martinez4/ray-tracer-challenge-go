@@ -53,7 +53,7 @@ func ch6() string {
 
 					eye := ray.direction.SMultiply(-1)
 
-					color := EffectiveLighting(sphere1.Material, light, point, eye, normal, false)
+					color := EffectiveLighting(sphere1.Material, sphere1, light, point, eye, normal, false)
 
 					canvas.ColorPixel(int32(x), int32(y), color)
 				}

@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 type Material struct {
+	Pattern   Pattern
 	Color     Color
 	Ambient   float64
 	Diffuse   float64
@@ -12,6 +13,7 @@ type Material struct {
 
 func DefaultMaterial() Material {
 	return Material{
+		Pattern:   nil,
 		Color:     NewColor(1, 1, 1),
 		Ambient:   0.1,
 		Diffuse:   0.9,

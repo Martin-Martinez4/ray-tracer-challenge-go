@@ -81,7 +81,7 @@ func TestEffectiveLighting(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := EffectiveLighting(tt.material, tt.light, tt.point, tt.eyeVec, tt.normalVec, false)
+			got := EffectiveLighting(tt.material, NewSphere(), tt.light, tt.point, tt.eyeVec, tt.normalVec, false)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s failed\nWanted:\n%v\nGot:\n%v\n", tt.name, tt.want, got)
@@ -122,7 +122,7 @@ func TestLightingWithShadows(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := EffectiveLighting(tt.material, tt.light, tt.point, tt.eyeVec, tt.normalVec, tt.inShadow)
+			got := EffectiveLighting(tt.material, NewSphere(), tt.light, tt.point, tt.eyeVec, tt.normalVec, tt.inShadow)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s failed\nWanted:\n%v\nGot:\n%v\n", tt.name, tt.want, got)

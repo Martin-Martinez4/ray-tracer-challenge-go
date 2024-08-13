@@ -23,9 +23,17 @@ func NewLight(position, intensity [3]float64) Light {
 		the normal vectors from the Phong reflection model
 */
 
-func EffectiveLighting(mat Material, light Light, point Tuple, eyeVec Tuple, normalVec Tuple, inShadow bool) Color {
+func EffectiveLighting(mat Material, shape Shape, light Light, point Tuple, eyeVec Tuple, normalVec Tuple, inShadow bool) Color {
 
-	effectiveColor := mat.Color.Multiply(light.Intensity)
+	var color Color
+
+	if mat.Pattern == nil {
+		color = mat.Color
+	} else {
+		color = mat.Pattern.PatternAtShape(shape, point)
+	}
+
+	effectiveColor := color.Multiply(light.Intensity)
 
 	lightVec := Normalize(light.Position.Subtract(point))
 

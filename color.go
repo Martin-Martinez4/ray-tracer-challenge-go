@@ -8,6 +8,9 @@ type Color struct {
 	b float64
 }
 
+var BLACK Color = NewColor(0, 0, 0)
+var WHITE Color = NewColor(1, 1, 1)
+
 func NewColor(r float64, g float64, b float64) Color {
 	return Color{r, g, b}
 }
