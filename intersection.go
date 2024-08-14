@@ -21,6 +21,7 @@ type Computations struct {
 	Eyev      Tuple
 	Normalv   Tuple
 	OverPoint Tuple
+	ReflectV  Tuple
 	Inside    bool
 }
 
@@ -170,6 +171,8 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 	}
 
 	nvEp := comps.Normalv.SMultiply(Epsilon)
+
+	comps.ReflectV = ray.direction.ReflectBy(comps.Normalv)
 
 	comps.OverPoint = comps.Point.Add(nvEp)
 

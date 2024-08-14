@@ -35,7 +35,7 @@ func TestCamera(T *testing.T) {
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			got := ColorAt(&tt.ray, &tt.world)
+			got := ColorAt(&tt.ray, &tt.world, 1)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)

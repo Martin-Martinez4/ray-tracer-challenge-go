@@ -56,14 +56,17 @@ func RayWorldIntersect(ray Ray, world World) Intersections {
 	return inters
 }
 
-func ShadeHit(world *World, comps *Computations) Color {
+func ShadeHit(world *World, comps *Computations, reflectionsLeft int) Color {
 
 	shadowed := IsShadowed(*world, comps.OverPoint)
 
-	return EffectiveLighting(*comps.Object.GetMaterial(), comps.Object, world.Light, comps.OverPoint, comps.Eyev, comps.Normalv, shadowed)
+	reflectedColor := RelfectedColor(world, comps, reflectionsLeft)
+	surface := EffectiveLighting(*comps.Object.GetMaterial(), comps.Object, world.Light, comps.OverPoint, comps.Eyev, comps.Normalv, shadowed)
+
+	return surface.Add(reflectedColor)
 }
 
-func ColorAt(ray *Ray, world *World) Color {
+func ColorAt(ray *Ray, world *World, reflectionsLeft int) Color {
 	inters := RayWorldIntersect(*ray, *world)
 
 	intersection := inters.Hit()
@@ -74,7 +77,7 @@ func ColorAt(ray *Ray, world *World) Color {
 
 	comps := PrepareComputations(*ray, intersection.S, *intersection)
 
-	return ShadeHit(world, &comps)
+	return ShadeHit(world, &comps, reflectionsLeft)
 
 }
 
@@ -84,7 +87,7 @@ func Render(camera Camera, world World) Canvas {
 	for y := 0; y < int(camera.VSize)-1; y++ {
 		for x := 0; x < int(camera.HSize)-1; x++ {
 			ray := RayForPixel(camera, float64(x), float64(y))
-			color := ColorAt(&ray, &world)
+			color := ColorAt(&ray, &world, 4)
 			image.ColorPixel(int32(x), int32(y), color)
 		}
 	}
