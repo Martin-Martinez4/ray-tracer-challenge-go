@@ -13,7 +13,7 @@ type Pattern interface {
 
 	GetTransforms() Matrix4x4
 	SetTransform(transform *Matrix4x4) Matrix4x4
-	SetTransforms(mats []Matrix4x4)
+	SetTransforms(mats []*Matrix4x4)
 
 	PatternAtShape(object Shape, worldPoint Tuple) Color
 }

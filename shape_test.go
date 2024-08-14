@@ -41,11 +41,11 @@ func (shape *TestShape) SetTransform(mat44 *Matrix4x4) Matrix4x4 {
 	return shape.Transforms
 }
 
-func (shape *TestShape) SetTransforms(mat44 []Matrix4x4) {
+func (shape *TestShape) SetTransforms(mat44 []*Matrix4x4) {
 
 	for _, transform := range mat44 {
 
-		shape.SetTransform(&transform)
+		shape.SetTransform(transform)
 	}
 
 }
@@ -124,23 +124,24 @@ func (shape *TestShape) NormalAt(worldPoint Tuple) Tuple {
 }
 
 func TestShapeGetTransform(t *testing.T) {
+	translate := Translate(2, 3, 4)
 	tests := []struct {
 		name       string
 		shape      Shape
-		transforms []Matrix4x4
+		transforms []*Matrix4x4
 		want       Matrix4x4
 	}{
 		{
 			name:       "the default transformation",
 			shape:      NewTestShape(),
-			transforms: []Matrix4x4{},
+			transforms: []*Matrix4x4{},
 			want:       IdentitiyMatrix4x4(),
 		},
 		{
 			name:       "assiging a translate",
 			shape:      NewTestShape(),
-			transforms: []Matrix4x4{Translate(2, 3, 4)},
-			want:       Translate(2, 3, 4),
+			transforms: []*Matrix4x4{Translate(2, 3, 4)},
+			want:       *translate,
 		},
 	}
 
@@ -148,7 +149,7 @@ func TestShapeGetTransform(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			for i := 0; i < len(tt.transforms); i++ {
-				tt.shape.SetTransform(&tt.transforms[i])
+				tt.shape.SetTransform(tt.transforms[i])
 			}
 
 			got := tt.shape.GetTransforms()
@@ -202,21 +203,21 @@ func TestShapeSavedRay(t *testing.T) {
 		name       string
 		ray        Ray
 		shape      Shape
-		transforms []Matrix4x4
+		transforms []*Matrix4x4
 		want       Ray
 	}{
 		{
 			name:       "intersecting a scaled shape with a ray",
 			ray:        NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			shape:      NewTestShape(),
-			transforms: []Matrix4x4{Scale(2, 2, 2)},
+			transforms: []*Matrix4x4{Scale(2, 2, 2)},
 			want:       NewRay([3]float64{0, 0, -2.5}, [3]float64{0, 0, 0.5}),
 		},
 		{
 			name:       "intersecting a translated shape with a ray",
 			ray:        NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			shape:      NewTestShape(),
-			transforms: []Matrix4x4{Translate(5, 0, 0)},
+			transforms: []*Matrix4x4{Translate(5, 0, 0)},
 			want:       NewRay([3]float64{-5, 0, -5}, [3]float64{0, 0, 1}),
 		},
 	}
@@ -241,21 +242,21 @@ func TestShapeNormalAt(t *testing.T) {
 		name       string
 		shape      Shape
 		point      Tuple
-		transforms []Matrix4x4
+		transforms []*Matrix4x4
 		want       Tuple
 	}{
 		{
 			name:       "computing the normal on a translated shape",
 			shape:      NewTestShape(),
 			point:      Point(0, 1.70711, -0.70711),
-			transforms: []Matrix4x4{Translate(0, 1, 0)},
+			transforms: []*Matrix4x4{Translate(0, 1, 0)},
 			want:       Vector(0, 0.70711, -0.70711),
 		},
 		{
 			name:       "computing the normal on a transformed shape",
 			shape:      NewTestShape(),
 			point:      Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2),
-			transforms: []Matrix4x4{RotationAlongZ(math.Pi / 5), Scale(1, 0.5, 1)},
+			transforms: []*Matrix4x4{RotationAlongZ(math.Pi / 5), Scale(1, 0.5, 1)},
 			want:       Vector(0, 0.97014, -0.24254),
 		},
 	}

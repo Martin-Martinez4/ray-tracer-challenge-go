@@ -16,7 +16,7 @@ import "math"
 type Shape interface {
 	GetTransforms() Matrix4x4
 	SetTransform(transform *Matrix4x4) Matrix4x4
-	SetTransforms(transform []Matrix4x4)
+	SetTransforms(transform []*Matrix4x4)
 
 	GetMaterial() *Material
 	SetMaterial(material Material)
@@ -31,10 +31,10 @@ type Shape interface {
 
 // Created functions that return transforms as a Matrix4x4, aids with using the SetTransforms function
 
-func Translate(x, y, z float64) Matrix4x4 {
+func Translate(x, y, z float64) *Matrix4x4 {
 	translationMatrix := NewMatrix4x4([16]float64{1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1})
 
-	return translationMatrix
+	return &translationMatrix
 }
 
 func TranslateInverse(x, y, z float64) Matrix4x4 {
@@ -48,10 +48,10 @@ func TranslateInverse(x, y, z float64) Matrix4x4 {
 	return translationMatrix
 }
 
-func Scale(x, y, z float64) Matrix4x4 {
+func Scale(x, y, z float64) *Matrix4x4 {
 	scaleMatrix := NewMatrix4x4([16]float64{x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1})
 
-	return scaleMatrix
+	return &scaleMatrix
 
 }
 
@@ -84,7 +84,7 @@ func ReflectZ() Matrix4x4 {
 	return refmatrix
 }
 
-func RotationAlongX(radians float64) Matrix4x4 {
+func RotationAlongX(radians float64) *Matrix4x4 {
 	/*
 		1, 0, 0 , 0,
 		0, math.cos(radians), -math.sin(radians), 0,
@@ -92,10 +92,10 @@ func RotationAlongX(radians float64) Matrix4x4 {
 		0, 0, 0, 1
 	*/
 	rotmatrix := NewMatrix4x4([16]float64{1, 0, 0, 0, 0, math.Cos(radians), -math.Sin(radians), 0, 0, math.Sin(radians), math.Cos(radians), 0, 0, 0, 0, 1})
-	return rotmatrix
+	return &rotmatrix
 }
 
-func RotationAlongY(radians float64) Matrix4x4 {
+func RotationAlongY(radians float64) *Matrix4x4 {
 	/*
 		math.cos(radians), 	0,	math.sin(radians) , 0,
 		0, 					1, 	0, 					0,
@@ -103,10 +103,10 @@ func RotationAlongY(radians float64) Matrix4x4 {
 		0, 					0, 	0, 					1
 	*/
 	rotmatrix := NewMatrix4x4([16]float64{math.Cos(radians), 0, math.Sin(radians), 0, 0, 1, 0, 0, -math.Sin(radians), 0, math.Cos(radians), 0, 0, 0, 0, 1})
-	return rotmatrix
+	return &rotmatrix
 }
 
-func RotationAlongZ(radians float64) Matrix4x4 {
+func RotationAlongZ(radians float64) *Matrix4x4 {
 	/*
 		math.Cos(radians), 		-math.Sin(radians),	0,	0,
 		math.Sin(radians), 		math.Cos(radians),	0, 	0,
@@ -114,7 +114,7 @@ func RotationAlongZ(radians float64) Matrix4x4 {
 		0, 0, 0, 1
 	*/
 	rotmatrix := NewMatrix4x4([16]float64{math.Cos(radians), -math.Sin(radians), 0, 0, math.Sin(radians), math.Cos(radians), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
-	return rotmatrix
+	return &rotmatrix
 }
 
 /*

@@ -25,11 +25,10 @@ func NewLight(position, intensity [3]float64) Light {
 
 func EffectiveLighting(mat Material, shape Shape, light Light, point Tuple, eyeVec Tuple, normalVec Tuple, inShadow bool) Color {
 
-	var color Color
+	color := mat.Color
 
-	if mat.Pattern == nil {
-		color = mat.Color
-	} else {
+	if mat.Pattern != nil {
+
 		color = mat.Pattern.PatternAtShape(shape, point)
 	}
 

@@ -33,10 +33,6 @@ func printToFile(str string, filepath string) {
 
 func main() {
 
-	// fmt.Println("Should be creating Canvas")
-	// for chapter 5
-	// printch6(ch6())
-
-	printToFile(ch9(), "chapter9.ppm")
+	printToFile(ch10(), "chapter10.ppm")
 
 }

@@ -36,11 +36,11 @@ func (sphere *Sphere) SetTransform(mat44 *Matrix4x4) Matrix4x4 {
 	return sphere.Transforms
 }
 
-func (sphere *Sphere) SetTransforms(mat44 []Matrix4x4) {
+func (sphere *Sphere) SetTransforms(mat44 []*Matrix4x4) {
 
 	for _, transform := range mat44 {
 
-		sphere.SetTransform(&transform)
+		sphere.SetTransform(transform)
 	}
 }
 

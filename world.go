@@ -60,7 +60,7 @@ func ShadeHit(world *World, comps *Computations) Color {
 
 	shadowed := IsShadowed(*world, comps.OverPoint)
 
-	return EffectiveLighting(*comps.Object.GetMaterial(), comps.Object, world.Light, comps.Point, comps.Eyev, comps.Normalv, shadowed)
+	return EffectiveLighting(*comps.Object.GetMaterial(), comps.Object, world.Light, comps.OverPoint, comps.Eyev, comps.Normalv, shadowed)
 }
 
 func ColorAt(ray *Ray, world *World) Color {

@@ -49,9 +49,9 @@ func (plane *Plane) GetTransforms() Matrix4x4 {
 func (plane *Plane) SetTransform(transform *Matrix4x4) Matrix4x4 {
 	return IdentitiyMatrix4x4()
 }
-func (plane *Plane) SetTransforms(transform []Matrix4x4) {
+func (plane *Plane) SetTransforms(transform []*Matrix4x4) {
 	for i := 0; i < len(transform); i++ {
-		plane.SetTransform(&transform[i])
+		plane.SetTransform(transform[i])
 	}
 }
 

@@ -29,11 +29,11 @@ func (testPattern *testPattern) SetTransform(mat44 *Matrix4x4) Matrix4x4 {
 	return testPattern.Transforms
 }
 
-func (testPattern *testPattern) SetTransforms(mat44 []Matrix4x4) {
+func (testPattern *testPattern) SetTransforms(mat44 []*Matrix4x4) {
 
 	for _, transform := range mat44 {
 
-		testPattern.SetTransform(&transform)
+		testPattern.SetTransform(transform)
 	}
 }
 
@@ -63,8 +63,8 @@ func TestStripesWithTransformedObject(t *testing.T) {
 		name              string
 		pattern           Pattern
 		shape             Shape
-		shapeTransforms   []Matrix4x4
-		patternTransforms []Matrix4x4
+		shapeTransforms   []*Matrix4x4
+		patternTransforms []*Matrix4x4
 		point             Tuple
 		want              Color
 	}{
@@ -72,8 +72,8 @@ func TestStripesWithTransformedObject(t *testing.T) {
 			name:              "a pattern with an object transformation",
 			pattern:           NewTestPattern(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{Scale(2, 2, 2)},
-			patternTransforms: []Matrix4x4{},
+			shapeTransforms:   []*Matrix4x4{Scale(2, 2, 2)},
+			patternTransforms: []*Matrix4x4{},
 			point:             Point(2, 3, 4),
 			want:              NewColor(1, 1.5, 2),
 		},
@@ -81,8 +81,8 @@ func TestStripesWithTransformedObject(t *testing.T) {
 			name:              "a pattern with pattern transformation",
 			pattern:           NewTestPattern(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{},
-			patternTransforms: []Matrix4x4{Scale(2, 2, 2)},
+			shapeTransforms:   []*Matrix4x4{},
+			patternTransforms: []*Matrix4x4{Scale(2, 2, 2)},
 			point:             Point(2, 3, 4),
 			want:              NewColor(1, 1.5, 2),
 		},
@@ -90,8 +90,8 @@ func TestStripesWithTransformedObject(t *testing.T) {
 			name:              "a pattern with both object and pattern transformation",
 			pattern:           NewTestPattern(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{Scale(2, 2, 2)},
-			patternTransforms: []Matrix4x4{Translate(.5, 1, 1.5)},
+			shapeTransforms:   []*Matrix4x4{Scale(2, 2, 2)},
+			patternTransforms: []*Matrix4x4{Translate(.5, 1, 1.5)},
 			point:             Point(2.5, 3, 3.5),
 			want:              NewColor(0.75, 0.5, 0.25),
 		},
@@ -125,8 +125,8 @@ func TestPatternAt(t *testing.T) {
 		name              string
 		pattern           Pattern
 		shape             Shape
-		shapeTransforms   []Matrix4x4
-		patternTransforms []Matrix4x4
+		shapeTransforms   []*Matrix4x4
+		patternTransforms []*Matrix4x4
 		point             Tuple
 		want              Color
 	}{
@@ -134,8 +134,8 @@ func TestPatternAt(t *testing.T) {
 			name:              "stripes with an object transformation",
 			pattern:           NewStripe(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{Scale(2, 2, 2)},
-			patternTransforms: []Matrix4x4{},
+			shapeTransforms:   []*Matrix4x4{Scale(2, 2, 2)},
+			patternTransforms: []*Matrix4x4{},
 			point:             Point(1.5, 0, 0),
 			want:              WHITE,
 		},
@@ -143,8 +143,8 @@ func TestPatternAt(t *testing.T) {
 			name:              "stripes with pattern transformation",
 			pattern:           NewStripe(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{},
-			patternTransforms: []Matrix4x4{Scale(2, 2, 2)},
+			shapeTransforms:   []*Matrix4x4{},
+			patternTransforms: []*Matrix4x4{Scale(2, 2, 2)},
 			point:             Point(1.5, 0, 0),
 			want:              WHITE,
 		},
@@ -152,8 +152,8 @@ func TestPatternAt(t *testing.T) {
 			name:              "stripes with both object and pattern transformation",
 			pattern:           NewStripe(BLACK, WHITE),
 			shape:             NewSphere(),
-			shapeTransforms:   []Matrix4x4{Translate(0.5, 0, 0)},
-			patternTransforms: []Matrix4x4{Scale(2, 2, 2)},
+			shapeTransforms:   []*Matrix4x4{Translate(0.5, 0, 0)},
+			patternTransforms: []*Matrix4x4{Scale(2, 2, 2)},
 			point:             Point(1.5, 0, 0),
 			want:              WHITE,
 		},

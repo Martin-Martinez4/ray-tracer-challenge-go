@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestGradientPatternAt(t *testing.T) {
+func TestRingPatternAt(t *testing.T) {
 	tests := []struct {
 		name              string
 		pattern           Pattern
@@ -14,7 +14,7 @@ func TestGradientPatternAt(t *testing.T) {
 	}{
 		{
 			name:              "Point(0,0,0) should be white",
-			pattern:           NewGradient(WHITE, BLACK),
+			pattern:           NewRing(WHITE, BLACK),
 			shape:             NewSphere(),
 			shapeTransforms:   []*Matrix4x4{},
 			patternTransforms: []*Matrix4x4{},
@@ -23,21 +23,30 @@ func TestGradientPatternAt(t *testing.T) {
 		},
 		{
 			name:              "Point(0.25,0,0) should be a bit darker than white",
-			pattern:           NewGradient(WHITE, BLACK),
+			pattern:           NewRing(WHITE, BLACK),
 			shape:             NewSphere(),
 			shapeTransforms:   []*Matrix4x4{},
 			patternTransforms: []*Matrix4x4{},
-			point:             Point(0.25, 0, 0),
-			want:              NewColor(0.75, 0.75, 0.75),
+			point:             Point(1, 0, 0),
+			want:              BLACK,
 		},
 		{
 			name:              "Point(0.25,0,0) should be gray",
-			pattern:           NewGradient(WHITE, BLACK),
+			pattern:           NewRing(WHITE, BLACK),
 			shape:             NewSphere(),
 			shapeTransforms:   []*Matrix4x4{},
 			patternTransforms: []*Matrix4x4{},
-			point:             Point(0.5, 0, 0),
-			want:              NewColor(0.5, 0.5, 0.5),
+			point:             Point(0, 0, 1),
+			want:              BLACK,
+		},
+		{
+			name:              "Point(0.25,0,0) should be gray",
+			pattern:           NewRing(WHITE, BLACK),
+			shape:             NewSphere(),
+			shapeTransforms:   []*Matrix4x4{},
+			patternTransforms: []*Matrix4x4{},
+			point:             Point(0.708, 0, 0.708),
+			want:              BLACK,
 		},
 	}
 
