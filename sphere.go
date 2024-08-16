@@ -13,6 +13,15 @@ type Sphere struct {
 	SavedRay   Ray
 }
 
+func NewGlassSphere() *Sphere {
+	sphere := NewSphere()
+	sphere.Transforms = IdentitiyMatrix4x4()
+	sphere.Material.Transparency = 1
+	sphere.Material.RefractiveIndex = 1.5
+
+	return sphere
+}
+
 func (sphere *Sphere) GetTransforms() Matrix4x4 {
 	return sphere.Transforms
 }

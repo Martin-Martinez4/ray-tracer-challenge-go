@@ -3,24 +3,28 @@ package main
 import "fmt"
 
 type Material struct {
-	Pattern    Pattern
-	Color      Color
-	Ambient    float64
-	Diffuse    float64
-	Specular   float64
-	Shininess  float64
-	Reflective float64
+	Pattern         Pattern
+	Color           Color
+	Ambient         float64
+	Diffuse         float64
+	Specular        float64
+	Shininess       float64
+	Reflective      float64
+	Transparency    float64
+	RefractiveIndex float64
 }
 
 func DefaultMaterial() Material {
 	return Material{
-		Pattern:    nil,
-		Color:      NewColor(1, 1, 1),
-		Ambient:    0.1,
-		Diffuse:    0.9,
-		Specular:   0.9,
-		Shininess:  200.0,
-		Reflective: 0,
+		Pattern:         nil,
+		Color:           NewColor(1, 1, 1),
+		Ambient:         0.1,
+		Diffuse:         0.9,
+		Specular:        0.9,
+		Shininess:       200.0,
+		Reflective:      0,
+		Transparency:    0,
+		RefractiveIndex: 1,
 	}
 }
 

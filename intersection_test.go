@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -262,7 +263,6 @@ func TestPrepareComputations(t *testing.T) {
 
 			if !got.Equal(tt.want) {
 				t.Errorf("\n%s failed \nwanted %v \ngot %v\n", tt.name, tt.want, got)
-				return
 
 			}
 
@@ -297,7 +297,91 @@ func TestPrepareComputationsWithinRange(t *testing.T) {
 
 			if !(got.OverPoint.z < -Epsilon/2 && got.Point.z > got.OverPoint.z) {
 				t.Errorf("\n%s failed \nOverPoint value was not within range:\nOverPoint.z < -Epsilon/2 %v \nPoint.z > got.OverPoint.z %v ", tt.name, got.OverPoint.z < -Epsilon/2, got.Point.z > got.OverPoint.z)
-				return
+
+			}
+
+		})
+	}
+}
+
+func TestPrepareComputationsWithHit(t *testing.T) {
+
+	// Setup
+	glass1 := NewGlassSphere()
+	glass1.GetMaterial().RefractiveIndex = 1.5
+	glass1.SetTransform(Scale(2, 2, 2))
+
+	glass2 := NewGlassSphere()
+	glass2.GetMaterial().RefractiveIndex = 2.0
+	glass2.SetTransform(Translate(0, 0, -0.25))
+
+	glass3 := NewGlassSphere()
+	glass3.GetMaterial().RefractiveIndex = 2.5
+	glass3.SetTransform(Translate(0, 0, 0.25))
+
+	ray := NewRay([3]float64{0, 0, -4}, [3]float64{0, 0, 1})
+
+	intersections := []Intersection{
+		{T: 2, S: glass1},
+		{T: 2.75, S: glass2},
+		{T: 3.25, S: glass3},
+		{T: 4.75, S: glass2},
+		{T: 5.25, S: glass3},
+		{T: 6, S: glass1},
+	}
+
+	want := []struct {
+		n1 float64
+		n2 float64
+	}{
+		{1.0, 1.5},
+		{1.5, 2},
+		{2, 2.5},
+		{2.5, 2.5},
+		{2.5, 1.5},
+		{1.5, 1.0},
+	}
+
+	for i, _ := range intersections {
+		t.Run(fmt.Sprint(i), func(t *testing.T) {
+
+			got := PrepareComputationsWithHit(intersections[i], ray, intersections)
+
+			if got.N1 != want[i].n1 || got.N2 != want[i].n2 {
+				t.Errorf("#%d failed\nwanted: %f, %f\ngot: %f, %f", i, want[i].n1, want[i].n2, got.N1, got.N2)
+
+			}
+
+		})
+	}
+}
+
+func TestPrepareComputationsUnderPoint(t *testing.T) {
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		sphere       *Sphere
+		intersection Intersection
+	}{
+		{
+			name:         "test underpoint",
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			sphere:       NewGlassSphere(),
+			intersection: Intersection{5, nil},
+		},
+	}
+
+	for i, tt := range tests {
+
+		t.Run(fmt.Sprint(i), func(t *testing.T) {
+
+			tt.intersection.S = tt.sphere
+
+			got := PrepareComputationsWithHit(tt.intersection, tt.ray, []Intersection{tt.intersection})
+
+			if got.UnderPoint.z > Epsilon/2 && got.Point.z < got.UnderPoint.z {
+				t.Errorf("Failed")
 
 			}
 

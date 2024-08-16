@@ -296,3 +296,313 @@ func TestShadeHitWithShadow(T *testing.T) {
 		})
 	}
 }
+
+func TestRefractedColorOpaque(T *testing.T) {
+
+	theWorld := NewDefaultWorld()
+	shape := theWorld.Shapes[0]
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		world        World
+		intersection []Intersection
+		want         Color
+	}{
+		{
+			name:         "shading an intersection",
+			world:        theWorld,
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			intersection: []Intersection{{4, shape}, {6, shape}},
+			want:         BLACK,
+		},
+	}
+
+	for i, tt := range tests {
+		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+
+			got := RefreactedColor(tt.world, *comps, 5)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+			}
+
+		})
+	}
+}
+
+func TestRefractedColorMax0(T *testing.T) {
+
+	theWorld := NewDefaultWorld()
+	shape := theWorld.Shapes[0]
+	shape.GetMaterial().Transparency = 1.0
+	shape.GetMaterial().RefractiveIndex = 1.5
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		world        World
+		intersection []Intersection
+		want         Color
+	}{
+		{
+			name:         "shading an intersection",
+			world:        theWorld,
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			intersection: []Intersection{{4, shape}, {6, shape}},
+			want:         BLACK,
+		},
+	}
+
+	for i, tt := range tests {
+		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+
+			got := RefreactedColor(tt.world, *comps, 0)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+			}
+
+		})
+	}
+}
+
+func TestRefractedColorSnellLaw(T *testing.T) {
+
+	theWorld := NewDefaultWorld()
+	shape := theWorld.Shapes[0]
+	shape.GetMaterial().Transparency = 1.0
+	shape.GetMaterial().RefractiveIndex = 1.5
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		world        World
+		intersection []Intersection
+		want         Color
+	}{
+		{
+			name:         "the refracted color under total internal relfection",
+			world:        theWorld,
+			ray:          NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0}),
+			intersection: []Intersection{{-math.Sqrt(2) / 2, shape}, {math.Sqrt(2) / 2, shape}},
+			want:         BLACK,
+		},
+	}
+
+	for i, tt := range tests {
+		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+			comps := PrepareComputationsWithHit(tt.intersection[1], tt.ray, tt.intersection)
+
+			got := RefreactedColor(tt.world, *comps, 5)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+			}
+
+		})
+	}
+}
+
+func TestRefractedColorRefractedRay(T *testing.T) {
+
+	theWorld := NewDefaultWorld()
+
+	shapeA := theWorld.Shapes[0]
+	shapeA.GetMaterial().Ambient = 1.0
+	shapeA.GetMaterial().Pattern = NewTestPattern(BLACK, WHITE)
+
+	shapeB := theWorld.Shapes[1]
+	shapeB.GetMaterial().Transparency = 1.0
+	shapeB.GetMaterial().RefractiveIndex = 1.5
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		world        World
+		intersection []Intersection
+		want         Color
+	}{
+		{
+			name:         "the refracted color under total internal relfection",
+			world:        theWorld,
+			ray:          NewRay([3]float64{0, 0, 0.1}, [3]float64{0, 1, 0}),
+			intersection: []Intersection{{-0.9899, shapeA}, {-0.4899, shapeB}, {0.4899, shapeB}, {0.9899, shapeA}},
+			want:         NewColor(0, 0.99888, 0.04725),
+		},
+	}
+
+	for i, tt := range tests {
+		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+			comps := PrepareComputationsWithHit(tt.intersection[2], tt.ray, tt.intersection)
+
+			got := RefreactedColor(tt.world, *comps, 5)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+			}
+
+		})
+	}
+}
+
+// Come back to it later
+
+// Test later
+// func TestRefractorShadeHit(T *testing.T) {
+
+// 	theWorld := NewDefaultWorld()
+
+// 	floor := NewPlane()
+// 	floor.GetMaterial().Transparency = 0.5
+// 	floor.GetMaterial().RefractiveIndex = 1.5
+// 	floor.SetTransform(Translate(0, -1, 0))
+
+// 	ball := NewSphere()
+// 	ball.GetMaterial().Color = NewColor(1, 0, 0)
+// 	ball.GetMaterial().Ambient = 0.5
+// 	ball.SetTransform(Translate(0, -3.5, -0.5))
+
+// 	theWorld.Shapes = []Shape{floor, ball}
+
+// 	tests := []struct {
+// 		name         string
+// 		ray          Ray
+// 		world        World
+// 		intersection []Intersection
+// 		want         Color
+// 	}{
+// 		{
+// 			name:         "ShadeHit with a transparent material",
+// 			world:        theWorld,
+// 			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
+// 			intersection: []Intersection{{math.Sqrt(2), floor}},
+// 			want:         NewColor(0.93642, 0.68642, 0.68642),
+// 		},
+// 	}
+
+// 	for i, tt := range tests {
+// 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+// 			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+
+// 			got := ShadeHit(&theWorld, comps, 5)
+
+// 			if !got.Equal(tt.want) {
+// 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+// 			}
+
+// 		})
+// 	}
+// }
+
+func TestSchlick(T *testing.T) {
+
+	gSphere := NewGlassSphere()
+	ray := NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0})
+	xs := []Intersection{{T: -math.Sqrt(2) / 2, S: gSphere}, {T: math.Sqrt(2) / 2, S: gSphere}}
+
+	T.Run("Schlick Test", func(t *testing.T) {
+
+		comps := PrepareComputationsWithHit(xs[1], ray, xs)
+
+		got := Schlick(comps)
+
+		if got != 1 {
+			t.Errorf("Schlick test failed")
+		}
+
+	})
+}
+
+func TestSchlickPerpendicular(T *testing.T) {
+
+	gSphere := NewGlassSphere()
+	ray := NewRay([3]float64{0, 0, 0}, [3]float64{0, 1, 0})
+	xs := []Intersection{{T: -1, S: gSphere}, {T: 1, S: gSphere}}
+
+	T.Run("Schlick Test", func(t *testing.T) {
+
+		comps := PrepareComputationsWithHit(xs[1], ray, xs)
+
+		got := Schlick(comps)
+
+		if !AreFloatsEqual(got, 0.04) {
+			t.Errorf("Schlick test failed:\ngot: %f\nwanted: %f\n", got, 0.04)
+		}
+
+	})
+}
+
+func TestSchlickSmallAngle(T *testing.T) {
+
+	gSphere := NewGlassSphere()
+	ray := NewRay([3]float64{0, 0.99, -2}, [3]float64{0, 0, 1})
+	xs := []Intersection{{T: 1.8589, S: gSphere}}
+
+	T.Run("Schlick Test", func(t *testing.T) {
+
+		comps := PrepareComputationsWithHit(xs[0], ray, xs)
+
+		got := Schlick(comps)
+
+		if !AreFloatsEqual(got, 0.48873) {
+			t.Errorf("Schlick test failed:\ngot: %f\nwanted: %f\n", got, 0.48873)
+		}
+
+	})
+}
+
+func TestRefractorShadeHit(T *testing.T) {
+
+	theWorld := NewDefaultWorld()
+
+	floor := NewPlane()
+	floor.GetMaterial().Transparency = 0.5
+	floor.GetMaterial().Reflective = 0.5
+	floor.GetMaterial().RefractiveIndex = 1.5
+	floor.SetTransform(Translate(0, -1, 0))
+
+	ball := NewSphere()
+	ball.GetMaterial().Color = NewColor(1, 0, 0)
+	ball.GetMaterial().Ambient = 0.5
+	ball.SetTransform(Translate(0, -3.5, -0.5))
+
+	theWorld.Shapes = []Shape{floor, ball}
+
+	tests := []struct {
+		name         string
+		ray          Ray
+		world        World
+		intersection []Intersection
+		want         Color
+	}{
+		{
+			name:         "ShadeHit with a transparent material",
+			world:        theWorld,
+			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
+			intersection: []Intersection{{math.Sqrt(2), floor}},
+			want:         NewColor(0.93391, 0.69643, 0.69643),
+		},
+	}
+
+	for i, tt := range tests {
+		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
+
+			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+
+			got := ShadeHit(&theWorld, comps, 5)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
+			}
+
+		})
+	}
+}

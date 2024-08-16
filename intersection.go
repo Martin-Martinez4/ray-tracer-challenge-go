@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"sort"
 )
@@ -15,14 +16,21 @@ type Intersections struct {
 }
 
 type Computations struct {
-	T         float64
-	Object    Shape
-	Point     Tuple
-	Eyev      Tuple
-	Normalv   Tuple
-	OverPoint Tuple
-	ReflectV  Tuple
-	Inside    bool
+	T          float64
+	Object     Shape
+	Point      Tuple
+	Eyev       Tuple
+	Normalv    Tuple
+	OverPoint  Tuple
+	UnderPoint Tuple
+	ReflectV   Tuple
+	Inside     bool
+	N1         float64
+	N2         float64
+}
+
+func (comps Computations) Print() string {
+	return fmt.Sprintf("\nT: %f\nPoint: %s\nEyeV: %s\nNormalV: %s\nOverPoint: %s\nUnderPoint: %s\nN1: %f,\nN2: %f", comps.T, comps.Point.Print(), comps.Eyev.Print(), comps.Normalv.Print(), comps.OverPoint.Print(), comps.UnderPoint.Print(), comps.N1, comps.N2)
 }
 
 func (inters *Intersections) Add(inter Intersection) {
@@ -142,16 +150,59 @@ func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 		d1 := (-b - math.Sqrt(discriminant)) / (2 * a)
 		d2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
+		intersections := Intersections{}
+
 		if !AreFloatsEqual(d1, d2) {
 
-			return &Intersections{[]Intersection{{d1, s}, {d2, s}}}
+			intersections.Add(Intersection{d1, s})
+			intersections.Add(Intersection{d2, s})
 
 		} else {
-
-			return &Intersections{[]Intersection{{d1, s}}}
+			intersections.Add(Intersection{d1, s})
 
 		}
+		return &intersections
 	}
+}
+
+func PrepareComputationsWithHit(i Intersection, r Ray, xs []Intersection) *Computations {
+	comps := PrepareComputations(r, i.S, i)
+
+	containers := make([]Shape, 0)
+	for _, item := range xs {
+		if i == item {
+			if len(containers) == 0 {
+				comps.N1 = 1.0
+			} else {
+				comps.N1 = (containers[len(containers)-1]).GetMaterial().RefractiveIndex
+			}
+		}
+
+		var itemIndex int = -1
+		for index := 0; index < len(containers); index++ {
+			if containers[index] == item.S {
+				itemIndex = index
+			}
+		}
+
+		if itemIndex != -1 {
+			containers = append(containers[:itemIndex], containers[itemIndex+1:]...)
+		} else {
+			containers = append(containers, item.S)
+		}
+		if i == item {
+			if len(containers) == 0 {
+				comps.N2 = 1.0
+			} else {
+				comps.N2 = (containers[len(containers)-1]).GetMaterial().RefractiveIndex
+			}
+
+			break
+		}
+
+	}
+
+	return &comps
 }
 
 func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Computations {
@@ -171,10 +222,10 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 	}
 
 	nvEp := comps.Normalv.SMultiply(Epsilon)
+	comps.OverPoint = comps.Point.Add(nvEp)
+	comps.UnderPoint = comps.Point.Subtract(nvEp)
 
 	comps.ReflectV = ray.direction.ReflectBy(comps.Normalv)
-
-	comps.OverPoint = comps.Point.Add(nvEp)
 
 	return comps
 }

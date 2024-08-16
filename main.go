@@ -33,6 +33,7 @@ func printToFile(str string, filepath string) {
 
 func main() {
 
-	printToFile(ch10(), "chapter10.ppm")
+	// printToFile(ch11A(), "chapter11A.ppm")
+	printToFile(ch11C(), "chapter11C.ppm")
 
 }

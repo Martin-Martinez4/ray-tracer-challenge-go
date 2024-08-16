@@ -1,5 +1,12 @@
 package main
 
+import (
+	"fmt"
+	"log"
+	"math"
+	"os"
+)
+
 type World struct {
 	Shapes []Shape
 	Light  Light
@@ -56,14 +63,41 @@ func RayWorldIntersect(ray Ray, world World) Intersections {
 	return inters
 }
 
+func PrintToLog(data string) {
+	// If the file doesn't exist, create it, or append to the file
+	f, err := os.OpenFile("debug.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err := f.Write([]byte(data)); err != nil {
+		log.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+}
+
 func ShadeHit(world *World, comps *Computations, reflectionsLeft int) Color {
+
+	fmt.Printf("\n======= %d =======\n%s\n", reflectionsLeft, comps.Print())
 
 	shadowed := IsShadowed(*world, comps.OverPoint)
 
-	reflectedColor := RelfectedColor(world, comps, reflectionsLeft)
 	surface := EffectiveLighting(*comps.Object.GetMaterial(), comps.Object, world.Light, comps.OverPoint, comps.Eyev, comps.Normalv, shadowed)
+	reflectedColor := RelfectedColor(world, comps, reflectionsLeft)
+	refractedColor := RefreactedColor(*world, *comps, reflectionsLeft)
 
-	return surface.Add(reflectedColor)
+	material := comps.Object.GetMaterial()
+
+	if material.Reflective > 0 && material.Transparency > 0 {
+		reflectance := Schlick(comps)
+		reflec := reflectedColor.SMultiply(reflectance)
+		refra := refractedColor.SMultiply(1 - reflectance)
+		return surface.Add(reflec).Add(refra)
+	}
+
+	return surface.Add(reflectedColor).Add(refractedColor)
 }
 
 func ColorAt(ray *Ray, world *World, reflectionsLeft int) Color {
@@ -74,11 +108,36 @@ func ColorAt(ray *Ray, world *World, reflectionsLeft int) Color {
 	if intersection == nil {
 		return NewColor(0, 0, 0)
 	}
+	comps := PrepareComputationsWithHit(*intersection, *ray, inters.intersections)
 
-	comps := PrepareComputations(*ray, intersection.S, *intersection)
+	return ShadeHit(world, comps, reflectionsLeft)
 
-	return ShadeHit(world, &comps, reflectionsLeft)
+}
 
+func RefreactedColor(world World, comps Computations, reflectionsLeft int) Color {
+	if comps.Object.GetMaterial().Transparency == 0 || reflectionsLeft <= 0 {
+		return BLACK
+	}
+
+	nRatio := comps.N1 / comps.N2
+	cosI := Dot(comps.Eyev, comps.Normalv)
+	sin2T := (nRatio * nRatio) * (1 - (cosI * cosI))
+
+	if sin2T > 1 {
+		return BLACK
+	}
+
+	cosT := math.Sqrt(1.0 - sin2T)
+
+	d1 := comps.Normalv.SMultiply(nRatio*cosI - cosT)
+	d2 := comps.Eyev.SMultiply(nRatio)
+	direction := d1.Subtract(d2)
+
+	refractRay := NewRay([3]float64{comps.UnderPoint.x, comps.UnderPoint.y, comps.UnderPoint.z}, [3]float64{direction.x, direction.y, direction.z})
+
+	color := ColorAt(&refractRay, &world, reflectionsLeft-1)
+
+	return color.SMultiply(comps.Object.GetMaterial().Transparency)
 }
 
 func Render(camera Camera, world World) Canvas {
@@ -87,7 +146,7 @@ func Render(camera Camera, world World) Canvas {
 	for y := 0; y < int(camera.VSize)-1; y++ {
 		for x := 0; x < int(camera.HSize)-1; x++ {
 			ray := RayForPixel(camera, float64(x), float64(y))
-			color := ColorAt(&ray, &world, 4)
+			color := ColorAt(&ray, &world, 5)
 			image.ColorPixel(int32(x), int32(y), color)
 		}
 	}
@@ -111,4 +170,23 @@ func IsShadowed(world World, point Tuple) bool {
 		return false
 	}
 
+}
+func Schlick(comps *Computations) float64 {
+	cos := Dot(comps.Eyev, comps.Normalv)
+
+	if comps.N1 > comps.N2 {
+		n := comps.N1 / comps.N2
+		sin2t := (n * n) * (1 - (cos * cos))
+
+		if sin2t > 1.0 {
+			return 1
+		}
+
+		cost := math.Sqrt(1 - sin2t)
+		cos = cost
+	}
+
+	r0 := math.Pow(((comps.N1 - comps.N2) / (comps.N1 + comps.N2)), 2)
+
+	return r0 + (1-r0)*math.Pow((1-cos), 5)
 }
