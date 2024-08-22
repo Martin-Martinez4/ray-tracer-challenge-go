@@ -27,6 +27,7 @@ type Plane struct {
 	Material   Material
 	Transforms Matrix4x4
 	SavedRay   Ray
+	Parent     Shape
 }
 
 func NewPlane() *Plane {
@@ -40,6 +41,7 @@ func NewPlane() *Plane {
 		id:         id,
 		Transforms: identityMatix,
 		Material:   DefaultMaterial(),
+		Parent:     nil,
 	}
 }
 
@@ -47,7 +49,8 @@ func (plane *Plane) GetTransforms() Matrix4x4 {
 	return plane.Transforms
 }
 func (plane *Plane) SetTransform(transform *Matrix4x4) Matrix4x4 {
-	return IdentitiyMatrix4x4()
+	plane.Transforms = transform.Multiply(plane.Transforms)
+	return plane.Transforms
 }
 func (plane *Plane) SetTransforms(transform []*Matrix4x4) {
 	for i := 0; i < len(transform); i++ {
@@ -66,13 +69,14 @@ func (plane *Plane) LocalIntersect(ray Ray) Intersections {
 		return Intersections{intersections: []Intersection{}}
 	}
 
-	t := -(ray.origin.y / ray.direction.y)
+	t := (-ray.origin.y / ray.direction.y)
 
 	return Intersections{intersections: []Intersection{{T: t, S: plane}}}
 }
 
 func (plane *Plane) Intersect(ray *Ray) Intersections {
-	return plane.LocalIntersect(*ray)
+	tray := ray.Transform(plane.Transforms.Inverse())
+	return plane.LocalIntersect(tray)
 }
 
 func (plane *Plane) LocalNormalAt(localPoint Tuple) Tuple {
@@ -80,15 +84,7 @@ func (plane *Plane) LocalNormalAt(localPoint Tuple) Tuple {
 }
 
 func (plane *Plane) NormalAt(worldPoint Tuple) Tuple {
-	invTransf := plane.GetTransforms().Inverse()
-	objectPoint := invTransf.TupleMultiply(worldPoint)
-
-	objectNormal := plane.LocalNormalAt(objectPoint)
-
-	invTransfTransposed := invTransf.Transpose()
-	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
-	worldNormal.w = 0
-	return Normalize(worldNormal)
+	return plane.LocalNormalAt(worldPoint)
 }
 
 func (plane *Plane) GetSavedRay() Ray {
@@ -96,4 +92,12 @@ func (plane *Plane) GetSavedRay() Ray {
 }
 func (plane *Plane) SetSavedRay(ray Ray) {
 	plane.SavedRay = ray
+}
+
+func (plane *Plane) GetParent() Shape {
+	return plane.Parent
+}
+
+func (plane *Plane) GetId() uuid.UUID {
+	return plane.id
 }

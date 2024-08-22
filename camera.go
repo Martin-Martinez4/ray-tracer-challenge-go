@@ -28,7 +28,6 @@ func PixelSize(camera *Camera) {
 
 }
 
-// hsize means horizontal size not height
 func NewCamera(hsize float64, vsize float64, fieldOfView float64) Camera {
 
 	tempCamera := Camera{HSize: hsize, VSize: vsize, FieldOfView: fieldOfView, Transform: IdentitiyMatrix4x4()}
@@ -38,8 +37,8 @@ func NewCamera(hsize float64, vsize float64, fieldOfView float64) Camera {
 }
 
 func RayForPixel(camera Camera, px, py float64) Ray {
-	xoffset := (float64(px) + 0.5) * camera.PixelSize
-	yoffset := (float64(py) + 0.5) * camera.PixelSize
+	xoffset := (px + 0.5) * camera.PixelSize
+	yoffset := (py + 0.5) * camera.PixelSize
 
 	worldX := camera.HalfWidth - xoffset
 	worldY := camera.HalfHeight - yoffset

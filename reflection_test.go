@@ -63,7 +63,7 @@ func TestNonreflective(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 			preComp := PrepareComputations(tt.ray, shape, tt.intersection)
-			got := RelfectedColor(&tt.world, &preComp, 1)
+			got := RelfectedColor(tt.world, preComp, 1)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d failed\nwanted:\n%s\ngot:\n%s", i, tt.want.Print(), got.Print())
@@ -102,7 +102,7 @@ func TestReflective(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 			preComp := PrepareComputations(tt.ray, tt.shape, tt.intersection)
-			got := RelfectedColor(&tt.world, &preComp, 1)
+			got := RelfectedColor(tt.world, preComp, 1)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d failed\nwanted:\n%s\ngot:\n%s", i, tt.want.Print(), got.Print())
@@ -141,7 +141,7 @@ func TestReflectiveShadeHit(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 			preComp := PrepareComputations(tt.ray, tt.shape, tt.intersection)
-			got := ShadeHit(&tt.world, &preComp, 1)
+			got := ShadeHit(tt.world, preComp, 1)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d failed\nwanted:\n%s\ngot:\n%s", i, tt.want.Print(), got.Print())
@@ -179,7 +179,7 @@ func TestReflectiveZeroAllowed(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 			preComp := PrepareComputations(tt.ray, tt.shape, tt.intersection)
-			got := RelfectedColor(&tt.world, &preComp, 0)
+			got := RelfectedColor(tt.world, preComp, 0)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d failed\nwanted:\n%s\ngot:\n%s", i, tt.want.Print(), got.Print())
@@ -204,6 +204,6 @@ func TestTwoRefelctiveShapes(t *testing.T) {
 
 	ray := NewRay([3]float64{0, 0, 0}, [3]float64{0, 1, 0})
 
-	ColorAt(&ray, &world, 4)
+	ColorAt(ray, world, 4)
 
 }

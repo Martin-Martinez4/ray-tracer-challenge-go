@@ -22,8 +22,8 @@ func ViewTransformation(from Tuple, to Tuple, up Tuple) Matrix4x4 {
 
 	orientationMat := NewMatrix4x4([16]float64{leftVec.x, leftVec.y, leftVec.z, 0, trueUp.x, trueUp.y, trueUp.z, 0, -forwardVec.x, -forwardVec.y, -forwardVec.z, 0, 0, 0, 0, 1})
 
-	id := IdentitiyMatrix4x4().Translate(-from.x, -from.y, -from.z)
+	id := Translate(-from.x, -from.y, -from.z)
 
-	return orientationMat.Multiply(id)
+	return orientationMat.Multiply(*id)
 
 }

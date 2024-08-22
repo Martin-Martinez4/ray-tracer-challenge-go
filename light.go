@@ -9,8 +9,8 @@ type Light struct {
 
 func NewLight(position, intensity [3]float64) Light {
 	return Light{
-		Intensity: NewColor(intensity[0], intensity[1], intensity[2]),
 		Position:  Point(position[0], position[1], position[2]),
+		Intensity: NewColor(intensity[0], intensity[1], intensity[2]),
 	}
 }
 

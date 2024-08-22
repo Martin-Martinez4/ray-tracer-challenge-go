@@ -12,6 +12,7 @@ type TestShape struct {
 	Material   Material
 	Transforms Matrix4x4
 	SavedRay   Ray
+	Parent     Shape
 }
 
 func (shape *TestShape) GetTransform() Matrix4x4 {
@@ -29,6 +30,7 @@ func NewTestShape() *TestShape {
 		id:         id,
 		Transforms: identityMatix,
 		Material:   DefaultMaterial(),
+		Parent:     nil,
 	}
 }
 
@@ -121,6 +123,14 @@ func (shape *TestShape) NormalAt(worldPoint Tuple) Tuple {
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
 	worldNormal.w = 0
 	return Normalize(worldNormal)
+}
+
+func (shape *TestShape) GetParent() Shape {
+	return shape.Parent
+}
+
+func (shape *TestShape) GetId() uuid.UUID {
+	return shape.id
 }
 
 func TestShapeGetTransform(t *testing.T) {
@@ -266,7 +276,7 @@ func TestShapeNormalAt(t *testing.T) {
 
 			tt.shape.SetTransforms(tt.transforms)
 
-			got := tt.shape.NormalAt(tt.point)
+			got := NormalAt(tt.shape, tt.point)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s did not pass: \nGot: %s \nWanted: %s", tt.name, got.Print(), tt.want.Print())

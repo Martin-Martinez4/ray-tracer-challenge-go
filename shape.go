@@ -1,6 +1,10 @@
 package main
 
-import "math"
+import (
+	"math"
+
+	"github.com/google/uuid"
+)
 
 /*
 	Shape will have all the functions needed
@@ -14,6 +18,7 @@ import "math"
 		Shininess: 200.0,
 */
 type Shape interface {
+	GetId() uuid.UUID
 	GetTransforms() Matrix4x4
 	SetTransform(transform *Matrix4x4) Matrix4x4
 	SetTransforms(transform []*Matrix4x4)
@@ -23,10 +28,13 @@ type Shape interface {
 
 	Intersect(ray *Ray) Intersections
 
-	NormalAt(point Tuple) Tuple
+	// NormalAt(point Tuple) Tuple
+	LocalNormalAt(point Tuple) Tuple
 
 	GetSavedRay() Ray
 	SetSavedRay(ray Ray)
+
+	GetParent() Shape
 }
 
 // Created functions that return transforms as a Matrix4x4, aids with using the SetTransforms function

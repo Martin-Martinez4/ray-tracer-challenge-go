@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -65,10 +66,15 @@ func ch11B() string {
 	floor.SetTransform(Translate(0, -1, 0))
 	floor.GetMaterial().Transparency = 0.5
 	floor.GetMaterial().RefractiveIndex = 1
+	floor.GetMaterial().Color = NewColor(0.2, 0.2, 0.2)
 
 	ball := NewSphere()
-	ball.GetMaterial().Ambient = 0.5
-	ball.GetMaterial().Transparency = 0.1
+	ball.GetMaterial().Ambient = 0
+	ball.GetMaterial().Specular = 0.9
+	ball.GetMaterial().Transparency = 0.9
+	ball.GetMaterial().Reflective = 0.9
+	ball.GetMaterial().RefractiveIndex = 1.5
+	ball.GetMaterial().Color = NewColor(1, 1, 1)
 
 	glassSphere := NewGlassSphere()
 
@@ -87,51 +93,117 @@ func ch11B() string {
 }
 
 func ch11C() string {
-	camera := NewCamera(300, 300, 0.45)
-	from := Point(0, 0, -5)
-	to := Point(0, 0, 0)
-	up := Point(0, 1, 0)
-	camera.Transform = ViewTransformation(from, to, up)
+	floor := NewPlane()
+	floor.SetTransform(Translate(0, -10, 0))
+	floor.Material.Pattern = NewChecker(BLACK, WHITE)
+	floor.Material.Pattern.SetTransform(Translate(0, 0, 0))
+	floor.Material.Specular = 0
+
+	bigger := NewSphere()
+	bigger.Material.Diffuse = 0.1
+	bigger.Material.Shininess = 300
+	bigger.Material.Reflective = 1
+	bigger.Material.Transparency = 1
+	bigger.Material.RefractiveIndex = 1.52
+	bigger.Material.Color = NewColor(0, 0, 0.1)
+
+	smaller := NewSphere()
+	smaller.SetTransform(Scale(0.5, 0.5, 0.5))
+	smaller.Material.Diffuse = 0.1
+	smaller.Material.Shininess = 300
+	smaller.Material.Reflective = 1
+	smaller.Material.Transparency = 1
+	smaller.Material.RefractiveIndex = 1
+	smaller.Material.Color = NewColor(0, 0, 0.1)
 
 	light := NewLight([3]float64{2, 10, -5}, [3]float64{0.9, 0.9, 0.9})
+	world := NewWorld(&[]Shape{floor, bigger, smaller}, &light)
 
-	// # wall
-	plane := NewPlane()
-	plane.SetTransforms([]*Matrix4x4{RotationAlongX(1.5708), Translate(0, 0, 10)})
-	plane.GetMaterial().Pattern = NewChecker(NewColor(0.15, 0.15, 0.15), NewColor(0.85, 0.85, 0.85))
-	plane.GetMaterial().Ambient = 0.8
-	plane.GetMaterial().Diffuse = 0.2
-	plane.GetMaterial().Specular = 0
-
-	// # glass ball
-	gSphere := NewSphere()
-	// Should make a way to add a material instead of setting things on at a time
-	gSphere.GetMaterial().Color = NewColor(1, 1, 1)
-	gSphere.GetMaterial().Ambient = 0
-	gSphere.GetMaterial().Diffuse = 0
-	gSphere.GetMaterial().Specular = 0.9
-	gSphere.GetMaterial().Shininess = 300
-	gSphere.GetMaterial().Reflective = 0.9
-	gSphere.GetMaterial().Transparency = 0.9
-	gSphere.GetMaterial().RefractiveIndex = 1.5
-
-	// # hollow center
-	hollow := NewSphere()
-	hollow.SetTransform(Scale(0.5, 0.5, 0.5))
-	// Should make a way to add a material instead of setting things on at a time
-	gSphere.GetMaterial().Color = NewColor(1, 1, 1)
-	gSphere.GetMaterial().Ambient = 0
-	gSphere.GetMaterial().Diffuse = 0
-	gSphere.GetMaterial().Specular = 0.9
-	gSphere.GetMaterial().Shininess = 300
-	gSphere.GetMaterial().Reflective = 0.9
-	gSphere.GetMaterial().Transparency = 0.9
-	gSphere.GetMaterial().RefractiveIndex = 1.0000034
-
-	world := NewWorld(&[]Shape{gSphere, plane, hollow}, &light)
+	camera := NewCamera(512, 512, math.Pi/3)
+	from := Point(0, 2.5, 0)
+	to := Point(0, 0, 0)
+	up := Vector(1, 0, 0)
+	camera.Transform = ViewTransformation(from, to, up)
 
 	canvas := Render(camera, world)
 
 	return canvas.Newppm()
+}
 
+func ch11D() string {
+	floor := NewPlane()
+	floor.SetTransforms([]*Matrix4x4{RotationAlongX(1.5708), Translate(0, 0, 10)})
+	floor.Material.Pattern = NewChecker(BLACK, WHITE)
+	floor.Material.Specular = 0
+	floor.Material.Ambient = 0.8
+	floor.Material.Diffuse = 0.2
+
+	bigger := NewSphere()
+	bigger.Material.Diffuse = 0
+	bigger.Material.Ambient = 0
+	bigger.Material.Shininess = 300
+	bigger.Material.Reflective = .9
+	bigger.Material.Transparency = .9
+	bigger.Material.Specular = .9
+	bigger.Material.RefractiveIndex = 1.52
+	bigger.Material.Color = NewColor(1, 1, 1)
+
+	smaller := NewSphere()
+	smaller.SetTransform(Scale(0.5, 0.5, 0.5))
+	smaller.Material.Diffuse = 0
+	smaller.Material.Ambient = 0
+	smaller.Material.Specular = 0
+	smaller.Material.Shininess = 300
+	smaller.Material.Reflective = .9
+	smaller.Material.Transparency = .9
+	smaller.Material.RefractiveIndex = 1.000034
+	smaller.Material.Color = NewColor(1, 1, 1)
+
+	light := NewLight([3]float64{2, 10, -5}, [3]float64{0.9, 0.9, 0.9})
+	world := NewWorld(&[]Shape{floor, bigger, smaller}, &light)
+
+	camera := NewCamera(300, 300, 0.45)
+	from := Point(0, 0, -5)
+	to := Point(0, 0, 0)
+	up := Vector(0, 1, 0)
+	camera.Transform = ViewTransformation(from, to, up)
+
+	canvas := Render(camera, world)
+
+	fmt.Printf("\n%f\n", camera.HalfHeight)
+
+	return canvas.Newppm()
+}
+
+func ch11D3() string {
+	theWorld := NewDefaultWorld()
+
+	floor := NewPlane()
+	floor.GetMaterial().Transparency = 0.5
+	floor.GetMaterial().RefractiveIndex = 1.5
+	floor.SetTransform(Translate(0, -1, 0))
+
+	ball := NewSphere()
+	ball.GetMaterial().Color = NewColor(1, 0, 0)
+	ball.GetMaterial().Ambient = 0.5
+	ball.SetTransform(Translate(0, -2.5, -0.5))
+
+	theWorld.Shapes = append(theWorld.Shapes, floor, ball)
+
+	// light := NewLight([3]float64{2, 10, -5}, [3]float64{0.9, 0.9, 0.9})
+
+	// theWorld.Light = light
+
+	// camera := NewCamera(500, 500, 0.45)
+	// from := Point(0, 0, -5)
+	// to := Point(0, 0, 0)
+	// up := Vector(0, 1, 0)
+	camera := NewCamera(400, 400, math.Pi/3)
+	camera.Transform = ViewTransformation(Point(0, 1.5, -5), Point(0, 1, 0), Vector(0, 1, 0))
+
+	canvas := Render(camera, theWorld)
+
+	fmt.Printf("\n%f\n", camera.HalfHeight)
+
+	return canvas.Newppm()
 }

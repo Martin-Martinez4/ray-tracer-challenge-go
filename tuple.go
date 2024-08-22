@@ -12,7 +12,7 @@ type Tuple struct {
 	w float64
 }
 
-var Epsilon = 0.00005
+var Epsilon = 0.00003
 
 func IsPoint(tuple Tuple) bool {
 	return tuple.w == 1
@@ -52,8 +52,12 @@ func (t *Tuple) Subtract(addend Tuple) Tuple {
 }
 
 func (t *Tuple) Negate() Tuple {
-	zerotuple := Tuple{0, 0, 0, 0}
-	return zerotuple.Subtract(*t)
+	return Tuple{
+		x: -t.x,
+		y: -t.y,
+		z: -t.z,
+		w: -t.w,
+	}
 }
 
 func (t *Tuple) SMultiply(aFloat float64) Tuple {
@@ -61,12 +65,11 @@ func (t *Tuple) SMultiply(aFloat float64) Tuple {
 }
 
 func (t *Tuple) SDivide(aFloat float64) Tuple {
-	factor := 1 / aFloat
-	return Tuple{t.x * factor, t.y * factor, t.z * factor, t.w * factor}
+	return Tuple{t.x / aFloat, t.y / aFloat, t.z / aFloat, t.w / aFloat}
 }
 
 func (t *Tuple) Magnitude() float64 {
-	return float64(math.Sqrt(float64(t.x*t.x) + float64(t.y*t.y) + float64(t.z*t.z)))
+	return math.Sqrt((t.x * t.x) + (t.y * t.y) + (t.z * t.z) + (t.w * t.w))
 }
 
 func Normalize(t Tuple) Tuple {
@@ -102,4 +105,8 @@ func (t Tuple) Print() string {
 		return fmt.Sprintf("Point: %f, %f, %f", t.x, t.y, t.z)
 	}
 
+}
+
+func (t Tuple) Reflect(normal Tuple) Tuple {
+	return t.Subtract(normal.SMultiply(Dot(normal, t) * 2))
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"sort"
 )
@@ -27,10 +26,6 @@ type Computations struct {
 	Inside     bool
 	N1         float64
 	N2         float64
-}
-
-func (comps Computations) Print() string {
-	return fmt.Sprintf("\nT: %f\nPoint: %s\nEyeV: %s\nNormalV: %s\nOverPoint: %s\nUnderPoint: %s\nN1: %f,\nN2: %f", comps.T, comps.Point.Print(), comps.Eyev.Print(), comps.Normalv.Print(), comps.OverPoint.Print(), comps.UnderPoint.Print(), comps.N1, comps.N2)
 }
 
 func (inters *Intersections) Add(inter Intersection) {
@@ -150,18 +145,15 @@ func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 		d1 := (-b - math.Sqrt(discriminant)) / (2 * a)
 		d2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
-		intersections := Intersections{}
-
 		if !AreFloatsEqual(d1, d2) {
 
-			intersections.Add(Intersection{d1, s})
-			intersections.Add(Intersection{d2, s})
+			return &Intersections{[]Intersection{{d1, s}, {d2, s}}}
 
 		} else {
-			intersections.Add(Intersection{d1, s})
+
+			return &Intersections{[]Intersection{{d1, s}}}
 
 		}
-		return &intersections
 	}
 }
 
@@ -211,21 +203,22 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 	comps.Object = shape
 
 	comps.Point = Position(ray, intersection.T)
-	comps.Eyev = ray.direction.SMultiply(-1)
-	comps.Normalv = shape.NormalAt(comps.Point)
+	comps.Eyev = ray.direction.Negate()
+	comps.Normalv = NormalAt(shape, comps.Point)
 
 	if Dot(comps.Normalv, comps.Eyev) < 0 {
 		comps.Inside = true
-		comps.Normalv = comps.Normalv.SMultiply(-1)
+		comps.Normalv = comps.Normalv.Negate()
 	} else {
 		comps.Inside = false
 	}
 
 	nvEp := comps.Normalv.SMultiply(Epsilon)
-	comps.OverPoint = comps.Point.Add(nvEp)
-	comps.UnderPoint = comps.Point.Subtract(nvEp)
 
 	comps.ReflectV = ray.direction.ReflectBy(comps.Normalv)
+
+	comps.OverPoint = comps.Point.Add(nvEp)
+	comps.UnderPoint = comps.Point.Subtract(nvEp)
 
 	return comps
 }

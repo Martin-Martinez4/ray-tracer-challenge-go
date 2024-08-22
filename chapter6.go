@@ -41,7 +41,7 @@ func ch6() string {
 			// intersect
 			xs := RaySphereInteresect(ray, sphere)
 			if xs != nil {
-				intersection, found := Hit(xs)
+				intersection, found := Hit(xs.intersections)
 				if found {
 
 					point := Position(ray, intersection.T)

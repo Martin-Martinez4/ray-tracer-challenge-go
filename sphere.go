@@ -11,11 +11,11 @@ type Sphere struct {
 	Material   Material
 	Transforms Matrix4x4
 	SavedRay   Ray
+	Parent     Shape
 }
 
 func NewGlassSphere() *Sphere {
 	sphere := NewSphere()
-	sphere.Transforms = IdentitiyMatrix4x4()
 	sphere.Material.Transparency = 1
 	sphere.Material.RefractiveIndex = 1.5
 
@@ -37,6 +37,7 @@ func NewSphere() *Sphere {
 		id:         id,
 		Transforms: identityMatix,
 		Material:   DefaultMaterial(),
+		Parent:     nil,
 	}
 }
 
@@ -137,4 +138,12 @@ func (sphere *Sphere) NormalAt(worldPoint Tuple) Tuple {
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
 	worldNormal.w = 0
 	return Normalize(worldNormal)
+}
+
+func (sphere *Sphere) GetParent() Shape {
+	return sphere.Parent
+}
+
+func (sphere *Sphere) GetId() uuid.UUID {
+	return sphere.id
 }

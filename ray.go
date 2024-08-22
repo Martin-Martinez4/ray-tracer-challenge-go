@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"strings"
 )
 
@@ -66,17 +67,29 @@ func (ray Ray) Transform(m44 Matrix4x4) Ray {
 }
 
 // Hit finds the first intersection with a positive T (the passed intersections are assumed to have been sorted already)
-func Hit(intersections *Intersections) (Intersection, bool) {
-	inters := intersections.intersections
+func Hit(intersections []Intersection) (Intersection, bool) {
 
-	// Filter out all negatives
-	for i := 0; i < len(inters); i++ {
-
-		if inters[i].T > 0 {
-			return inters[i], true
-			//xs = append(xs, i)
+	lowestNonNegative := Intersection{T: math.MaxFloat64, S: nil}
+	for _, intersection := range intersections {
+		if intersection.T > 0 && intersection.T < lowestNonNegative.T {
+			lowestNonNegative = intersection
 		}
 	}
+	if lowestNonNegative.T < math.MaxFloat64 {
+		return lowestNonNegative, true
+	} else {
+		return lowestNonNegative, false
+	}
+	// inters := intersections.intersections
 
-	return Intersection{}, false
+	// Filter out all negatives
+	// for i := 0; i < len(inters); i++ {
+
+	// 	if inters[i].T > 0 {
+	// 		return inters[i], true
+	// 		//xs = append(xs, i)
+	// 	}
+	// }
+
+	// return Intersection{}, false
 }
