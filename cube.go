@@ -28,6 +28,7 @@ type Cube struct {
 	Transforms Matrix4x4
 	SavedRay   Ray
 	Parent     Shape
+	Bounds     *BoundingBox
 }
 
 func NewCube() *Cube {
@@ -144,4 +145,15 @@ func (cube *Cube) GetParent() Shape {
 
 func (cube *Cube) GetId() uuid.UUID {
 	return cube.id
+}
+
+func (cube *Cube) BoundingBox() *BoundingBox {
+	if cube.Bounds == nil {
+		cube.Bounds = &BoundingBox{
+			Minimum: Point(-1, -1, -1),
+			Maximum: Point(1, 1, 1),
+		}
+	}
+
+	return cube.Bounds
 }

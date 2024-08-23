@@ -35,6 +35,8 @@ type Shape interface {
 	SetSavedRay(ray Ray)
 
 	GetParent() Shape
+
+	BoundingBox() *BoundingBox
 }
 
 // Created functions that return transforms as a Matrix4x4, aids with using the SetTransforms function

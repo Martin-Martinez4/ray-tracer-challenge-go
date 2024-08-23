@@ -28,6 +28,7 @@ type Plane struct {
 	Transforms Matrix4x4
 	SavedRay   Ray
 	Parent     Shape
+	Bounds     *BoundingBox
 }
 
 func NewPlane() *Plane {
@@ -42,6 +43,7 @@ func NewPlane() *Plane {
 		Transforms: identityMatix,
 		Material:   DefaultMaterial(),
 		Parent:     nil,
+		Bounds:     nil,
 	}
 }
 
@@ -100,4 +102,15 @@ func (plane *Plane) GetParent() Shape {
 
 func (plane *Plane) GetId() uuid.UUID {
 	return plane.id
+}
+
+func (plane *Plane) BoundingBox() *BoundingBox {
+	if plane.Bounds == nil {
+		plane.Bounds = &BoundingBox{
+			Minimum: Point(math.Inf(-1), 0, math.Inf(-1)),
+			Maximum: Point(math.Inf(1), 0, math.Inf(1)),
+		}
+	}
+
+	return plane.Bounds
 }

@@ -12,6 +12,7 @@ type Sphere struct {
 	Transforms Matrix4x4
 	SavedRay   Ray
 	Parent     Shape
+	Bounds     *BoundingBox
 }
 
 func NewGlassSphere() *Sphere {
@@ -38,6 +39,7 @@ func NewSphere() *Sphere {
 		Transforms: identityMatix,
 		Material:   DefaultMaterial(),
 		Parent:     nil,
+		Bounds:     nil,
 	}
 }
 
@@ -146,4 +148,15 @@ func (sphere *Sphere) GetParent() Shape {
 
 func (sphere *Sphere) GetId() uuid.UUID {
 	return sphere.id
+}
+
+func (sphere *Sphere) BoundingBox() *BoundingBox {
+	if sphere.Bounds == nil {
+		sphere.Bounds = &BoundingBox{
+			Minimum: Point(-1, -1, -1),
+			Maximum: Point(1, 1, 1),
+		}
+	}
+
+	return sphere.Bounds
 }

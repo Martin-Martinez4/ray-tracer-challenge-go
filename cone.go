@@ -15,6 +15,7 @@ type Cone struct {
 	Maximum    float64
 	Closed     bool
 	Parent     Shape
+	Bounds     *BoundingBox
 }
 
 func NewCone() *Cone {
@@ -32,6 +33,7 @@ func NewCone() *Cone {
 		Maximum:    math.Inf(1),
 		Closed:     false,
 		Parent:     nil,
+		Bounds:     nil,
 	}
 }
 
@@ -158,4 +160,18 @@ func (cone *Cone) GetParent() Shape {
 
 func (cone *Cone) GetId() uuid.UUID {
 	return cone.id
+}
+
+func (cone *Cone) BoundingBox() *BoundingBox {
+	if cone.Bounds == nil {
+		a := math.Abs(cone.Minimum)
+		b := math.Abs(cone.Maximum)
+		limit := max(a, b)
+		cone.Bounds = &BoundingBox{
+			Minimum: Point(-limit, cone.Minimum, -limit),
+			Maximum: Point(limit, cone.Maximum, limit),
+		}
+	}
+
+	return cone.Bounds
 }

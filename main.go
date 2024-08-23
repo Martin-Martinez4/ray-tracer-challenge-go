@@ -34,6 +34,7 @@ func printToFile(str string, filepath string) {
 func main() {
 
 	// printToFile(ch11A(), "chapter11A.ppm")
-	printToFile(ch11C(), "chapter11C.ppm")
+	// printToFile(ch11C(), "chapter11C.ppm")
+	ParseObj("v 1.5 2 1.3\nv 1.4 -1.2 0.12\nv -0.1 0.5 -1.3")
 
 }

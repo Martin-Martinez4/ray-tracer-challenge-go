@@ -15,6 +15,7 @@ type Cylinder struct {
 	Maximum    float64
 	Closed     bool
 	Parent     Shape
+	Bounds     *BoundingBox
 }
 
 func NewCylinder() *Cylinder {
@@ -32,6 +33,7 @@ func NewCylinder() *Cylinder {
 		Maximum:    math.Inf(1),
 		Closed:     false,
 		Parent:     nil,
+		Bounds:     nil,
 	}
 }
 
@@ -155,4 +157,15 @@ func (cylinder *Cylinder) GetParent() Shape {
 
 func (cylinder *Cylinder) GetId() uuid.UUID {
 	return cylinder.id
+}
+
+func (cylinder *Cylinder) BoundingBox() *BoundingBox {
+	if cylinder.Bounds == nil {
+		cylinder.Bounds = &BoundingBox{
+			Minimum: Point(-1, cylinder.Minimum, -1),
+			Maximum: Point(1, cylinder.Maximum, 1),
+		}
+	}
+
+	return cylinder.Bounds
 }

@@ -133,6 +133,10 @@ func (shape *TestShape) GetId() uuid.UUID {
 	return shape.id
 }
 
+func (shape *TestShape) BoundingBox() *BoundingBox {
+	return nil
+}
+
 func TestShapeGetTransform(t *testing.T) {
 	translate := Translate(2, 3, 4)
 	tests := []struct {

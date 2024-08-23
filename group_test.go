@@ -115,3 +115,61 @@ func TestObjectToWorld(t *testing.T) {
 	}
 
 }
+
+func TestNomralOnObjectinGroup(t *testing.T) {
+
+	group1 := NewGroup()
+	group1.SetTransform(RotationAlongY(math.Pi / 2))
+
+	group2 := NewGroup()
+	group2.SetTransform(Scale(1, 2, 3))
+
+	group1.AddChild(group2)
+
+	sphere := NewSphere()
+	sphere.SetTransform(Translate(5, 0, 0))
+
+	group2.AddChild(sphere)
+
+	name := "the object to world"
+
+	want := Vector(0.2857, 0.4286, -0.8571)
+
+	got := NormalAt(sphere, Point(1.7321, 1.1547, -5.5774))
+
+	if !got.Equal(got) {
+		t.Errorf("%s: \nwant: %v \ngot: %v \ndo not match", name, want, got)
+	}
+
+}
+
+func TestBoundingBoxOnGroup(t *testing.T) {
+
+	group1 := NewGroup()
+
+	leftUp := NewCube()
+	leftUp.SetTransform(Translate(-1, 1, 0))
+
+	leftDown := NewCube()
+	leftDown.SetTransform(Translate(-1, -1, 0))
+
+	rightUp := NewCube()
+	rightUp.SetTransform(Translate(1, 1, 0))
+
+	rightDown := NewCube()
+	rightDown.SetTransform(Translate(1, -1, 0))
+
+	group1.AddChild(leftUp)
+	group1.AddChild(leftDown)
+	group1.AddChild(rightUp)
+	group1.AddChild(rightDown)
+
+	name := "bounding box of group of transformed shapes"
+
+	got := Bounds(group1)
+
+	if !got.Maximum.Equal(Point(2, 2, 1)) || !got.Minimum.Equal(Point(-2, -2, -1)) {
+		t.Errorf("%s Failed \ngot: %s", name, got.Print())
+	}
+
+}
