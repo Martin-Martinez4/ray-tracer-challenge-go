@@ -71,16 +71,17 @@ func intersectConeCaps(cone *Cone, ray Ray, xs *Intersections) {
 
 	t := (cone.Minimum - ray.origin.y) / ray.direction.y
 	if checkConeCap(ray, t, cone.Minimum) {
-		xs.Add(Intersection{t, cone})
+		xs.Add(NewIntersection(t, cone))
 	}
 
 	t = (cone.Maximum - ray.origin.y) / ray.direction.y
 	if checkConeCap(ray, t, cone.Maximum) {
-		xs.Add(Intersection{t, cone})
+		xs.Add(NewIntersection(t, cone))
 	}
 }
 
 func (cone *Cone) LocalIntersect(ray Ray) Intersections {
+	ray = ray.Transform(cone.Transforms.Inverse())
 
 	intersections := Intersections{intersections: []Intersection{}}
 	a := (ray.direction.x * ray.direction.x) - (ray.direction.y * ray.direction.y) + (ray.direction.z * ray.direction.z)
@@ -114,12 +115,12 @@ func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 
 	y0 := ray.origin.y + t0*ray.direction.y
 	if cone.Minimum < y0 && y0 < cone.Maximum {
-		intersections.Add(Intersection{t0, cone})
+		intersections.Add(NewIntersection(t0, cone))
 	}
 
 	y1 := ray.origin.y + t1*ray.direction.y
 	if cone.Minimum < y1 && y1 < cone.Maximum {
-		intersections.Add(Intersection{t1, cone})
+		intersections.Add(NewIntersection(t1, cone))
 	}
 
 	return intersections
@@ -131,7 +132,7 @@ func (cone *Cone) Intersect(ray *Ray) Intersections {
 	return cone.LocalIntersect(tray)
 }
 
-func (cone *Cone) LocalNormalAt(localPoint Tuple) Tuple {
+func (cone *Cone) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	dist := (localPoint.x * localPoint.x) + (localPoint.z * localPoint.z)
 	if dist < 1 && localPoint.y >= cone.Maximum-Epsilon {
 		return Vector(0, 1, 0)
@@ -156,6 +157,10 @@ func (cone *Cone) SetSavedRay(ray Ray) {
 
 func (cone *Cone) GetParent() Shape {
 	return cone.Parent
+}
+
+func (cone *Cone) SetParent(shape Shape) {
+	cone.Parent = shape
 }
 
 func (cone *Cone) GetId() uuid.UUID {

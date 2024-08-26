@@ -5,9 +5,9 @@ import "testing"
 func TestNormalOnATriangle(t *testing.T) {
 	tri := NewTriangle(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0))
 
-	n1 := tri.LocalNormalAt(Point(0, 0.5, 0))
-	n2 := tri.LocalNormalAt(Point(-0.5, 0.75, 0))
-	n3 := tri.LocalNormalAt(Point(0.5, 0.25, 0))
+	n1 := tri.LocalNormalAt(Point(0, 0.5, 0), nil, nil)
+	n2 := tri.LocalNormalAt(Point(-0.5, 0.75, 0), nil, nil)
+	n3 := tri.LocalNormalAt(Point(0.5, 0.25, 0), nil, nil)
 
 	if !(n1.Equal(n2) && n2.Equal(n3) && n2.Equal(tri.Normal)) {
 		t.Errorf("Normal on triangle test failed,\nwanted: %s\ngot: \nn1: %s\nn2: %s\nn3: %s\n", tri.Normal.Print(), n1.Print(), n2.Print(), n3.Print())
@@ -42,7 +42,7 @@ func TestTriangleIntersection(t *testing.T) {
 		{
 			name: "a ray strikes a triangle",
 			ray:  NewRay([3]float64{0, 0.5, -2}, [3]float64{0, 0, 1}),
-			want: Intersections{intersections: []Intersection{{2, triangle}}},
+			want: Intersections{intersections: []Intersection{NewIntersection(2, triangle)}},
 		},
 	}
 

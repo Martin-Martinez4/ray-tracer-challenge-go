@@ -103,7 +103,7 @@ func (cube *Cube) LocalIntersect(ray Ray) Intersections {
 
 	}
 
-	return Intersections{intersections: []Intersection{{tmin, cube}, {tmax, cube}}}
+	return Intersections{intersections: []Intersection{NewIntersection(tmin, cube), NewIntersection(tmax, cube)}}
 }
 
 func (cube *Cube) Intersect(ray *Ray) Intersections {
@@ -111,7 +111,7 @@ func (cube *Cube) Intersect(ray *Ray) Intersections {
 	return cube.LocalIntersect(tray)
 }
 
-func (cube *Cube) LocalNormalAt(localPoint Tuple) Tuple {
+func (cube *Cube) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 
 	absX := math.Abs(localPoint.x)
 	absY := math.Abs(localPoint.y)
@@ -129,7 +129,7 @@ func (cube *Cube) LocalNormalAt(localPoint Tuple) Tuple {
 }
 
 func (cube *Cube) NormalAt(worldPoint Tuple) Tuple {
-	return cube.LocalNormalAt(worldPoint)
+	return cube.LocalNormalAt(worldPoint, nil, nil)
 }
 
 func (cube *Cube) GetSavedRay() Ray {
@@ -141,6 +141,10 @@ func (cube *Cube) SetSavedRay(ray Ray) {
 
 func (cube *Cube) GetParent() Shape {
 	return cube.Parent
+}
+
+func (cube *Cube) SetParent(shape Shape) {
+	cube.Parent = shape
 }
 
 func (cube *Cube) GetId() uuid.UUID {

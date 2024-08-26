@@ -81,12 +81,12 @@ func (plane *Plane) Intersect(ray *Ray) Intersections {
 	return plane.LocalIntersect(tray)
 }
 
-func (plane *Plane) LocalNormalAt(localPoint Tuple) Tuple {
+func (plane *Plane) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	return Vector(0, 1, 0)
 }
 
 func (plane *Plane) NormalAt(worldPoint Tuple) Tuple {
-	return plane.LocalNormalAt(worldPoint)
+	return plane.LocalNormalAt(worldPoint, nil, nil)
 }
 
 func (plane *Plane) GetSavedRay() Ray {
@@ -98,6 +98,10 @@ func (plane *Plane) SetSavedRay(ray Ray) {
 
 func (plane *Plane) GetParent() Shape {
 	return plane.Parent
+}
+
+func (plane *Plane) SetParent(shape Shape) {
+	plane.Parent = shape
 }
 
 func (plane *Plane) GetId() uuid.UUID {

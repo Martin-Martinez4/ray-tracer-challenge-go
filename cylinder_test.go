@@ -45,21 +45,21 @@ func TestRayCylinderIntersect(T *testing.T) {
 			cylinder:  cylinder,
 			origin:    Point(1, 0, -5),
 			direction: Vector(0, 0, 1),
-			want:      []Intersection{{5, cylinder}, {5, cylinder}},
+			want:      []Intersection{NewIntersection(5, cylinder), NewIntersection(5, cylinder)},
 		},
 		{
 			name:      "the ray intersects the cylinder 1",
 			cylinder:  cylinder,
 			origin:    Point(0, 0, -5),
 			direction: Vector(0, 0, 1),
-			want:      []Intersection{{4, cylinder}, {6, cylinder}},
+			want:      []Intersection{NewIntersection(4, cylinder), NewIntersection(6, cylinder)},
 		},
 		{
 			name:      "the ray intersects the cylinder 1",
 			cylinder:  cylinder,
 			origin:    Point(0.5, 0, -5),
 			direction: Vector(0.1, 1, 1),
-			want:      []Intersection{{6.80798, cylinder}, {7.08872, cylinder}},
+			want:      []Intersection{NewIntersection(6.80798, cylinder), NewIntersection(7.08872, cylinder)},
 		},
 		{
 			name:      "the ray intersects misses the truncated cylinder 1",
@@ -87,7 +87,7 @@ func TestRayCylinderIntersect(T *testing.T) {
 			cylinder:  truncedCylinder,
 			origin:    Point(0, 1.5, -2),
 			direction: Vector(0, 0, 1),
-			want:      []Intersection{{1, truncedCylinder}, {3, truncedCylinder}},
+			want:      []Intersection{NewIntersection(1, truncedCylinder), NewIntersection(3, truncedCylinder)},
 		},
 	}
 
@@ -147,7 +147,7 @@ func TestRayCylinderLocalNormal(T *testing.T) {
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			got := tt.cylinder.LocalNormalAt(tt.point)
+			got := tt.cylinder.LocalNormalAt(tt.point, nil, nil)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %s \ngot: %s \ndo not match", i, tt.want.Print(), got.Print())
@@ -176,28 +176,28 @@ func TestRayCylinderCapIntersect(T *testing.T) {
 			cylinder:  truncedCylinder,
 			origin:    Point(0, 3, 0),
 			direction: Vector(0, -1, 0),
-			want:      []Intersection{{1, truncedCylinder}, {2, truncedCylinder}},
+			want:      []Intersection{NewIntersection(1, truncedCylinder), NewIntersection(2, truncedCylinder)},
 		},
 		{
 			name:      "the ray intersects the truncated cylinder cap 2",
 			cylinder:  truncedCylinder,
 			origin:    Point(0, 3, -2),
 			direction: Vector(0, -1, 2),
-			want:      []Intersection{{2.23606797749979, truncedCylinder}, {3.3541019662496843, truncedCylinder}},
+			want:      []Intersection{NewIntersection(2.23606797749979, truncedCylinder), NewIntersection(3.3541019662496843, truncedCylinder)},
 		},
 		{
 			name:      "the ray intersects the truncated cylinder cap 3",
 			cylinder:  truncedCylinder,
 			origin:    Point(0, 4, -2),
 			direction: Vector(0, -1, 1),
-			want:      []Intersection{{2.8284271247461903, truncedCylinder}, {4.242640687119286, truncedCylinder}},
+			want:      []Intersection{NewIntersection(2.8284271247461903, truncedCylinder), NewIntersection(4.242640687119286, truncedCylinder)},
 		},
 		{
 			name:      "the ray intersects the truncated cylinder cap 4",
 			cylinder:  truncedCylinder,
 			origin:    Point(0, -1, -2),
 			direction: Vector(0, 1, 1),
-			want:      []Intersection{{2.8284271247461903, truncedCylinder}, {4.242640687119286, truncedCylinder}},
+			want:      []Intersection{NewIntersection(2.8284271247461903, truncedCylinder), NewIntersection(4.242640687119286, truncedCylinder)},
 		},
 	}
 

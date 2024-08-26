@@ -71,12 +71,12 @@ func intersectCaps(cylinder *Cylinder, ray Ray, xs *Intersections) {
 
 	t := (cylinder.Minimum - ray.origin.y) / ray.direction.y
 	if checkCap(ray, t) {
-		xs.Add(Intersection{t, cylinder})
+		xs.Add(NewIntersection(t, cylinder))
 	}
 
 	t = (cylinder.Maximum - ray.origin.y) / ray.direction.y
 	if checkCap(ray, t) {
-		xs.Add(Intersection{t, cylinder})
+		xs.Add(NewIntersection(t, cylinder))
 	}
 }
 
@@ -111,12 +111,12 @@ func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 
 	y0 := ray.origin.y + t0*ray.direction.y
 	if cylinder.Minimum < y0 && y0 < cylinder.Maximum {
-		intersections.Add(Intersection{t0, cylinder})
+		intersections.Add(NewIntersection(t0, cylinder))
 	}
 
 	y1 := ray.origin.y + t1*ray.direction.y
 	if cylinder.Minimum < y1 && y1 < cylinder.Maximum {
-		intersections.Add(Intersection{t1, cylinder})
+		intersections.Add(NewIntersection(t1, cylinder))
 	}
 
 	return intersections
@@ -128,7 +128,7 @@ func (cylinder *Cylinder) Intersect(ray *Ray) Intersections {
 	return cylinder.LocalIntersect(tray)
 }
 
-func (cylinder *Cylinder) LocalNormalAt(localPoint Tuple) Tuple {
+func (cylinder *Cylinder) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	dist := (localPoint.x * localPoint.x) + (localPoint.z * localPoint.z)
 	if dist < 1 && localPoint.y >= cylinder.Maximum-Epsilon {
 		return Vector(0, 1, 0)
@@ -141,7 +141,7 @@ func (cylinder *Cylinder) LocalNormalAt(localPoint Tuple) Tuple {
 }
 
 func (cylinder *Cylinder) NormalAt(worldPoint Tuple) Tuple {
-	return cylinder.LocalNormalAt(worldPoint)
+	return cylinder.LocalNormalAt(worldPoint, nil, nil)
 }
 
 func (cylinder *Cylinder) GetSavedRay() Ray {
@@ -153,6 +153,10 @@ func (cylinder *Cylinder) SetSavedRay(ray Ray) {
 
 func (cylinder *Cylinder) GetParent() Shape {
 	return cylinder.Parent
+}
+
+func (cylinder *Cylinder) SetParent(shape Shape) {
+	cylinder.Parent = shape
 }
 
 func (cylinder *Cylinder) GetId() uuid.UUID {

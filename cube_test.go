@@ -19,43 +19,43 @@ func TestRayCubeIntersect(T *testing.T) {
 			name: "the cube intersect +x direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{5, 0.5, 0}, [3]float64{-1, 0, 0}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -x direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{-5, 0.5, 0}, [3]float64{1, 0, 0}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect +y direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 5, 0}, [3]float64{0, -1, 0}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -y direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, -5, 0}, [3]float64{0, 1, 0}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect +z direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 0, 5}, [3]float64{0, 0, -1}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -z direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 0, -5}, [3]float64{0, 0, 1}),
-			want: []Intersection{{4, cube}, {6, cube}},
+			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect inside",
 			cube: *cube,
 			ray:  NewRay([3]float64{0, 0.5, 0}, [3]float64{0, 0, 1}),
-			want: []Intersection{{-1, cube}, {1, cube}},
+			want: []Intersection{NewIntersection(-1, cube), NewIntersection(1, cube)},
 		},
 		{
 			name: "a ray misses a cube 1",
@@ -147,7 +147,7 @@ func TestRayCubeNormal(T *testing.T) {
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			got := cube.LocalNormalAt(tt.point)
+			got := cube.LocalNormalAt(tt.point, nil, nil)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %s \ngot: %s \ndo not match", i, tt.want.Print(), got.Print())

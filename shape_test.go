@@ -89,12 +89,12 @@ func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			inters.Add(Intersection{d1, shape})
-			inters.Add(Intersection{d2, shape})
+			inters.Add(NewIntersection(d1, shape))
+			inters.Add(NewIntersection(d2, shape))
 
 		} else {
 
-			inters.Add(Intersection{d1, shape})
+			inters.Add(NewIntersection(d1, shape))
 
 		}
 	}
@@ -109,7 +109,7 @@ func (shape *TestShape) Intersect(ray *Ray) Intersections {
 
 }
 
-func (shape *TestShape) LocalNormalAt(localPoint Tuple) Tuple {
+func (shape *TestShape) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	return Vector(localPoint.x, localPoint.y, localPoint.z)
 }
 
@@ -117,7 +117,7 @@ func (shape *TestShape) NormalAt(worldPoint Tuple) Tuple {
 	invTransf := shape.GetTransforms().Inverse()
 	objectPoint := invTransf.TupleMultiply(worldPoint)
 
-	objectNormal := shape.LocalNormalAt(objectPoint)
+	objectNormal := shape.LocalNormalAt(objectPoint, nil, nil)
 
 	invTransfTransposed := invTransf.Transpose()
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
@@ -127,6 +127,10 @@ func (shape *TestShape) NormalAt(worldPoint Tuple) Tuple {
 
 func (shape *TestShape) GetParent() Shape {
 	return shape.Parent
+}
+
+func (shape *TestShape) SetParent(other Shape) {
+	shape.Parent = other
 }
 
 func (shape *TestShape) GetId() uuid.UUID {

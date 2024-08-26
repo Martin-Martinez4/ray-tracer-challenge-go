@@ -59,6 +59,10 @@ func (group *Group) GetParent() Shape {
 	return group.Parent
 }
 
+func (group *Group) SetParent(shape Shape) {
+	group.Parent = shape
+}
+
 func (group *Group) GetSavedRay() Ray {
 	return group.SavedRay
 }
@@ -67,6 +71,7 @@ func (group *Group) SetSavedRay(ray Ray) {
 }
 
 func (group *Group) AddChild(shape Shape) {
+	shape.SetParent(group)
 	group.Children[shape.GetId()] = shape
 }
 
@@ -182,13 +187,13 @@ func NormalToWorld(shape Shape, normal Tuple) Tuple {
 	return normal
 }
 
-func (group *Group) LocalNormalAt(localPoint Tuple) Tuple {
+func (group *Group) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	panic("local normal called on group")
 }
 
 func NormalAt(shape Shape, point Tuple) Tuple {
 	localPoint := WorldToObject(shape, point)
-	localNormal := shape.LocalNormalAt(localPoint)
+	localNormal := shape.LocalNormalAt(localPoint, nil, nil)
 	return NormalToWorld(shape, localNormal)
 }
 

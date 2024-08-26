@@ -29,12 +29,13 @@ type Shape interface {
 	Intersect(ray *Ray) Intersections
 
 	// NormalAt(point Tuple) Tuple
-	LocalNormalAt(point Tuple) Tuple
+	LocalNormalAt(point Tuple, hitPoint *Tuple, intersection *Intersection) Tuple
 
 	GetSavedRay() Ray
 	SetSavedRay(ray Ray)
 
 	GetParent() Shape
+	SetParent(shape Shape)
 
 	BoundingBox() *BoundingBox
 }

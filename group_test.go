@@ -46,7 +46,7 @@ func TestIntersectingAGroup(t *testing.T) {
 	group.AddChild(s2)
 	group.AddChild(s3)
 
-	want := []Intersection{{1, s2}, {3, s2}, {4, s1}, {6, s1}}
+	want := []Intersection{NewIntersection(1, s2), NewIntersection(3, s2), NewIntersection(4, s1), NewIntersection(6, s1)}
 
 	normed := Normalize(direction)
 
@@ -75,7 +75,7 @@ func TestIntersectingATransfomredGroup(t *testing.T) {
 
 	group.AddChild(s1)
 
-	want := []Intersection{{8, s1}, {12, s1}}
+	want := []Intersection{NewIntersection(8, s1), NewIntersection(12, s1)}
 
 	normed := Normalize(direction)
 

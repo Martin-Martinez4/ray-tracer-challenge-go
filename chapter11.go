@@ -5,7 +5,6 @@ import (
 	"math"
 )
 
-// Same as ch7 but with shadows
 func ch11A() string {
 	// Floor
 	floor := NewPlane()

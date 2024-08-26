@@ -18,7 +18,7 @@ func TestReflectionV(t *testing.T) {
 			name:         "precomputing the reflection vector",
 			shape:        NewPlane(),
 			ray:          NewRay([3]float64{0, 1, -1}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: Intersection{math.Sqrt(2), nil},
+			intersection: NewIntersection(math.Sqrt(2), nil),
 			want:         Vector(0, math.Sqrt(2)/2, math.Sqrt(2)/2),
 		},
 	}
@@ -51,7 +51,7 @@ func TestNonreflective(t *testing.T) {
 			name:         "the reflected color for a nonreflective material shoul be black",
 			world:        NewDefaultWorld(),
 			ray:          NewRay([3]float64{0, 1, -1}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: Intersection{1, nil},
+			intersection: NewIntersection(1, nil),
 			want:         NewColor(0, 0, 0),
 		},
 	}
@@ -88,7 +88,7 @@ func TestReflective(t *testing.T) {
 			world:        NewDefaultWorld(),
 			shape:        NewPlane(),
 			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: Intersection{math.Sqrt(2), nil},
+			intersection: NewIntersection(math.Sqrt(2), nil),
 			want:         NewColor(0.19032, 0.2379, 0.14277),
 		},
 	}
@@ -127,7 +127,7 @@ func TestReflectiveShadeHit(t *testing.T) {
 			world:        NewDefaultWorld(),
 			shape:        NewPlane(),
 			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: Intersection{math.Sqrt(2), nil},
+			intersection: NewIntersection(math.Sqrt(2), nil),
 			want:         NewColor(0.87677, 0.92436, 0.82918),
 		},
 	}
@@ -165,7 +165,7 @@ func TestReflectiveZeroAllowed(t *testing.T) {
 			world:        NewDefaultWorld(),
 			shape:        NewPlane(),
 			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: Intersection{math.Sqrt(2), nil},
+			intersection: NewIntersection(math.Sqrt(2), nil),
 			want:         BLACK,
 		},
 	}

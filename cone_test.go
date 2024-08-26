@@ -22,28 +22,28 @@ func TestRayConeIntersect(T *testing.T) {
 			cone:      cone,
 			origin:    Point(0, 0, -5),
 			direction: Vector(0, 0, 1),
-			want:      []Intersection{{5, cone}, {5, cone}},
+			want:      []Intersection{NewIntersection(5, cone), NewIntersection(5, cone)},
 		},
 		{
 			name:      "the ray hits the cone 2",
 			cone:      cone,
 			origin:    Point(0, 0, -5),
 			direction: Vector(1, 1, 1),
-			want:      []Intersection{{8.66025, cone}, {8.66025, cone}},
+			want:      []Intersection{NewIntersection(8.66025, cone), NewIntersection(8.66025, cone)},
 		},
 		{
 			name:      "the ray hits the cone 3",
 			cone:      cone,
 			origin:    Point(1, 1, -5),
 			direction: Vector(-0.5, -1, 1),
-			want:      []Intersection{{4.55006, cone}, {49.44994, cone}},
+			want:      []Intersection{NewIntersection(4.55006, cone), NewIntersection(49.44994, cone)},
 		},
 		{
 			name:      "the ray hits the cone once 1",
 			cone:      cone,
 			origin:    Point(0, 0, -1),
 			direction: Vector(0, 1, 1),
-			want:      []Intersection{{0.35355, cone}},
+			want:      []Intersection{NewIntersection(0.35355, cone)},
 		},
 	}
 
@@ -90,14 +90,14 @@ func TestRayConeCapIntersect(T *testing.T) {
 			cone:      cone,
 			origin:    Point(0, 0, -0.25),
 			direction: Vector(0, 1, 1),
-			want:      []Intersection{{0.08838834764831845, cone}, {0.7071067811865476, cone}},
+			want:      []Intersection{NewIntersection(0.08838834764831845, cone), NewIntersection(0.7071067811865476, cone)},
 		},
 		{
 			name:      "the ray intersects the truncated cone cap 3",
 			cone:      cone,
 			origin:    Point(0, 0, -0.25),
 			direction: Vector(0, 1, 0),
-			want:      []Intersection{{-0.5, cone}, {-0.25, cone}, {0.25, cone}, {0.5, cone}},
+			want:      []Intersection{NewIntersection(-0.5, cone), NewIntersection(-0.25, cone), NewIntersection(0.25, cone), NewIntersection(0.5, cone)},
 		},
 	}
 
@@ -151,7 +151,7 @@ func TestRayConeLocalNormal(T *testing.T) {
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			got := tt.cone.LocalNormalAt(tt.point)
+			got := tt.cone.LocalNormalAt(tt.point, nil, nil)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %s \ngot: %s \ndo not match", i, tt.want.Print(), got.Print())

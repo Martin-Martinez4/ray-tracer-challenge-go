@@ -84,12 +84,12 @@ func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			inters.Add(Intersection{d1, sphere})
-			inters.Add(Intersection{d2, sphere})
+			inters.Add(NewIntersection(d1, sphere))
+			inters.Add(NewIntersection(d2, sphere))
 
 		} else {
 
-			inters.Add(Intersection{d1, sphere})
+			inters.Add(NewIntersection(d1, sphere))
 
 		}
 	}
@@ -126,15 +126,24 @@ func (sphere *Sphere) RotationAlongZ(rads float64) {
 	sphere.Transforms = newTransform
 }
 
-func (sphere *Sphere) LocalNormalAt(localPoint Tuple) Tuple {
-	return localPoint.Subtract(Point(0, 0, 0))
+func (sphere *Sphere) LocalNormalAt(localPoint Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
+	// return localPoint.Subtract(Point(0, 0, 0))
+
+	invTransf := sphere.GetTransforms().Inverse()
+	objectPoint := invTransf.TupleMultiply(localPoint)
+	objectNormal := objectPoint.Subtract(Point(0, 0, 0))
+
+	invTransfTransposed := invTransf.Transpose()
+	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
+	worldNormal.w = 0
+	return Normalize(worldNormal)
 }
 
 func (sphere *Sphere) NormalAt(worldPoint Tuple) Tuple {
 	invTransf := sphere.GetTransforms().Inverse()
 	objectPoint := invTransf.TupleMultiply(worldPoint)
 
-	objectNormal := sphere.LocalNormalAt(objectPoint)
+	objectNormal := objectPoint.Subtract(Point(0, 0, 0))
 
 	invTransfTransposed := invTransf.Transpose()
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
@@ -144,6 +153,10 @@ func (sphere *Sphere) NormalAt(worldPoint Tuple) Tuple {
 
 func (sphere *Sphere) GetParent() Shape {
 	return sphere.Parent
+}
+
+func (sphere *Sphere) SetParent(shape Shape) {
+	sphere.Parent = shape
 }
 
 func (sphere *Sphere) GetId() uuid.UUID {

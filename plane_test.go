@@ -31,7 +31,7 @@ func TestPlaneLocalNormal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := plane.LocalNormalAt(tt.point)
+			got := plane.LocalNormalAt(tt.point, nil, nil)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("%s did not pass: \nGot: %s \nWanted: %s", tt.name, got.Print(), tt.want.Print())

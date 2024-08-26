@@ -67,7 +67,7 @@ func TestShadeHit(T *testing.T) {
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere:       theWorld.Shapes[0],
 			world:        theWorld,
-			intersection: Intersection{4, theWorld.Shapes[0]},
+			intersection: NewIntersection(4, theWorld.Shapes[0]),
 			want:         NewColor(0.38066, 0.47583, 0.2855),
 		},
 		{
@@ -75,7 +75,7 @@ func TestShadeHit(T *testing.T) {
 			ray:          NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
 			sphere:       theOtherWorld.Shapes[1],
 			world:        theOtherWorld,
-			intersection: Intersection{0.5, theOtherWorld.Shapes[1]},
+			intersection: NewIntersection(0.5, theOtherWorld.Shapes[1]),
 			want:         NewColor(0.90498, 0.90498, 0.90498),
 		},
 	}
@@ -277,7 +277,7 @@ func TestShadeHitWithShadow(T *testing.T) {
 			name:         "shading an intersection",
 			ray:          NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
 			world:        theWorld,
-			intersection: Intersection{4, s2},
+			intersection: NewIntersection(4, s2),
 			want:         NewColor(0.1, 0.1, 0.1),
 		},
 	}
@@ -313,7 +313,7 @@ func TestRefractedColorOpaque(T *testing.T) {
 			name:         "shading an intersection",
 			world:        theWorld,
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			intersection: []Intersection{{4, shape}, {6, shape}},
+			intersection: []Intersection{NewIntersection(4, shape), NewIntersection(6, shape)},
 			want:         BLACK,
 		},
 	}
@@ -351,7 +351,7 @@ func TestRefractedColorMax0(T *testing.T) {
 			name:         "shading an intersection",
 			world:        theWorld,
 			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			intersection: []Intersection{{4, shape}, {6, shape}},
+			intersection: []Intersection{NewIntersection(4, shape), NewIntersection(6, shape)},
 			want:         BLACK,
 		},
 	}
@@ -389,7 +389,7 @@ func TestRefractedColorSnellLaw(T *testing.T) {
 			name:         "the refracted color under total internal relfection",
 			world:        theWorld,
 			ray:          NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0}),
-			intersection: []Intersection{{-math.Sqrt(2) / 2, shape}, {math.Sqrt(2) / 2, shape}},
+			intersection: []Intersection{NewIntersection(-math.Sqrt(2)/2, shape), NewIntersection(math.Sqrt(2)/2, shape)},
 			want:         BLACK,
 		},
 	}
@@ -432,7 +432,7 @@ func TestRefractedColorRefractedRay(T *testing.T) {
 			name:         "the refracted color under total internal relfection",
 			world:        theWorld,
 			ray:          NewRay([3]float64{0, 0, 0.1}, [3]float64{0, 1, 0}),
-			intersection: []Intersection{{-0.9899, shapeA}, {-0.4899, shapeB}, {0.4899, shapeB}, {0.9899, shapeA}},
+			intersection: []Intersection{NewIntersection(-0.9899, shapeA), NewIntersection(-0.4899, shapeB), NewIntersection(0.4899, shapeB), NewIntersection(0.9899, shapeA)},
 			want:         NewColor(0, 0.99888, 0.04725),
 		},
 	}
@@ -478,7 +478,7 @@ func TestRefractorShadeHit(T *testing.T) {
 			name:         "ShadeHit with a transparent material",
 			world:        theWorld,
 			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: []Intersection{{math.Sqrt(2), floor}},
+			intersection: []Intersection{NewIntersection(math.Sqrt(2), floor)},
 			want:         NewColor(0.93642, 0.68642, 0.68642),
 		},
 	}
@@ -503,7 +503,7 @@ func TestSchlickInternalReflection(T *testing.T) {
 
 	name := "ShadeHit with a transparent material"
 	ray := NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0})
-	intersection := []Intersection{{-math.Sqrt(2) / 2, shape}, {math.Sqrt(2) / 2, shape}}
+	intersection := []Intersection{NewIntersection(-math.Sqrt(2)/2, shape), NewIntersection(math.Sqrt(2)/2, shape)}
 	want := 1.0
 
 	T.Run(name, func(t *testing.T) {
@@ -524,7 +524,7 @@ func TestSchlickPerpendicular(T *testing.T) {
 
 	name := "schilick with perpendicular viewing angle"
 	ray := NewRay([3]float64{0, 0, 0}, [3]float64{0, 1, 0})
-	intersection := []Intersection{{-1, shape}, {1, shape}}
+	intersection := []Intersection{NewIntersection(-1, shape), NewIntersection(1, shape)}
 	want := 0.04
 
 	T.Run(name, func(t *testing.T) {
@@ -545,7 +545,7 @@ func TestSchlickSmallAngle(T *testing.T) {
 
 	name := "schilick with small viewing angle, where n2 > n1"
 	ray := NewRay([3]float64{0, 0.99, -2}, [3]float64{0, 0, 1})
-	intersection := []Intersection{{1.8589, shape}}
+	intersection := []Intersection{NewIntersection(1.8589, shape)}
 	want := 0.48873
 
 	T.Run(name, func(t *testing.T) {
@@ -579,7 +579,7 @@ func TestSchlickReflectionAndRefraction(T *testing.T) {
 
 	world.Shapes = append(world.Shapes, floor, ball)
 
-	intersection := []Intersection{{math.Sqrt(2), floor}}
+	intersection := []Intersection{NewIntersection(math.Sqrt(2), floor)}
 	want := NewColor(0.93391, 0.69643, 0.69243)
 
 	T.Run(name, func(t *testing.T) {

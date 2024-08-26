@@ -8,6 +8,9 @@ import (
 type Intersection struct {
 	T float64
 	S Shape
+
+	U *float64
+	V *float64
 }
 
 type Intersections struct {
@@ -28,6 +31,24 @@ type Computations struct {
 	N2         float64
 }
 
+func NewIntersection(T float64, S Shape) Intersection {
+	return Intersection{
+		T: T,
+		S: S,
+		U: nil,
+		V: nil,
+	}
+}
+
+func NewIntersectionWithUV(T float64, S Shape, U, V *float64) Intersection {
+	return Intersection{
+		T: T,
+		S: S,
+		U: U,
+		V: V,
+	}
+}
+
 func (inters *Intersections) Add(inter Intersection) {
 
 	intersections := append(inters.intersections, inter)
@@ -36,6 +57,10 @@ func (inters *Intersections) Add(inter Intersection) {
 	sort.Slice(inters.intersections, func(i, j int) bool {
 		return inters.intersections[i].T < inters.intersections[j].T
 	})
+	// remove default values intersection {0 <nil> <nil> <nil>} if present
+	if inters.intersections[0].S == nil {
+		inters.intersections = append(inters.intersections[:0], inters.intersections[1:]...)
+	}
 }
 
 func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
@@ -58,12 +83,12 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			inters.Add(Intersection{d1, s})
-			inters.Add(Intersection{d2, s})
+			inters.Add(NewIntersection(d1, s))
+			inters.Add(NewIntersection(d2, s))
 
 		} else {
 
-			inters.Add(Intersection{d1, s})
+			inters.Add(NewIntersection(d1, s))
 
 		}
 	}
@@ -147,11 +172,11 @@ func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 
 		if !AreFloatsEqual(d1, d2) {
 
-			return &Intersections{[]Intersection{{d1, s}, {d2, s}}}
+			return &Intersections{[]Intersection{NewIntersection(d1, s), NewIntersection(d2, s)}}
 
 		} else {
 
-			return &Intersections{[]Intersection{{d1, s}}}
+			return &Intersections{[]Intersection{NewIntersection(d1, s)}}
 
 		}
 	}
@@ -204,7 +229,8 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 
 	comps.Point = Position(ray, intersection.T)
 	comps.Eyev = ray.direction.Negate()
-	comps.Normalv = NormalAt(shape, comps.Point)
+	// comps.Normalv = NormalAt(shape, comps.Point)
+	comps.Normalv = shape.LocalNormalAt(comps.Point, &comps.Point, &intersection)
 
 	if Dot(comps.Normalv, comps.Eyev) < 0 {
 		comps.Inside = true

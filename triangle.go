@@ -86,6 +86,9 @@ func (triangle *Triangle) GetId() uuid.UUID {
 func (triangle *Triangle) GetParent() Shape {
 	return triangle.Parent
 }
+func (triangle *Triangle) SetParent(shape Shape) {
+	triangle.Parent = shape
+}
 
 func (triangle *Triangle) GetTransforms() Matrix4x4 {
 	return triangle.Transforms
@@ -106,7 +109,7 @@ func (triangle *Triangle) GetMaterial() *Material {
 func (triangle *Triangle) SetMaterial(material Material) {
 	triangle.Material = material
 }
-func (triangle *Triangle) LocalNormalAt(localPoint Tuple) Tuple {
+func (triangle *Triangle) LocalNormalAt(point Tuple, hitPoint *Tuple, intersection *Intersection) Tuple {
 	return triangle.Normal
 }
 func (triangle *Triangle) NormalAt(worldPoint Tuple) Tuple {
@@ -139,7 +142,7 @@ func (triangle *Triangle) LocalIntersect(ray Ray) Intersections {
 
 	t := f * Dot(triangle.E2, originCrossE1)
 	// will change later
-	return Intersections{intersections: []Intersection{{t, triangle}}}
+	return Intersections{intersections: []Intersection{NewIntersection(t, triangle)}}
 }
 
 func (triangle *Triangle) Intersect(ray *Ray) Intersections {
