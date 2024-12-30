@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
 /*
@@ -16,8 +18,8 @@ import (
 
 type ParserOBJ struct {
 	Vertices   []Tuple
-	Triangles  []Triangle
-	STriangles []SmoothTriangle
+	Triangles  []shapes.Triangle
+	STriangles []shapes.SmoothTriangle
 	Normals    []Tuple
 	Groups     []Group
 }
@@ -198,7 +200,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 
 		if smooth {
 
-			stri := NewSmoothTriangle(verts[numbs00], verts[numbs01], verts[numbs02], norms[norm00], norms[norm01], norms[norm02])
+			stri := shapes.NewSmoothTriangle(verts[numbs00], verts[numbs01], verts[numbs02], norms[norm00], norms[norm01], norms[norm02])
 			if gIndex == -1 {
 
 				parser.STriangles = append(parser.STriangles, *stri)
@@ -206,7 +208,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 				parser.Groups[gIndex].AddChild(stri)
 			}
 		} else {
-			tri := NewTriangle(verts[numbs00], verts[numbs01], verts[numbs02])
+			tri := shapes.NewTriangle(verts[numbs00], verts[numbs01], verts[numbs02])
 			if gIndex == -1 {
 
 				parser.Triangles = append(parser.Triangles, *tri)
@@ -223,7 +225,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 
 // func ParseObj(contents string) *ParserOBJ {
 
-// 	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []Triangle{}}
+// 	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}}
 
 // 	parserVertices(contents, &parser)
 // 	parseFanTris(contents, &parser)
@@ -233,7 +235,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 
 func ParseObjFile(filePath string) *ParserOBJ {
 
-	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []Triangle{}, Groups: []Group{}}
+	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}, Groups: []Group{}}
 
 	file, err := os.Open(filePath)
 	if err != nil {

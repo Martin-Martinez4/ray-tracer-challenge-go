@@ -2,15 +2,17 @@ package main
 
 import (
 	"testing"
+
+	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
 func TestParserObj(t *testing.T) {
 
 	group1 := NewGroup()
-	group1.AddChild(NewTriangle(Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0)))
+	group1.AddChild(shapes.NewTriangle(Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0)))
 
 	group2 := NewGroup()
-	group2.AddChild(NewTriangle(Point(-1, 1, 0), Point(1, 0, 0), Point(1, 1, 0)))
+	group2.AddChild(shapes.NewTriangle(Point(-1, 1, 0), Point(1, 0, 0), Point(1, 1, 0)))
 
 	tests := []struct {
 		name  string
@@ -20,34 +22,34 @@ func TestParserObj(t *testing.T) {
 		{
 			name:  "an empty string is parsed",
 			input: "obj-files/empty.obj",
-			want:  &ParserOBJ{Vertices: []Tuple{}, Triangles: []Triangle{}},
+			want:  &ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}},
 		},
 		{
 			name:  "gibberish string is parsed",
 			input: "obj-files/gibberish.obj",
-			want:  &ParserOBJ{Vertices: []Tuple{}, Triangles: []Triangle{}},
+			want:  &ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}},
 		},
 		{
 			name:  "parsing vertices",
 			input: "obj-files/verts.obj",
 			want: &ParserOBJ{
 				Vertices:  []Tuple{Point(1.5, 2, 1.3), Point(1.4, -1.2, 0.12), Point(-0.1, 0, -1.3)},
-				Triangles: []Triangle{}},
+				Triangles: []shapes.Triangle{}},
 		},
 		{
 			name:  "parsing vertices and a face (triangle)",
 			input: "obj-files/tris.obj",
-			want:  &ParserOBJ{Vertices: []Tuple{Point(-1, -1, 0), Point(-1, 0, 0), Point(1, 0, 0), Point(1, 1, 0)}, Triangles: []Triangle{*NewTriangle(Point(-1, -1, 0), Point(-1, 0, 0), Point(1, 0, 0)), *NewTriangle(Point(-1, -1, 0), Point(1, 0, 0), Point(1, 1, 0))}},
+			want:  &ParserOBJ{Vertices: []Tuple{Point(-1, -1, 0), Point(-1, 0, 0), Point(1, 0, 0), Point(1, 1, 0)}, Triangles: []shapes.Triangle{*shapes.NewTriangle(Point(-1, -1, 0), Point(-1, 0, 0), Point(1, 0, 0)), *shapes.NewTriangle(Point(-1, -1, 0), Point(1, 0, 0), Point(1, 1, 0))}},
 		},
 		{
 			name:  "parsing vertices and a fan face (triangle)",
 			input: "obj-files/fanTris.obj",
 			want: &ParserOBJ{
 				Vertices: []Tuple{Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Point(1, 1, 0), Point(0, 2, 0)},
-				Triangles: []Triangle{
-					*NewTriangle(Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0)),
-					*NewTriangle(Point(-1, 1, 0), Point(1, 0, 0), Point(1, 1, 0)),
-					*NewTriangle(Point(-1, 1, 0), Point(1, 1, 0), Point(0, 2, 0)),
+				Triangles: []shapes.Triangle{
+					*shapes.NewTriangle(Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0)),
+					*shapes.NewTriangle(Point(-1, 1, 0), Point(1, 0, 0), Point(1, 1, 0)),
+					*shapes.NewTriangle(Point(-1, 1, 0), Point(1, 1, 0), Point(0, 2, 0)),
 				},
 			},
 		},
@@ -56,7 +58,7 @@ func TestParserObj(t *testing.T) {
 			input: "obj-files/groups.obj",
 			want: &ParserOBJ{
 				Vertices:  []Tuple{Point(-1, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Point(1, 1, 0)},
-				Triangles: []Triangle{},
+				Triangles: []shapes.Triangle{},
 				Groups:    []Group{*group1, *group2}},
 		},
 		{
@@ -64,7 +66,7 @@ func TestParserObj(t *testing.T) {
 			input: "obj-files/normalVerts.obj",
 			want: &ParserOBJ{
 				Vertices:  []Tuple{Point(1.5, 2, 1.3), Point(1.4, -1.2, 0.12), Point(-0.1, 0, -1.3)},
-				Triangles: []Triangle{},
+				Triangles: []shapes.Triangle{},
 				Groups:    []Group{},
 				Normals:   []Tuple{Point(1.5, 2, 1.3), Point(1.4, -1.2, 0.12), Point(-0.1, 0, -1.3)},
 			},
@@ -74,10 +76,10 @@ func TestParserObj(t *testing.T) {
 			input: "obj-files/smoothTris.obj",
 			want: &ParserOBJ{
 				Vertices:  []Tuple{Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0)},
-				Triangles: []Triangle{},
-				STriangles: []SmoothTriangle{
-					*NewSmoothTriangle(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Vector(-1, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)),
-					*NewSmoothTriangle(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Vector(-1, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)),
+				Triangles: []shapes.Triangle{},
+				STriangles: []shapes.SmoothTriangle{
+					*shapes.NewSmoothTriangle(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Vector(-1, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)),
+					*shapes.NewSmoothTriangle(Point(0, 1, 0), Point(-1, 0, 0), Point(1, 0, 0), Vector(-1, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)),
 				},
 				Groups:  []Group{},
 				Normals: []Tuple{Point(-1, 0, 0), Point(1, 0, 0), Point(0, 1, 0)},
