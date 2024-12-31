@@ -23,6 +23,9 @@ type Shape interface {
 	SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4
 	SetTransforms(transform []*pm.Matrix4x4)
 
+	GetInverseTransforms() pm.Matrix4x4
+	setInverseTransforms(transforms *pm.Matrix4x4)
+
 	GetMaterial() *mat.Material
 	SetMaterial(material mat.Material)
 
@@ -43,10 +46,11 @@ type Shape interface {
 
 // short for primordial
 type PrimeShape struct {
-	id         uuid.UUID
-	Material   mat.Material
-	Transforms pm.Matrix4x4
-	SavedRay   Ray
+	id               uuid.UUID
+	Material         mat.Material
+	Transforms       pm.Matrix4x4
+	inverseTransform pm.Matrix4x4
+	SavedRay         Ray
 }
 
 func (ps *PrimeShape) GetId() uuid.UUID {
@@ -58,14 +62,41 @@ func (ps *PrimeShape) GetTransforms() pm.Matrix4x4 {
 }
 func (ps *PrimeShape) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
 	ps.Transforms = transform.Multiply(ps.Transforms)
+	inverse := ps.Transforms.Inverse()
+	ps.setInverseTransforms(&inverse)
 	return ps.Transforms
 }
+
 func (ps *PrimeShape) SetTransforms(transform []*pm.Matrix4x4) {
-	// rework later to when memoizing the inverse transform
-	// should keep a running multiplication then at the end memoize instead of calling setTransform for each transform
+
+	transformation := pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
+
 	for i := 0; i < len(transform); i++ {
-		ps.SetTransform(transform[i])
+		// modifying the transformation instead of creating new ones each time might make it faster
+		transformation = transform[i].Multiply(transformation)
 	}
+
+	ps.SetTransform(&transformation)
+
+}
+
+// Other version I do not know which is better right now they seem about equal
+// func (ps *PrimeShape) SetTransforms(transform []*pm.Matrix4x4) {
+
+// 	for i := 0; i < len(transform); i++ {
+// 		ps.Transforms = transform[i].Multiply(ps.Transforms)
+// 	}
+// 	inverse := ps.Transforms.Inverse()
+// 	ps.setInverseTransforms(&inverse)
+
+// }
+
+func (ps *PrimeShape) GetInverseTransforms() pm.Matrix4x4 {
+	return ps.inverseTransform
+}
+
+func (ps *PrimeShape) setInverseTransforms(transforms *pm.Matrix4x4) {
+	ps.inverseTransform = *transforms
 }
 
 func (ps *PrimeShape) GetMaterial() *mat.Material {
@@ -106,8 +137,9 @@ func CreateDefaultPrimeShape() *PrimeShape {
 
 	return &PrimeShape{
 
-		id:         id,
-		Transforms: identityMatix,
-		Material:   mat.DefaultMaterial(),
+		id:               id,
+		Transforms:       identityMatix,
+		inverseTransform: pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}),
+		Material:         mat.DefaultMaterial(),
 	}
 }

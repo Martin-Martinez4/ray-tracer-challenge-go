@@ -29,19 +29,6 @@ func NewSphere() *Sphere {
 	}
 }
 
-func (sphere *Sphere) SetTransform(mat44 *pm.Matrix4x4) pm.Matrix4x4 {
-	sphere.Transforms = mat44.Multiply(sphere.Transforms)
-	return sphere.Transforms
-}
-
-func (sphere *Sphere) SetTransforms(mat44 []*pm.Matrix4x4) {
-
-	for _, transform := range mat44 {
-
-		sphere.SetTransform(transform)
-	}
-}
-
 func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
 
 	inters := Intersections{}
@@ -100,7 +87,7 @@ func (sphere *Sphere) RotationAlongZ(rads float64) {
 func (sphere *Sphere) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, intersection *Intersection) pm.Tuple {
 	// return localPoint.Subtract(pm.Point(0, 0, 0))
 
-	invTransf := sphere.GetTransforms().Inverse()
+	invTransf := sphere.GetInverseTransforms()
 	objectPoint := invTransf.TupleMultiply(localPoint)
 	objectNormal := objectPoint.Subtract(pm.Point(0, 0, 0))
 
@@ -111,7 +98,7 @@ func (sphere *Sphere) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, int
 }
 
 func (sphere *Sphere) NormalAt(worldPoint pm.Tuple) pm.Tuple {
-	invTransf := sphere.GetTransforms().Inverse()
+	invTransf := sphere.GetInverseTransforms()
 	objectPoint := invTransf.TupleMultiply(worldPoint)
 
 	objectNormal := objectPoint.Subtract(pm.Point(0, 0, 0))

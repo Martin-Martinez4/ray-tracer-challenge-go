@@ -1,17 +1,13 @@
 package exercises
 
 import (
-	"fmt"
-	"log"
-	"os"
-
 	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
-func ch5() string {
+func Ch5() string {
 
 	rayOrigin := pm.Point(0, 0, -5)
 	wallZ := 10.0
@@ -51,23 +47,4 @@ func ch5() string {
 
 	return canvas.Newppm()
 
-}
-
-func printAnswer(str string) {
-
-	f, err := os.Create("chapter5.ppm")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer f.Close()
-
-	_, err2 := f.WriteString(str)
-
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
-	fmt.Println("done")
 }

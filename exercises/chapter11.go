@@ -10,7 +10,7 @@ import (
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
-func ch11A() string {
+func Ch11A() string {
 	// Floor
 	floor := shapes.NewPlane()
 	floor.SetTransforms([]*pm.Matrix4x4{pm.Translate(0, 0, 5)})
@@ -32,9 +32,7 @@ func ch11A() string {
 	middleSphere.GetMaterial().Pattern = middPat
 
 	rightSphere := shapes.NewSphere()
-	rightSphere.Transforms = rightSphere.Transforms.Scale(0.5, 0.5, 0.5)
-	rightSphere.Transforms = rightSphere.Transforms.Translate(1.5, 0.5, -0.5)
-	rightSphere.SetTransform(pm.RotationAlongY(50 * (math.Pi / 180)))
+	rightSphere.SetTransforms([]*pm.Matrix4x4{pm.Scale(0.5, 0.5, 0.5), pm.Translate(1.5, 0.5, -0.5), pm.RotationAlongY(50 * (math.Pi / 180))})
 	rightSphere.Material.Color = mat.NewColor(0.5, 1, 0.1)
 	rightSphere.Material.Diffuse = 0.7
 	rightSphere.Material.Specular = 0.3
@@ -43,8 +41,7 @@ func ch11A() string {
 	rightSphere.Material.Pattern = rightPattern
 
 	leftSphere := shapes.NewSphere()
-	leftSphere.Transforms = leftSphere.Transforms.Scale(0.33, 0.33, 0.33)
-	leftSphere.Transforms = leftSphere.Transforms.Translate(-1.5, 0.33, -0.75)
+	leftSphere.SetTransforms([]*pm.Matrix4x4{pm.Scale(0.33, 0.33, 0.33), pm.Translate(-1.5, 0.33, -0.75)})
 	leftSphere.Material.Color = mat.NewColor(1, 0.8, 0.1)
 	leftSphere.Material.Diffuse = 0.7
 	leftSphere.Material.Specular = 0.3
@@ -63,7 +60,7 @@ func ch11A() string {
 
 }
 
-func ch11B() string {
+func Ch11B() string {
 	// Floor
 
 	floor := shapes.NewPlane()
@@ -96,7 +93,7 @@ func ch11B() string {
 
 }
 
-func ch11C() string {
+func Ch11C() string {
 	floor := shapes.NewPlane()
 	floor.SetTransform(pm.Translate(0, -10, 0))
 	floor.Material.Pattern = mat.NewChecker(mat.BLACK, mat.WHITE)
@@ -134,7 +131,7 @@ func ch11C() string {
 	return canvas.Newppm()
 }
 
-func ch11D() string {
+func Ch11D() string {
 	floor := shapes.NewPlane()
 	floor.SetTransforms([]*pm.Matrix4x4{pm.RotationAlongX(1.5708), pm.Translate(0, 0, 10)})
 	floor.Material.Pattern = mat.NewChecker(mat.BLACK, mat.WHITE)
@@ -179,7 +176,7 @@ func ch11D() string {
 	return canvas.Newppm()
 }
 
-func ch11D3() string {
+func Ch11D3() string {
 	theWorld := world.NewDefaultWorld()
 
 	floor := shapes.NewPlane()

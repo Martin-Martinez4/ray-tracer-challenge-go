@@ -7,7 +7,7 @@ import (
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
-func ch6() string {
+func Ch6() string {
 
 	rayOrigin := pm.Point(0, 0, -5)
 	wallZ := 10.0

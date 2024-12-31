@@ -10,7 +10,7 @@ import (
 )
 
 // Same as ch7 but with shadows
-func ch9() string {
+func Ch9() string {
 	// Floor
 	floor := shapes.NewPlane()
 	floor.SetTransforms([]*pm.Matrix4x4{pm.RotationAlongX(math.Pi / 2), pm.Translate(0, 0, 5)})

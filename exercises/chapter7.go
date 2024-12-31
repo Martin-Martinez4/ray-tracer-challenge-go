@@ -9,7 +9,7 @@ import (
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
-func ch7() string {
+func Ch7() string {
 	// Floor
 	floor := shapes.NewSphere()
 	floor.Transforms = floor.Transforms.Scale(10, 0.01, 10)

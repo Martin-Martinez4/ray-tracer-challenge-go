@@ -10,7 +10,7 @@ import (
 )
 
 // Same as ch7 but with shadows
-func ch8() string {
+func Ch8() string {
 	// Floor
 	floor := shapes.NewSphere()
 	floor.Transforms = floor.Transforms.Scale(10, 0.01, 10)

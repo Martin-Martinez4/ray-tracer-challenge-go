@@ -10,7 +10,7 @@ import (
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
-func ch15A() string {
+func Ch15A() string {
 	// Floor
 	floor := shapes.NewPlane()
 	floor.SetTransforms([]*pm.Matrix4x4{pm.Translate(0, 0, 5)})
@@ -74,7 +74,7 @@ func ch15A() string {
 
 }
 
-func ch15B() string {
+func Ch15B() string {
 	// Floor
 	// floor := NewPlane()
 	// floor.SetTransforms([]*pm.Matrix4x4{pm.Translate(0, 0, 5)})
