@@ -3,9 +3,7 @@ package shapes
 import (
 	"math"
 
-	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 // type Shape interface {
@@ -26,7 +24,6 @@ import (
 
 type Cube struct {
 	*PrimeShape
-	Parent Shape
 	Bounds *BoundingBox
 }
 
@@ -34,28 +31,7 @@ func NewCube() *Cube {
 
 	return &Cube{
 		PrimeShape: CreateDefaultPrimeShape(),
-		Parent:     nil,
 	}
-}
-
-func (cube *Cube) GetTransforms() pm.Matrix4x4 {
-	return cube.Transforms
-}
-func (cube *Cube) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
-	cube.Transforms = transform.Multiply(cube.Transforms)
-	return cube.Transforms
-}
-func (cube *Cube) SetTransforms(transform []*pm.Matrix4x4) {
-	for i := 0; i < len(transform); i++ {
-		cube.SetTransform(transform[i])
-	}
-}
-
-func (cube *Cube) GetMaterial() *mat.Material {
-	return &cube.Material
-}
-func (cube *Cube) SetMaterial(material mat.Material) {
-	cube.Material = material
 }
 
 func CheckAxis(origin, Direction float64) (float64, float64) {
@@ -99,7 +75,7 @@ func (cube *Cube) LocalIntersect(ray Ray) Intersections {
 }
 
 func (cube *Cube) Intersect(ray *Ray) Intersections {
-	tray := ray.Transform(cube.Transforms.Inverse())
+	tray := ray.Transform(cube.GetInverseTransforms())
 	return cube.LocalIntersect(tray)
 }
 
@@ -122,25 +98,6 @@ func (cube *Cube) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, interse
 
 func (cube *Cube) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	return cube.LocalNormalAt(worldPoint, nil, nil)
-}
-
-func (cube *Cube) GetSavedRay() Ray {
-	return cube.SavedRay
-}
-func (cube *Cube) SetSavedRay(ray Ray) {
-	cube.SavedRay = ray
-}
-
-func (cube *Cube) GetParent() Shape {
-	return cube.Parent
-}
-
-func (cube *Cube) SetParent(shape Shape) {
-	cube.Parent = shape
-}
-
-func (cube *Cube) GetId() uuid.UUID {
-	return cube.id
 }
 
 func (cube *Cube) BoundingBox() *BoundingBox {

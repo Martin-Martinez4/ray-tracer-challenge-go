@@ -46,6 +46,11 @@ func Ch11A() string {
 	leftSphere.Material.Diffuse = 0.7
 	leftSphere.Material.Specular = 0.3
 
+	// box := shapes.NewCube()
+	// box.SetTransforms([]*pm.Matrix4x4{pm.Scale(0.25, 0.25, 0.25), pm.RotationAlongX(20 * (math.Pi / 180))})
+	// cylinder := shapes.NewCylinder()
+	// cylinder.SetTransforms([]*pm.Matrix4x4{pm.Scale(0.5, 0.2, 0.5), pm.Translate(-1, 0.33, -0.75)})
+
 	// Light Source
 	w := world.NewDefaultWorld()
 	w.Shapes = []shapes.Shape{floor, middleSphere, leftSphere, rightSphere}

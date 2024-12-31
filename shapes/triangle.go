@@ -3,9 +3,7 @@ package shapes
 import (
 	"math"
 
-	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 type Triangle struct {
@@ -18,7 +16,6 @@ type Triangle struct {
 	E1 pm.Tuple
 	E2 pm.Tuple
 
-	Parent Shape
 	Bounds *BoundingBox
 }
 
@@ -59,7 +56,6 @@ func NewTriangle(p1, p2, p3 pm.Tuple) *Triangle {
 		E2: e2,
 
 		Normal: normal,
-		Parent: nil,
 		Bounds: nil,
 	}
 }
@@ -68,36 +64,6 @@ func (triangle *Triangle) Equal(other *Triangle) bool {
 	return triangle.P1.Equal(other.P1) && triangle.P2.Equal(other.P2) && triangle.P3.Equal(other.P3)
 }
 
-func (triangle *Triangle) GetId() uuid.UUID {
-	return triangle.id
-}
-
-func (triangle *Triangle) GetParent() Shape {
-	return triangle.Parent
-}
-func (triangle *Triangle) SetParent(shape Shape) {
-	triangle.Parent = shape
-}
-
-func (triangle *Triangle) GetTransforms() pm.Matrix4x4 {
-	return triangle.Transforms
-}
-func (triangle *Triangle) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
-	triangle.Transforms = transform.Multiply(triangle.Transforms)
-	return triangle.Transforms
-}
-func (triangle *Triangle) SetTransforms(transform []*pm.Matrix4x4) {
-	for i := 0; i < len(transform); i++ {
-		triangle.SetTransform(transform[i])
-	}
-}
-
-func (triangle *Triangle) GetMaterial() *mat.Material {
-	return &triangle.Material
-}
-func (triangle *Triangle) SetMaterial(material mat.Material) {
-	triangle.Material = material
-}
 func (triangle *Triangle) LocalNormalAt(point pm.Tuple, hitPoint *pm.Tuple, intersection *Intersection) pm.Tuple {
 	return triangle.Normal
 }
@@ -135,15 +101,8 @@ func (triangle *Triangle) LocalIntersect(ray Ray) Intersections {
 }
 
 func (triangle *Triangle) Intersect(ray *Ray) Intersections {
-	tray := ray.Transform(triangle.Transforms.Inverse())
+	tray := ray.Transform(triangle.GetInverseTransforms())
 	return triangle.LocalIntersect(tray)
-}
-
-func (triangle *Triangle) GetSavedRay() Ray {
-	return triangle.SavedRay
-}
-func (triangle *Triangle) SetSavedRay(ray Ray) {
-	triangle.SavedRay = ray
 }
 
 func (triangle *Triangle) BoundingBox() *BoundingBox {

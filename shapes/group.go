@@ -4,7 +4,6 @@ import (
 	"math"
 	"sort"
 
-	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/google/uuid"
 )
@@ -32,7 +31,6 @@ type ChildrenMap map[uuid.UUID]Shape
 type Group struct {
 	*PrimeShape
 	Children ChildrenMap
-	Parent   Shape
 }
 
 func NewGroup() *Group {
@@ -40,51 +38,12 @@ func NewGroup() *Group {
 	return &Group{
 		PrimeShape: CreateDefaultPrimeShape(),
 		Children:   ChildrenMap{},
-		Parent:     nil,
 	}
-}
-
-func (group *Group) GetId() uuid.UUID {
-	return group.id
-}
-func (group *Group) GetParent() Shape {
-	return group.Parent
-}
-
-func (group *Group) SetParent(shape Shape) {
-	group.Parent = shape
-}
-
-func (group *Group) GetSavedRay() Ray {
-	return group.SavedRay
-}
-func (group *Group) SetSavedRay(ray Ray) {
-	group.SavedRay = ray
 }
 
 func (group *Group) AddChild(shape Shape) {
 	shape.SetParent(group)
 	group.Children[shape.GetId()] = shape
-}
-
-func (group *Group) GetTransforms() pm.Matrix4x4 {
-	return group.Transforms
-}
-func (group *Group) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
-	group.Transforms = transform.Multiply(group.Transforms)
-	return group.Transforms
-}
-func (group *Group) SetTransforms(transform []*pm.Matrix4x4) {
-	for i := 0; i < len(transform); i++ {
-		group.SetTransform(transform[i])
-	}
-}
-
-func (group *Group) GetMaterial() *mat.Material {
-	return &group.Material
-}
-func (group *Group) SetMaterial(material mat.Material) {
-	group.Material = material
 }
 
 // Could really be improved
@@ -138,7 +97,7 @@ func CheckGroupAxis(origin, direction, min, max float64) (float64, float64) {
 
 func (group *Group) Intersect(ray *Ray) Intersections {
 	// Check if bounding box is intersected
-	tray := ray.Transform(group.Transforms.Inverse())
+	tray := ray.Transform(group.GetInverseTransforms())
 
 	// gbdMin := group.BoundingBox().Minimum
 	// gbdMax := group.BoundingBox().Maximum
@@ -163,11 +122,11 @@ func WorldToObject(shape Shape, point pm.Tuple) pm.Tuple {
 		point = WorldToObject(shape.GetParent(), point)
 	}
 
-	return shape.GetTransforms().Inverse().TupleMultiply(point)
+	return shape.GetInverseTransforms().TupleMultiply(point)
 }
 
 func NormalToWorld(shape Shape, normal pm.Tuple) pm.Tuple {
-	shapTransform := shape.GetTransforms().Inverse().Transpose()
+	shapTransform := shape.GetInverseTransforms().Transpose()
 	normal = shapTransform.TupleMultiply(normal)
 	normal.W = 0
 	normal = pm.Normalize(normal)

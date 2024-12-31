@@ -67,7 +67,7 @@ func (inters *Intersections) Add(inter Intersection) {
 
 func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
-	ray = ray.Transform(s.GetTransforms().Inverse())
+	ray = ray.Transform(s.GetInverseTransforms())
 
 	sphereToRay := ray.origin.Subtract(pm.Point(0, 0, 0))
 
@@ -156,7 +156,7 @@ func Position(r Ray, distance float64) pm.Tuple {
 }
 
 func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
-	ray = ray.Transform(s.GetTransforms().Inverse())
+	ray = ray.Transform(s.GetInverseTransforms())
 
 	sphereToRay := ray.origin.Subtract(pm.Point(0, 0, 0))
 

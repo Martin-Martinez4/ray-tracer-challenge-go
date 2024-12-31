@@ -11,7 +11,6 @@ type Cone struct {
 	Minimum float64
 	Maximum float64
 	Closed  bool
-	Parent  Shape
 	Bounds  *BoundingBox
 }
 
@@ -22,7 +21,6 @@ func NewCone() *Cone {
 		Minimum:    math.Inf(-1),
 		Maximum:    math.Inf(1),
 		Closed:     false,
-		Parent:     nil,
 		Bounds:     nil,
 	}
 }
@@ -116,14 +114,6 @@ func (cone *Cone) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, interse
 
 		return pm.Vector(localPoint.X, y, localPoint.Z)
 	}
-}
-
-func (cone *Cone) GetParent() Shape {
-	return cone.Parent
-}
-
-func (cone *Cone) SetParent(shape Shape) {
-	cone.Parent = shape
 }
 
 func (cone *Cone) BoundingBox() *BoundingBox {

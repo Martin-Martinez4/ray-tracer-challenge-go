@@ -6,12 +6,10 @@ import (
 
 	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 type TestShape struct {
 	*PrimeShape
-	Parent Shape
 }
 
 func (shape *TestShape) GetTransform() pm.Matrix4x4 {
@@ -22,43 +20,7 @@ func NewTestShape() *TestShape {
 
 	return &TestShape{
 		PrimeShape: CreateDefaultPrimeShape(),
-		Parent:     nil,
 	}
-}
-
-func (shape *TestShape) GetTransforms() pm.Matrix4x4 {
-	return shape.Transforms
-}
-
-func (shape *TestShape) SetTransform(mat44 *pm.Matrix4x4) pm.Matrix4x4 {
-	shape.Transforms = mat44.Multiply(shape.Transforms)
-	return shape.Transforms
-}
-
-func (shape *TestShape) SetTransforms(mat44 []*pm.Matrix4x4) {
-
-	for _, transform := range mat44 {
-
-		shape.SetTransform(transform)
-	}
-
-}
-
-func (shape *TestShape) GetMaterial() *mat.Material {
-
-	return &shape.Material
-}
-
-func (shape *TestShape) SetMaterial(material mat.Material) {
-
-	shape.Material = material
-}
-
-func (shape *TestShape) GetSavedRay() Ray {
-	return shape.SavedRay
-}
-func (shape *TestShape) SetSavedRay(ray Ray) {
-	shape.SavedRay = ray
 }
 
 func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
@@ -115,18 +77,6 @@ func (shape *TestShape) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
 	worldNormal.W = 0
 	return pm.Normalize(worldNormal)
-}
-
-func (shape *TestShape) GetParent() Shape {
-	return shape.Parent
-}
-
-func (shape *TestShape) SetParent(other Shape) {
-	shape.Parent = other
-}
-
-func (shape *TestShape) GetId() uuid.UUID {
-	return shape.id
 }
 
 func (shape *TestShape) BoundingBox() *BoundingBox {

@@ -3,9 +3,7 @@ package shapes
 import (
 	"math"
 
-	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 type SmoothTriangle struct {
@@ -22,7 +20,6 @@ type SmoothTriangle struct {
 	E1 pm.Tuple
 	E2 pm.Tuple
 
-	Parent Shape
 	Bounds *BoundingBox
 }
 
@@ -49,7 +46,6 @@ func NewSmoothTriangle(p1, p2, p3, n1, n2, n3 pm.Tuple) *SmoothTriangle {
 		E2: e2,
 
 		Normal: normal,
-		Parent: nil,
 		Bounds: nil,
 	}
 }
@@ -58,39 +54,8 @@ func (smoothTriangle *SmoothTriangle) Equal(other *SmoothTriangle) bool {
 	return smoothTriangle.P1.Equal(other.P1) && smoothTriangle.P2.Equal(other.P2) && smoothTriangle.P3.Equal(other.P3)
 }
 
-func (smoothTriangle *SmoothTriangle) GetId() uuid.UUID {
-	return smoothTriangle.id
-}
-
-func (smoothTriangle *SmoothTriangle) GetParent() Shape {
-	return smoothTriangle.Parent
-}
-func (smoothTriangle *SmoothTriangle) SetParent(shape Shape) {
-	smoothTriangle.Parent = shape
-}
-
-func (smoothTriangle *SmoothTriangle) GetTransforms() pm.Matrix4x4 {
-	return smoothTriangle.Transforms
-}
-func (smoothTriangle *SmoothTriangle) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
-	smoothTriangle.Transforms = transform.Multiply(smoothTriangle.Transforms)
-	return smoothTriangle.Transforms
-}
-func (smoothTriangle *SmoothTriangle) SetTransforms(transform []*pm.Matrix4x4) {
-	for i := 0; i < len(transform); i++ {
-		smoothTriangle.SetTransform(transform[i])
-	}
-}
-
-func (smoothTriangle *SmoothTriangle) GetMaterial() *mat.Material {
-	return &smoothTriangle.Material
-}
-func (smoothTriangle *SmoothTriangle) SetMaterial(material mat.Material) {
-	smoothTriangle.Material = material
-}
-
 func (smoothTriangle *SmoothTriangle) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, intersection *Intersection) pm.Tuple {
-	invTransf := smoothTriangle.GetTransforms().Inverse()
+	invTransf := smoothTriangle.GetInverseTransforms()
 
 	n2U := smoothTriangle.N2.SMultiply(*intersection.U)
 	n3V := smoothTriangle.N3.SMultiply(*intersection.V)
@@ -139,15 +104,8 @@ func (smoothTriangle *SmoothTriangle) LocalIntersect(ray Ray) Intersections {
 }
 
 func (smoothTriangle *SmoothTriangle) Intersect(ray *Ray) Intersections {
-	tray := ray.Transform(smoothTriangle.Transforms.Inverse())
+	tray := ray.Transform(smoothTriangle.GetInverseTransforms())
 	return smoothTriangle.LocalIntersect(tray)
-}
-
-func (smoothTriangle *SmoothTriangle) GetSavedRay() Ray {
-	return smoothTriangle.SavedRay
-}
-func (smoothTriangle *SmoothTriangle) SetSavedRay(ray Ray) {
-	smoothTriangle.SavedRay = ray
 }
 
 func (smoothTriangle *SmoothTriangle) BoundingBox() *BoundingBox {

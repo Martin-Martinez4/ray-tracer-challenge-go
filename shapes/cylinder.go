@@ -4,7 +4,6 @@ import (
 	"math"
 
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 type Cylinder struct {
@@ -12,7 +11,6 @@ type Cylinder struct {
 	Minimum float64
 	Maximum float64
 	Closed  bool
-	Parent  Shape
 	Bounds  *BoundingBox
 }
 
@@ -23,7 +21,6 @@ func NewCylinder() *Cylinder {
 		Minimum:    math.Inf(-1),
 		Maximum:    math.Inf(1),
 		Closed:     false,
-		Parent:     nil,
 		Bounds:     nil,
 	}
 }
@@ -95,7 +92,7 @@ func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 }
 
 func (cylinder *Cylinder) Intersect(ray *Ray) Intersections {
-	tray := ray.Transform(cylinder.Transforms.Inverse())
+	tray := ray.Transform(cylinder.GetInverseTransforms())
 	return cylinder.LocalIntersect(tray)
 }
 
@@ -113,25 +110,6 @@ func (cylinder *Cylinder) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple,
 
 func (cylinder *Cylinder) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	return cylinder.LocalNormalAt(worldPoint, nil, nil)
-}
-
-func (cylinder *Cylinder) GetSavedRay() Ray {
-	return cylinder.SavedRay
-}
-func (cylinder *Cylinder) SetSavedRay(ray Ray) {
-	cylinder.SavedRay = ray
-}
-
-func (cylinder *Cylinder) GetParent() Shape {
-	return cylinder.Parent
-}
-
-func (cylinder *Cylinder) SetParent(shape Shape) {
-	cylinder.Parent = shape
-}
-
-func (cylinder *Cylinder) GetId() uuid.UUID {
-	return cylinder.id
 }
 
 func (cylinder *Cylinder) BoundingBox() *BoundingBox {

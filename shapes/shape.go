@@ -51,6 +51,25 @@ type PrimeShape struct {
 	Transforms       pm.Matrix4x4
 	inverseTransform pm.Matrix4x4
 	SavedRay         Ray
+	Parent           Shape
+}
+
+func CreateDefaultPrimeShape() *PrimeShape {
+	id, err := uuid.NewUUID()
+	identityMatix := pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
+
+	if err != nil {
+		panic("not able to cerate unique id for cube")
+	}
+
+	return &PrimeShape{
+
+		id:               id,
+		Transforms:       identityMatix,
+		inverseTransform: pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}),
+		Material:         mat.DefaultMaterial(),
+		Parent:           nil,
+	}
 }
 
 func (ps *PrimeShape) GetId() uuid.UUID {
@@ -116,6 +135,14 @@ func (ps *PrimeShape) SetSavedRay(ray Ray) {
 	ps.SavedRay = ray
 }
 
+func (ps *PrimeShape) GetParent() Shape {
+	return ps.Parent
+}
+
+func (ps *PrimeShape) SetParent(shape Shape) {
+	ps.Parent = shape
+}
+
 func (ps *PrimeShape) PatternAtShape(pattern mat.Pattern, worldPoint pm.Tuple) mat.Color {
 	inversObjTransform := ps.GetTransforms().Inverse()
 
@@ -125,21 +152,4 @@ func (ps *PrimeShape) PatternAtShape(pattern mat.Pattern, worldPoint pm.Tuple) m
 	patternPoint := inversPatTransform.TupleMultiply(objectPoint)
 
 	return pattern.PatternAt(patternPoint)
-}
-
-func CreateDefaultPrimeShape() *PrimeShape {
-	id, err := uuid.NewUUID()
-	identityMatix := pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
-
-	if err != nil {
-		panic("not able to cerate unique id for cube")
-	}
-
-	return &PrimeShape{
-
-		id:               id,
-		Transforms:       identityMatix,
-		inverseTransform: pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}),
-		Material:         mat.DefaultMaterial(),
-	}
 }

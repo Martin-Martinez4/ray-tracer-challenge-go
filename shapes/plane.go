@@ -3,9 +3,7 @@ package shapes
 import (
 	"math"
 
-	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
-	"github.com/google/uuid"
 )
 
 // type Shape interface {
@@ -27,7 +25,6 @@ import (
 type Plane struct {
 	*PrimeShape
 	SavedRay Ray
-	Parent   Shape
 	Bounds   *BoundingBox
 }
 
@@ -35,30 +32,10 @@ func NewPlane() *Plane {
 
 	return &Plane{
 		PrimeShape: CreateDefaultPrimeShape(),
-		Parent:     nil,
 		Bounds:     nil,
 	}
 }
 
-func (plane *Plane) GetTransforms() pm.Matrix4x4 {
-	return plane.Transforms
-}
-func (plane *Plane) SetTransform(transform *pm.Matrix4x4) pm.Matrix4x4 {
-	plane.Transforms = transform.Multiply(plane.Transforms)
-	return plane.Transforms
-}
-func (plane *Plane) SetTransforms(transform []*pm.Matrix4x4) {
-	for i := 0; i < len(transform); i++ {
-		plane.SetTransform(transform[i])
-	}
-}
-
-func (plane *Plane) GetMaterial() *mat.Material {
-	return &plane.Material
-}
-func (plane *Plane) SetMaterial(material mat.Material) {
-	plane.Material = material
-}
 func (plane *Plane) LocalIntersect(ray Ray) Intersections {
 	if math.Abs(ray.Direction.Y) < pm.Epsilon {
 		return Intersections{Intersections: []Intersection{}}
@@ -70,7 +47,7 @@ func (plane *Plane) LocalIntersect(ray Ray) Intersections {
 }
 
 func (plane *Plane) Intersect(ray *Ray) Intersections {
-	tray := ray.Transform(plane.Transforms.Inverse())
+	tray := ray.Transform(plane.GetInverseTransforms())
 	return plane.LocalIntersect(tray)
 }
 
@@ -80,25 +57,6 @@ func (plane *Plane) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, inter
 
 func (plane *Plane) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	return plane.LocalNormalAt(worldPoint, nil, nil)
-}
-
-func (plane *Plane) GetSavedRay() Ray {
-	return plane.SavedRay
-}
-func (plane *Plane) SetSavedRay(ray Ray) {
-	plane.SavedRay = ray
-}
-
-func (plane *Plane) GetParent() Shape {
-	return plane.Parent
-}
-
-func (plane *Plane) SetParent(shape Shape) {
-	plane.Parent = shape
-}
-
-func (plane *Plane) GetId() uuid.UUID {
-	return plane.id
 }
 
 func (plane *Plane) BoundingBox() *BoundingBox {

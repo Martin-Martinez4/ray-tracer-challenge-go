@@ -8,7 +8,6 @@ import (
 
 type Sphere struct {
 	*PrimeShape
-	Parent Shape
 	Bounds *BoundingBox
 }
 
@@ -24,7 +23,6 @@ func NewSphere() *Sphere {
 
 	return &Sphere{
 		PrimeShape: CreateDefaultPrimeShape(),
-		Parent:     nil,
 		Bounds:     nil,
 	}
 }
@@ -107,14 +105,6 @@ func (sphere *Sphere) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	worldNormal := invTransfTransposed.TupleMultiply(objectNormal)
 	worldNormal.W = 0
 	return pm.Normalize(worldNormal)
-}
-
-func (sphere *Sphere) GetParent() Shape {
-	return sphere.Parent
-}
-
-func (sphere *Sphere) SetParent(shape Shape) {
-	sphere.Parent = shape
 }
 
 func (sphere *Sphere) BoundingBox() *BoundingBox {
