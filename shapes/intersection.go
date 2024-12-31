@@ -16,7 +16,7 @@ type Intersection struct {
 }
 
 type Intersections struct {
-	intersections []Intersection
+	Intersections []Intersection
 }
 
 type Computations struct {
@@ -53,15 +53,15 @@ func NewIntersectionWithUV(T float64, S Shape, U, V *float64) Intersection {
 
 func (inters *Intersections) Add(inter Intersection) {
 
-	intersections := append(inters.intersections, inter)
-	inters.intersections = intersections
+	Intersections := append(inters.Intersections, inter)
+	inters.Intersections = Intersections
 
-	sort.Slice(inters.intersections, func(i, j int) bool {
-		return inters.intersections[i].T < inters.intersections[j].T
+	sort.Slice(inters.Intersections, func(i, j int) bool {
+		return inters.Intersections[i].T < inters.Intersections[j].T
 	})
 	// remove default values intersection {0 <nil> <nil> <nil>} if present
-	if inters.intersections[0].S == nil {
-		inters.intersections = append(inters.intersections[:0], inters.intersections[1:]...)
+	if inters.Intersections[0].S == nil {
+		inters.Intersections = append(inters.Intersections[:0], inters.Intersections[1:]...)
 	}
 }
 
@@ -71,8 +71,8 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
 	sphereToRay := ray.origin.Subtract(pm.Point(0, 0, 0))
 
-	a := pm.Dot(ray.direction, ray.direction)
-	b := 2 * pm.Dot(ray.direction, sphereToRay)
+	a := pm.Dot(ray.Direction, ray.Direction)
+	b := 2 * pm.Dot(ray.Direction, sphereToRay)
 	c := pm.Dot(sphereToRay, sphereToRay) - 1
 
 	discriminant := (b * b) - (4*a)*c
@@ -98,21 +98,21 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
 func (inters *Intersections) RayShapeInteresect(ray Ray, s Shape) {
 
-	intersections := s.Intersect(&ray).intersections
+	Intersections := s.Intersect(&ray).Intersections
 
-	if intersections == nil {
+	if Intersections == nil {
 		return
 	}
 
-	for _, intersection := range intersections {
+	for _, intersection := range Intersections {
 		inters.Add(intersection)
 	}
 }
 
 func (inters Intersections) Equal(other Intersections) bool {
 
-	oriInters := inters.intersections
-	otherInters := other.intersections
+	oriInters := inters.Intersections
+	otherInters := other.Intersections
 
 	if len(oriInters) != len(otherInters) {
 		return false
@@ -130,18 +130,18 @@ func (inters Intersections) Equal(other Intersections) bool {
 
 func (inters *Intersections) Hit() *Intersection {
 
-	if inters == nil || inters.intersections == nil || len(inters.intersections) < 1 {
+	if inters == nil || inters.Intersections == nil || len(inters.Intersections) < 1 {
 		return nil
 	}
 
-	if inters.intersections[0].T < 0 && inters.intersections[len(inters.intersections)-1].T < 0 {
+	if inters.Intersections[0].T < 0 && inters.Intersections[len(inters.Intersections)-1].T < 0 {
 		return nil
 	}
 
-	for i := 0; i < len(inters.intersections); i++ {
+	for i := 0; i < len(inters.Intersections); i++ {
 
-		if inters.intersections[i].T >= 0 {
-			return &inters.intersections[i]
+		if inters.Intersections[i].T >= 0 {
+			return &inters.Intersections[i]
 		}
 
 	}
@@ -150,7 +150,7 @@ func (inters *Intersections) Hit() *Intersection {
 }
 
 func Position(r Ray, distance float64) pm.Tuple {
-	add := r.direction.SMultiply(distance)
+	add := r.Direction.SMultiply(distance)
 	pos := r.origin.Add(add)
 	return pos
 }
@@ -160,8 +160,8 @@ func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 
 	sphereToRay := ray.origin.Subtract(pm.Point(0, 0, 0))
 
-	a := pm.Dot(ray.direction, ray.direction)
-	b := 2 * pm.Dot(ray.direction, sphereToRay)
+	a := pm.Dot(ray.Direction, ray.Direction)
+	b := 2 * pm.Dot(ray.Direction, sphereToRay)
 	c := pm.Dot(sphereToRay, sphereToRay) - 1
 
 	discriminant := (b * b) - (4 * a * c)
@@ -230,7 +230,7 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 	comps.Object = shape
 
 	comps.Point = Position(ray, intersection.T)
-	comps.Eyev = ray.direction.Negate()
+	comps.Eyev = ray.Direction.Negate()
 	// comps.Normalv = NormalAt(shape, comps.pm.Point)
 	comps.Normalv = shape.LocalNormalAt(comps.Point, &comps.Point, &intersection)
 
@@ -243,7 +243,7 @@ func PrepareComputations(ray Ray, shape Shape, intersection Intersection) Comput
 
 	nvEp := comps.Normalv.SMultiply(pm.Epsilon)
 
-	comps.ReflectV = ray.direction.ReflectBy(comps.Normalv)
+	comps.ReflectV = ray.Direction.ReflectBy(comps.Normalv)
 
 	comps.OverPoint = comps.Point.Add(nvEp)
 	comps.UnderPoint = comps.Point.Subtract(nvEp)

@@ -28,23 +28,23 @@ func NewCone() *Cone {
 }
 
 func checkConeCap(ray Ray, t float64, y float64) bool {
-	x := ray.origin.X + t*ray.direction.X
-	z := ray.origin.Z + t*ray.direction.Z
+	x := ray.origin.X + t*ray.Direction.X
+	z := ray.origin.Z + t*ray.Direction.Z
 
 	return x*x+z*z <= y*y
 }
 
 func intersectConeCaps(cone *Cone, ray Ray, xs *Intersections) {
-	if !cone.Closed || pm.AreFloatsEqual(ray.direction.Y, 0.0) {
+	if !cone.Closed || pm.AreFloatsEqual(ray.Direction.Y, 0.0) {
 		return
 	}
 
-	t := (cone.Minimum - ray.origin.Y) / ray.direction.Y
+	t := (cone.Minimum - ray.origin.Y) / ray.Direction.Y
 	if checkConeCap(ray, t, cone.Minimum) {
 		xs.Add(NewIntersection(t, cone))
 	}
 
-	t = (cone.Maximum - ray.origin.Y) / ray.direction.Y
+	t = (cone.Maximum - ray.origin.Y) / ray.Direction.Y
 	if checkConeCap(ray, t, cone.Maximum) {
 		xs.Add(NewIntersection(t, cone))
 	}
@@ -53,10 +53,10 @@ func intersectConeCaps(cone *Cone, ray Ray, xs *Intersections) {
 func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 	ray = ray.Transform(cone.Transforms.Inverse())
 
-	intersections := Intersections{intersections: []Intersection{}}
-	a := (ray.direction.X * ray.direction.X) - (ray.direction.Y * ray.direction.Y) + (ray.direction.Z * ray.direction.Z)
+	intersections := Intersections{Intersections: []Intersection{}}
+	a := (ray.Direction.X * ray.Direction.X) - (ray.Direction.Y * ray.Direction.Y) + (ray.Direction.Z * ray.Direction.Z)
 
-	b := 2 * ((ray.origin.X * ray.direction.X) - (ray.origin.Y * ray.direction.Y) + (ray.origin.Z * ray.direction.Z))
+	b := 2 * ((ray.origin.X * ray.Direction.X) - (ray.origin.Y * ray.Direction.Y) + (ray.origin.Z * ray.Direction.Z))
 
 	c := (ray.origin.X * ray.origin.X) - (ray.origin.Y * ray.origin.Y) + (ray.origin.Z * ray.origin.Z)
 	if pm.AreFloatsEqual(a, 0.0) {
@@ -83,12 +83,12 @@ func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 		t1 = tempt0
 	}
 
-	y0 := ray.origin.Y + t0*ray.direction.Y
+	y0 := ray.origin.Y + t0*ray.Direction.Y
 	if cone.Minimum < y0 && y0 < cone.Maximum {
 		intersections.Add(NewIntersection(t0, cone))
 	}
 
-	y1 := ray.origin.Y + t1*ray.direction.Y
+	y1 := ray.origin.Y + t1*ray.Direction.Y
 	if cone.Minimum < y1 && y1 < cone.Maximum {
 		intersections.Add(NewIntersection(t1, cone))
 	}

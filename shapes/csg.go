@@ -104,12 +104,12 @@ func (csg *CSG) LocalIntersect(ray Ray) Intersections {
 	leftxs := csg.LeftShape.Intersect(&ray)
 	rightxs := csg.RightShape.Intersect(&ray)
 
-	xs := append(leftxs.intersections, rightxs.intersections...)
+	xs := append(leftxs.Intersections, rightxs.Intersections...)
 
 	sort.Slice(xs, func(i, j int) bool {
 		return xs[i].T < xs[j].T
 	})
-	return Intersections{intersections: xs}
+	return Intersections{Intersections: xs}
 
 }
 

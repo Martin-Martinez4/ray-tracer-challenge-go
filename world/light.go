@@ -3,19 +3,21 @@ package world
 import (
 	"math"
 
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
+
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
 type Light struct {
-	Intensity Color
+	Intensity mat.Color
 	Position  pm.Tuple
 }
 
 func NewLight(position, intensity [3]float64) Light {
 	return Light{
 		Position:  pm.Point(position[0], position[1], position[2]),
-		Intensity: NewColor(intensity[0], intensity[1], intensity[2]),
+		Intensity: mat.NewColor(intensity[0], intensity[1], intensity[2]),
 	}
 }
 
@@ -28,33 +30,34 @@ func NewLight(position, intensity [3]float64) Light {
 		the normal vectors from the Phong reflection model
 */
 
-func EffectiveLighting(mat Material, shape shapes.Shape, light Light, point pm.Tuple, eyeVec pm.Tuple, normalVec pm.Tuple, inShadow bool) Color {
+func EffectiveLighting(material mat.Material, shape shapes.Shape, light Light, point pm.Tuple, eyeVec pm.Tuple, normalVec pm.Tuple, inShadow bool) mat.Color {
 
-	color := mat.Color
+	color := material.Color
 
-	if mat.Pattern != nil {
+	if material.Pattern != nil {
 
-		color = mat.Pattern.PatternAtShape(shape, point)
+		// color = material.Pattern.PatternAtShape(shape, point)
+		color = shape.PatternAtShape(material.Pattern, point)
 	}
 
 	effectiveColor := color.Multiply(light.Intensity)
 
-	lightVec := Normalize(light.Position.Subtract(point))
+	lightVec := pm.Normalize(light.Position.Subtract(point))
 
-	ambient := effectiveColor.SMultiply(mat.Ambient)
+	ambient := effectiveColor.SMultiply(material.Ambient)
 
-	lightDotNormal := Dot(lightVec, normalVec)
+	lightDotNormal := pm.Dot(lightVec, normalVec)
 
-	var specular Color
-	var diffuse Color
+	var specular mat.Color
+	var diffuse mat.Color
 
 	if lightDotNormal < 0 {
 
-		specular = NewColor(0, 0, 0)
-		diffuse = NewColor(0, 0, 0)
+		specular = mat.NewColor(0, 0, 0)
+		diffuse = mat.NewColor(0, 0, 0)
 
 	} else {
-		diffuse = effectiveColor.SMultiply(mat.Diffuse)
+		diffuse = effectiveColor.SMultiply(material.Diffuse)
 		diffuse = diffuse.SMultiply(lightDotNormal)
 
 		reflectVec := lightVec.SMultiply(-1)
@@ -63,8 +66,8 @@ func EffectiveLighting(mat Material, shape shapes.Shape, light Light, point pm.T
 		reflectDotEye := pm.Dot(reflectVec, eyeVec)
 
 		if reflectDotEye > 0 {
-			factor := math.Pow(reflectDotEye, mat.Shininess)
-			specular = light.Intensity.SMultiply(mat.Specular * factor)
+			factor := math.Pow(reflectDotEye, material.Shininess)
+			specular = light.Intensity.SMultiply(material.Specular * factor)
 		}
 
 	}

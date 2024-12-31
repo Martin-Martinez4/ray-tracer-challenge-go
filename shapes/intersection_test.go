@@ -22,7 +22,7 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(4, theSphere),
 					NewIntersection(6, theSphere),
 				},
@@ -33,7 +33,7 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 1, -5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(5, theSphere),
 				},
 			},
@@ -43,7 +43,7 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 2, -5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				intersections: []Intersection{},
+				Intersections: []Intersection{},
 			},
 		},
 		{
@@ -51,7 +51,7 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(-1, theSphere),
 					NewIntersection(1, theSphere),
 				},
@@ -62,7 +62,7 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(-6, theSphere),
 					NewIntersection(-4, theSphere),
 				},
@@ -78,7 +78,7 @@ func TestRayIntersect(t *testing.T) {
 			ints.RaySphereInteresect(tt.ray, tt.sphere)
 
 			if !ints.Equal(tt.intersection) {
-				t.Errorf("%s did not pass, lengths are not equal: \nGot: %v \nWanted: %v", tt.name, ints.intersections, tt.intersection)
+				t.Errorf("%s did not pass, lengths are not equal: \nGot: %v \nWanted: %v", tt.name, ints.Intersections, tt.intersection)
 			}
 
 		})
@@ -105,7 +105,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			transform: "scale",
 			args:      []float64{2, 2, 2},
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(3, theSphere),
 					NewIntersection(7, theSphere),
 				},
@@ -118,7 +118,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			transform: "scale",
 			args:      []float64{0.5, 0.5, 0.5},
 			intersection: Intersections{
-				intersections: []Intersection{
+				Intersections: []Intersection{
 					NewIntersection(4.5, theSphere),
 					NewIntersection(5.5, theSphere),
 				},
@@ -132,7 +132,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			transform: "translate",
 			args:      []float64{5, 0, 0},
 			intersection: Intersections{
-				intersections: nil,
+				Intersections: nil,
 			},
 		},
 	}
@@ -157,7 +157,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			ints.RaySphereInteresect(tt.ray, tt.sphere)
 
 			if !ints.Equal(tt.intersection) {
-				t.Errorf("%s did not pass, lengths are not equal: \n\nGot: %v \n\nWanted: %v", tt.name, ints.intersections, tt.intersection)
+				t.Errorf("%s did not pass, lengths are not equal: \n\nGot: %v \n\nWanted: %v", tt.name, ints.Intersections, tt.intersection)
 			}
 
 			tt.sphere.Transforms = pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
@@ -173,31 +173,31 @@ func TestRayIntersectWithTransform(t *testing.T) {
 // 	tests := []struct {
 // 		name          string
 // 		sphere        *Sphere
-// 		intersections []Intersection
+// 		Intersections []Intersection
 // 		want          Intersection
 // 	}{
 // 		{
 // 			name:          "A hit should be returned",
 // 			sphere:        theSphere,
-// 			intersections: []Intersection{NewIntersection(1, theSphere), NewIntersection(2, theSphere)},
+// 			Intersections: []Intersection{NewIntersection(1, theSphere), NewIntersection(2, theSphere)},
 // 			want:          NewIntersection(1, theSphere),
 // 		},
 // 		{
 // 			name:          "A hit should be returned",
 // 			sphere:        theSphere,
-// 			intersections: []Intersection{NewIntersection(-1, theSphere), NewIntersection(1, theSphere)},
+// 			Intersections: []Intersection{NewIntersection(-1, theSphere), NewIntersection(1, theSphere)},
 // 			want:          NewIntersection(1, theSphere),
 // 		},
 // 		// {
 // 		// 	name:          "An nil hit should be returned",
 // 		// 	sphere:        theSphere,
-// 		// 	intersections: []Intersection{NewIntersection(-1, theSphere), NewIntersection(-2, theSphere)},
+// 		// 	Intersections: []Intersection{NewIntersection(-1, theSphere), NewIntersection(-2, theSphere)},
 // 		// 	want:          nil,
 // 		// },
 // 		{
 // 			name:          "A hit should be returned",
 // 			sphere:        theSphere,
-// 			intersections: []Intersection{NewIntersection(7, theSphere), NewIntersection(7, theSphere), NewIntersection(-3, theSphere), NewIntersection(2, theSphere)},
+// 			Intersections: []Intersection{NewIntersection(7, theSphere), NewIntersection(7, theSphere), NewIntersection(-3, theSphere), NewIntersection(2, theSphere)},
 // 			want:          NewIntersection(2, theSphere),
 // 		},
 // 	}
@@ -205,10 +205,10 @@ func TestRayIntersectWithTransform(t *testing.T) {
 // 	for _, tt := range tests {
 // 		t.Run(tt.name, func(t *testing.T) {
 
-// 			inters := Intersections{intersections: []Intersection{}}
+// 			inters := Intersections{Intersections: []Intersection{}}
 
-// 			for i := 0; i < len(tt.intersections); i++ {
-// 				inters.Add(tt.intersections[i])
+// 			for i := 0; i < len(tt.Intersections); i++ {
+// 				inters.Add(tt.Intersections[i])
 // 			}
 
 // 			hit := inters.Hit()
@@ -322,7 +322,7 @@ func TestPrepareComputationsWithHit(t *testing.T) {
 
 	ray := NewRay([3]float64{0, 0, -4}, [3]float64{0, 0, 1})
 
-	intersections := []Intersection{
+	Intersections := []Intersection{
 		{T: 2, S: glass1},
 		{T: 2.75, S: glass2},
 		{T: 3.25, S: glass3},
@@ -343,10 +343,10 @@ func TestPrepareComputationsWithHit(t *testing.T) {
 		{1.5, 1.0},
 	}
 
-	for i := range intersections {
+	for i := range Intersections {
 		t.Run(fmt.Sprint(i), func(t *testing.T) {
 
-			got := PrepareComputationsWithHit(intersections[i], ray, intersections)
+			got := PrepareComputationsWithHit(Intersections[i], ray, Intersections)
 
 			if got.N1 != want[i].n1 || got.N2 != want[i].n2 {
 				t.Errorf("#%d failed\nwanted: %f, %f\ngot: %f, %f", i, want[i].n1, want[i].n2, got.N1, got.N2)

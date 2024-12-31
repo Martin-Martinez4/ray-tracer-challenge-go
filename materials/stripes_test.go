@@ -97,7 +97,7 @@ func TestStripeAt(t *testing.T) {
 	for i, tt := range tests {
 
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.pattern.StripeAt(tt.point)
+			got := tt.pattern.PatternAt(tt.point)
 
 			if !got.Equal(tt.want) {
 				t.Errorf("\n%d %s failed:\nwanted: %s\ngot: %s\n", i, tt.name, tt.want.Print(), got.Print())

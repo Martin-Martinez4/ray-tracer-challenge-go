@@ -90,13 +90,13 @@ func (group *Group) SetMaterial(material mat.Material) {
 // Could really be improved
 func (group *Group) LocalIntersect(ray Ray) Intersections {
 	// Def need to change this
-	overAllIntersections := Intersections{intersections: []Intersection{}}
+	overAllIntersections := Intersections{Intersections: []Intersection{}}
 	for _, shape := range group.Children {
 		inters := shape.Intersect(&ray)
-		overAllIntersections.intersections = append(overAllIntersections.intersections, inters.intersections...)
+		overAllIntersections.Intersections = append(overAllIntersections.Intersections, inters.Intersections...)
 	}
-	sort.Slice(overAllIntersections.intersections, func(i, j int) bool {
-		return overAllIntersections.intersections[i].T < overAllIntersections.intersections[j].T
+	sort.Slice(overAllIntersections.Intersections, func(i, j int) bool {
+		return overAllIntersections.Intersections[i].T < overAllIntersections.Intersections[j].T
 	})
 
 	return overAllIntersections
@@ -151,7 +151,7 @@ func (group *Group) Intersect(ray *Ray) Intersections {
 	// tmax := math.Min(math.Min(xtmax, ytmax), ztmax)
 
 	// if tmin > tmax {
-	// 	return Intersections{intersections: []Intersection{}}
+	// 	return Intersections{Intersections: []Intersection{}}
 
 	// }
 

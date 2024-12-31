@@ -3,6 +3,8 @@ package world
 import (
 	"math"
 
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
@@ -28,7 +30,7 @@ func NewWorld(s *[]shapes.Shape, light *Light) World {
 
 	if s == nil {
 		sphere1 := shapes.NewSphere()
-		sphere1.Material.Color = NewColor(0.8, 1.0, 0.6)
+		sphere1.Material.Color = mat.NewColor(0.8, 1.0, 0.6)
 		sphere1.Material.Diffuse = 0.7
 		sphere1.Material.Specular = 0.2
 
@@ -50,9 +52,9 @@ func NewWorld(s *[]shapes.Shape, light *Light) World {
 	return World{Shapes: *s, Light: *light}
 }
 
-func RayWorldIntersect(ray Ray, world World) Intersections {
+func RayWorldIntersect(ray shapes.Ray, world World) shapes.Intersections {
 
-	inters := Intersections{intersections: []Intersection{}}
+	inters := shapes.Intersections{Intersections: []shapes.Intersection{}}
 
 	for i := 0; i < len(world.Shapes); i++ {
 
@@ -62,7 +64,7 @@ func RayWorldIntersect(ray Ray, world World) Intersections {
 	return inters
 }
 
-func ShadeHit(world World, comps Computations, reflectionsLeft int) Color {
+func ShadeHit(world World, comps shapes.Computations, reflectionsLeft int) mat.Color {
 
 	shadowed := IsShadowed(world, comps.OverPoint)
 
@@ -82,34 +84,34 @@ func ShadeHit(world World, comps Computations, reflectionsLeft int) Color {
 	return surface.Add(reflectedColor).Add(refractedColor)
 }
 
-func ColorAt(ray Ray, world World, reflectionsLeft int) Color {
+func ColorAt(ray shapes.Ray, world World, reflectionsLeft int) mat.Color {
 	inters := RayWorldIntersect(ray, world)
 
 	// intersection := inters.Hit()
-	intersection, hit := Hit(inters.intersections)
+	intersection, hit := shapes.Hit(inters.Intersections)
 
 	if !hit {
-		return NewColor(0, 0, 0)
+		return mat.NewColor(0, 0, 0)
 	}
 
 	// comps := PrepareComputations(*ray, intersection.S, *intersection)
-	comps := PrepareComputationsWithHit(intersection, ray, inters.intersections)
+	comps := shapes.PrepareComputationsWithHit(intersection, ray, inters.Intersections)
 
 	return ShadeHit(world, *comps, reflectionsLeft)
 
 }
 
-func RefreactedColor(world World, comps Computations, reflectionsLeft int) Color {
+func RefreactedColor(world World, comps shapes.Computations, reflectionsLeft int) mat.Color {
 	if comps.Object.GetMaterial().Transparency == 0 || reflectionsLeft <= 0 {
-		return BLACK
+		return mat.BLACK
 	}
 
 	nRatio := comps.N1 / comps.N2
-	cosI := Dot(comps.Eyev, comps.Normalv)
+	cosI := pm.Dot(comps.Eyev, comps.Normalv)
 	sin2T := (nRatio * nRatio) * (1 - (cosI * cosI))
 
 	if sin2T > 1 {
-		return BLACK
+		return mat.BLACK
 	}
 
 	cosT := math.Sqrt(1.0 - sin2T)
@@ -128,7 +130,7 @@ func RefreactedColor(world World, comps Computations, reflectionsLeft int) Color
 	// fmt.Printf("CosT: %f\n", cosI)
 	// fmt.Printf("refract direction: %s\n", direction.Print())
 
-	refractRay := NewRay([3]float64{comps.UnderPoint.x, comps.UnderPoint.y, comps.UnderPoint.z}, [3]float64{direction.x, direction.y, direction.z})
+	refractRay := shapes.NewRay([3]float64{comps.UnderPoint.X, comps.UnderPoint.Y, comps.UnderPoint.Z}, [3]float64{direction.X, direction.Y, direction.Z})
 
 	return ColorAt(refractRay, world, reflectionsLeft-1).SMultiply(comps.Object.GetMaterial().Transparency)
 }
@@ -147,16 +149,16 @@ func Render(camera Camera, world World) Canvas {
 	return image
 }
 
-func IsShadowed(world World, point Tuple) bool {
+func IsShadowed(world World, point pm.Tuple) bool {
 	v := world.Light.Position.Subtract(point)
 	distance := v.Magnitude()
-	direction := Normalize(v)
+	direction := pm.Normalize(v)
 
-	ray := NewRay([3]float64{point.x, point.y, point.z}, [3]float64{direction.x, direction.y, direction.z})
+	ray := shapes.NewRay([3]float64{point.X, point.Y, point.Z}, [3]float64{direction.X, direction.Y, direction.Z})
 
 	intersections := RayWorldIntersect(ray, world)
 
-	intersection, hit := Hit(intersections.intersections)
+	intersection, hit := shapes.Hit(intersections.Intersections)
 	if hit && intersection.T < distance {
 		return true
 	} else {
@@ -165,8 +167,8 @@ func IsShadowed(world World, point Tuple) bool {
 
 }
 
-func Schlick(comps *Computations) float64 {
-	cos := Dot(comps.Eyev, comps.Normalv)
+func Schlick(comps *shapes.Computations) float64 {
+	cos := pm.Dot(comps.Eyev, comps.Normalv)
 
 	if comps.N1 > comps.N2 {
 		n := comps.N1 / comps.N2

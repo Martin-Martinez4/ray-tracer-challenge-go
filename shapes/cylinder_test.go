@@ -102,7 +102,7 @@ func TestRayCylinderIntersect(T *testing.T) {
 
 			got := tt.cylinder.LocalIntersect(ray)
 
-			if !got.Equal(Intersections{intersections: tt.want}) {
+			if !got.Equal(Intersections{Intersections: tt.want}) {
 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 
@@ -212,7 +212,7 @@ func TestRayCylinderCapIntersect(T *testing.T) {
 
 			got := tt.cylinder.LocalIntersect(ray)
 
-			if !got.Equal(Intersections{intersections: tt.want}) {
+			if !got.Equal(Intersections{Intersections: tt.want}) {
 				t.Errorf("\ntest %d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 

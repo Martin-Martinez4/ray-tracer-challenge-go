@@ -3,7 +3,7 @@ package world
 /*
 returns a Color
 	material default material
-	position Point(0,0,0)
+	position pm.Point(0,0,0)
 
 	* Will Change *
 	eyev
@@ -15,68 +15,71 @@ import (
 	"math"
 	"testing"
 
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
+
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
 func TestEffectiveLighting(t *testing.T) {
 
-	defaultMat := DefaultMaterial()
-	point := Point(0, 0, 0)
+	defaultMat := mat.DefaultMaterial()
+	point := pm.Point(0, 0, 0)
 
 	tests := []struct {
 		name      string
-		material  Material
-		eyeVec    Tuple
-		normalVec Tuple
-		point     Tuple
+		material  mat.Material
+		eyeVec    pm.Tuple
+		normalVec pm.Tuple
+		point     pm.Tuple
 		light     Light
-		want      Color
+		want      mat.Color
 	}{
 		{
 
 			name:      "lighting with the eye between the light and the surface",
 			material:  defaultMat,
-			eyeVec:    Vector(0, 0, -1),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, 0, -1),
+			normalVec: pm.Vector(0, 0, -1),
 			point:     point,
 			light:     NewLight([3]float64{0, 0, -10}, [3]float64{1, 1, 1}),
-			want:      NewColor(1.9, 1.9, 1.9),
+			want:      mat.NewColor(1.9, 1.9, 1.9),
 		},
 		{
 			name:      "lighting with the eye between the light and the surface, eye offset 45deg",
 			material:  defaultMat,
-			eyeVec:    Vector(0, math.Sqrt(2)/2, -math.Sqrt(2)/2),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, math.Sqrt(2)/2, -math.Sqrt(2)/2),
+			normalVec: pm.Vector(0, 0, -1),
 			point:     point,
 			light:     NewLight([3]float64{0, 0, -10}, [3]float64{1, 1, 1}),
-			want:      NewColor(1.0, 1.0, 1.0),
+			want:      mat.NewColor(1.0, 1.0, 1.0),
 		},
 		{
 			name:      "lighting with the eye opposite surface, eye offset 45deg",
 			material:  defaultMat,
-			eyeVec:    Vector(0, 0, -1),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, 0, -1),
+			normalVec: pm.Vector(0, 0, -1),
 			point:     point,
 			light:     NewLight([3]float64{0, 10, -10}, [3]float64{1, 1, 1}),
-			want:      NewColor(0.7364, 0.7364, 0.7364),
+			want:      mat.NewColor(0.7364, 0.7364, 0.7364),
 		},
 		{
 			name:      "lighting with the eye in the path of the reflection vector",
 			material:  defaultMat,
-			eyeVec:    Vector(0, -math.Sqrt(2)/2, -math.Sqrt(2)/2),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, -math.Sqrt(2)/2, -math.Sqrt(2)/2),
+			normalVec: pm.Vector(0, 0, -1),
 			point:     point,
 			light:     NewLight([3]float64{0, 10, -10}, [3]float64{1, 1, 1}),
-			want:      NewColor(1.6364, 1.6364, 1.6364),
+			want:      mat.NewColor(1.6364, 1.6364, 1.6364),
 		},
 		{
 			name:      "lighting with the light behind the surface",
 			material:  defaultMat,
-			eyeVec:    Vector(0, 0, -1),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, 0, -1),
+			normalVec: pm.Vector(0, 0, -1),
 			point:     point,
 			light:     NewLight([3]float64{0, 0, 10}, [3]float64{1, 1, 1}),
-			want:      NewColor(0.1, 0.1, 0.1),
+			want:      mat.NewColor(0.1, 0.1, 0.1),
 		},
 	}
 
@@ -95,29 +98,29 @@ func TestEffectiveLighting(t *testing.T) {
 
 func TestLightingWithShadows(t *testing.T) {
 
-	defaultMat := DefaultMaterial()
-	point := Point(0, 0, 0)
+	defaultMat := mat.DefaultMaterial()
+	point := pm.Point(0, 0, 0)
 
 	tests := []struct {
 		name      string
-		material  Material
-		eyeVec    Tuple
-		normalVec Tuple
+		material  mat.Material
+		eyeVec    pm.Tuple
+		normalVec pm.Tuple
 		light     Light
-		point     Tuple
+		point     pm.Tuple
 		inShadow  bool
-		want      Color
+		want      mat.Color
 	}{
 		{
 
 			name:      "lighting with the surface in shadow",
 			material:  defaultMat,
-			eyeVec:    Vector(0, 0, -1),
-			normalVec: Vector(0, 0, -1),
+			eyeVec:    pm.Vector(0, 0, -1),
+			normalVec: pm.Vector(0, 0, -1),
 			light:     NewLight([3]float64{0, 0, -10}, [3]float64{1, 1, 1}),
 			inShadow:  true,
 			point:     point,
-			want:      NewColor(0.1, 0.1, 0.1),
+			want:      mat.NewColor(0.1, 0.1, 0.1),
 		},
 	}
 

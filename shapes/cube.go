@@ -58,16 +58,16 @@ func (cube *Cube) SetMaterial(material mat.Material) {
 	cube.Material = material
 }
 
-func CheckAxis(origin, direction float64) (float64, float64) {
+func CheckAxis(origin, Direction float64) (float64, float64) {
 	tminNumerator := (-1 - origin)
 	tmaxNumerator := (1 - origin)
 
 	var tmin float64
 	var tmax float64
 
-	if math.Abs(direction) >= pm.Epsilon {
-		tmin = tminNumerator / direction
-		tmax = tmaxNumerator / direction
+	if math.Abs(Direction) >= pm.Epsilon {
+		tmin = tminNumerator / Direction
+		tmax = tmaxNumerator / Direction
 	} else {
 		tmin = tminNumerator * math.Inf(1)
 		tmax = tmaxNumerator * math.Inf(1)
@@ -83,19 +83,19 @@ func CheckAxis(origin, direction float64) (float64, float64) {
 }
 
 func (cube *Cube) LocalIntersect(ray Ray) Intersections {
-	xtmin, xtmax := CheckAxis(ray.origin.X, ray.direction.X)
-	ytmin, ytmax := CheckAxis(ray.origin.Y, ray.direction.Y)
-	ztmin, ztmax := CheckAxis(ray.origin.Z, ray.direction.Z)
+	xtmin, xtmax := CheckAxis(ray.origin.X, ray.Direction.X)
+	ytmin, ytmax := CheckAxis(ray.origin.Y, ray.Direction.Y)
+	ztmin, ztmax := CheckAxis(ray.origin.Z, ray.Direction.Z)
 
 	tmin := math.Max(math.Max(xtmin, ytmin), ztmin)
 	tmax := math.Min(math.Min(xtmax, ytmax), ztmax)
 
 	if tmin > tmax {
-		return Intersections{intersections: []Intersection{}}
+		return Intersections{Intersections: []Intersection{}}
 
 	}
 
-	return Intersections{intersections: []Intersection{NewIntersection(tmin, cube), NewIntersection(tmax, cube)}}
+	return Intersections{Intersections: []Intersection{NewIntersection(tmin, cube), NewIntersection(tmax, cube)}}
 }
 
 func (cube *Cube) Intersect(ray *Ray) Intersections {

@@ -8,6 +8,7 @@ import (
 	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
+	"github.com/Martin-Martinez4/ray-tracer-challenge-go/world"
 )
 
 func ch5() string {
@@ -21,7 +22,7 @@ func ch5() string {
 
 	pixelSize := wallSize / canvasPixels
 
-	canvas := NewCanvas(int32(canvasPixels), int32(canvasPixels))
+	canvas := world.NewCanvas(int32(canvasPixels), int32(canvasPixels))
 	shadowColor := mat.NewColor(1, 0, 0)
 	sphere := shapes.NewSphere()
 

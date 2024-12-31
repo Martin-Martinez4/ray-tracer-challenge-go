@@ -31,22 +31,22 @@ func TestTriangleIntersection(t *testing.T) {
 		{
 			name: "a ray misses p1-p3 edge",
 			ray:  NewRay([3]float64{-1, 1, -2}, [3]float64{0, 0, 1}),
-			want: Intersections{intersections: []Intersection{}},
+			want: Intersections{Intersections: []Intersection{}},
 		},
 		{
 			name: "a ray misses p1-p2 edge",
 			ray:  NewRay([3]float64{1, 1, -2}, [3]float64{0, 0, 1}),
-			want: Intersections{intersections: []Intersection{}},
+			want: Intersections{Intersections: []Intersection{}},
 		},
 		{
 			name: "a ray misses p2-p3 edge",
 			ray:  NewRay([3]float64{0, -1, -2}, [3]float64{0, 0, 1}),
-			want: Intersections{intersections: []Intersection{}},
+			want: Intersections{Intersections: []Intersection{}},
 		},
 		{
 			name: "a ray strikes a triangle",
 			ray:  NewRay([3]float64{0, 0.5, -2}, [3]float64{0, 0, 1}),
-			want: Intersections{intersections: []Intersection{NewIntersection(2, triangle)}},
+			want: Intersections{Intersections: []Intersection{NewIntersection(2, triangle)}},
 		},
 	}
 

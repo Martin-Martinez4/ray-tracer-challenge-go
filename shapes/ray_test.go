@@ -17,7 +17,7 @@ func TestNewRay(t *testing.T) {
 			name:      "Create a Ray with the correct origin and direction",
 			origin:    [3]float64{0, 1, 0},
 			direction: [3]float64{0, 0, 1},
-			want:      Ray{origin: pm.Point(0, 1, 0), direction: pm.Vector(0, 0, 1)},
+			want:      Ray{origin: pm.Point(0, 1, 0), Direction: pm.Vector(0, 0, 1)},
 		},
 	}
 

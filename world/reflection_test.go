@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
@@ -48,14 +49,14 @@ func TestNonreflective(t *testing.T) {
 		world        World
 		ray          shapes.Ray
 		intersection shapes.Intersection
-		want         Color
+		want         mat.Color
 	}{
 		{
 			name:         "the reflected color for a nonreflective material shoul be black",
 			world:        NewDefaultWorld(),
 			ray:          shapes.NewRay([3]float64{0, 1, -1}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
 			intersection: shapes.NewIntersection(1, nil),
-			want:         NewColor(0, 0, 0),
+			want:         mat.NewColor(0, 0, 0),
 		},
 	}
 
@@ -84,7 +85,7 @@ func TestReflective(t *testing.T) {
 		shape        shapes.Shape
 		ray          shapes.Ray
 		intersection shapes.Intersection
-		want         Color
+		want         mat.Color
 	}{
 		{
 			name:         "the reflected color for a relfective material",
@@ -92,7 +93,7 @@ func TestReflective(t *testing.T) {
 			shape:        shapes.NewPlane(),
 			ray:          shapes.NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
 			intersection: shapes.NewIntersection(math.Sqrt(2), nil),
-			want:         NewColor(0.19032, 0.2379, 0.14277),
+			want:         mat.NewColor(0.19032, 0.2379, 0.14277),
 		},
 	}
 
@@ -123,7 +124,7 @@ func TestReflectiveShadeHit(t *testing.T) {
 		shape        shapes.Shape
 		ray          shapes.Ray
 		intersection shapes.Intersection
-		want         Color
+		want         mat.Color
 	}{
 		{
 			name:         "the reflected color for a relfective material",
@@ -131,7 +132,7 @@ func TestReflectiveShadeHit(t *testing.T) {
 			shape:        shapes.NewPlane(),
 			ray:          shapes.NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
 			intersection: shapes.NewIntersection(math.Sqrt(2), nil),
-			want:         NewColor(0.87677, 0.92436, 0.82918),
+			want:         mat.NewColor(0.87677, 0.92436, 0.82918),
 		},
 	}
 
@@ -161,7 +162,7 @@ func TestReflectiveZeroAllowed(t *testing.T) {
 		shape        shapes.Shape
 		ray          shapes.Ray
 		intersection shapes.Intersection
-		want         Color
+		want         mat.Color
 	}{
 		{
 			name:         "the reflected color for a relfective material",
@@ -169,7 +170,7 @@ func TestReflectiveZeroAllowed(t *testing.T) {
 			shape:        shapes.NewPlane(),
 			ray:          shapes.NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
 			intersection: shapes.NewIntersection(math.Sqrt(2), nil),
-			want:         BLACK,
+			want:         mat.BLACK,
 		},
 	}
 

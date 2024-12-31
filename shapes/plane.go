@@ -60,13 +60,13 @@ func (plane *Plane) SetMaterial(material mat.Material) {
 	plane.Material = material
 }
 func (plane *Plane) LocalIntersect(ray Ray) Intersections {
-	if math.Abs(ray.direction.Y) < pm.Epsilon {
-		return Intersections{intersections: []Intersection{}}
+	if math.Abs(ray.Direction.Y) < pm.Epsilon {
+		return Intersections{Intersections: []Intersection{}}
 	}
 
-	t := (-ray.origin.Y / ray.direction.Y)
+	t := (-ray.origin.Y / ray.Direction.Y)
 
-	return Intersections{intersections: []Intersection{{T: t, S: plane}}}
+	return Intersections{Intersections: []Intersection{{T: t, S: plane}}}
 }
 
 func (plane *Plane) Intersect(ray *Ray) Intersections {

@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"math"
 	"testing"
+
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
+	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
 func TestCamera(T *testing.T) {
@@ -20,13 +24,13 @@ func TestCamera(T *testing.T) {
 
 	tests := []struct {
 		name  string
-		ray   Ray
+		ray   shapes.Ray
 		world World
-		want  Color
+		want  mat.Color
 	}{
 		{
 			name:  "the color with an intersection behind the ray",
-			ray:   NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
+			ray:   shapes.NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
 			world: theWorld,
 			want:  inner.GetMaterial().Color,
 		},
@@ -58,7 +62,7 @@ func TestRayForPixel(T *testing.T) {
 		px     float64
 		py     float64
 		args   []Transformation
-		want   Ray
+		want   shapes.Ray
 	}{
 		{
 			name:   "Constructing a ray through the center of the canvas",
@@ -66,7 +70,7 @@ func TestRayForPixel(T *testing.T) {
 			px:     100,
 			py:     50,
 			args:   []Transformation{},
-			want:   NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, -1}),
+			want:   shapes.NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, -1}),
 		},
 		{
 			name:   "Constructing a ray through a corner of the canvas",
@@ -74,7 +78,7 @@ func TestRayForPixel(T *testing.T) {
 			px:     0,
 			py:     0,
 			args:   []Transformation{},
-			want:   NewRay([3]float64{0, 0, 0}, [3]float64{0.66519, 0.33259, -0.66851}),
+			want:   shapes.NewRay([3]float64{0, 0, 0}, [3]float64{0.66519, 0.33259, -0.66851}),
 		},
 		{
 			name:   "Constructing a ray when the camera is transformed",
@@ -82,14 +86,14 @@ func TestRayForPixel(T *testing.T) {
 			px:     100,
 			py:     50,
 			args:   []Transformation{{name: "rotation_y", args: []float64{math.Pi / 4}}, {name: "translate", args: []float64{0, -2, 5}}},
-			want:   NewRay([3]float64{0, 2, -5}, [3]float64{math.Sqrt(2) / 2, 0, -math.Sqrt(2) / 2}),
+			want:   shapes.NewRay([3]float64{0, 2, -5}, [3]float64{math.Sqrt(2) / 2, 0, -math.Sqrt(2) / 2}),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			transformMatrix := IdentitiyMatrix4x4()
+			transformMatrix := pm.IdentitiyMatrix4x4()
 
 			// transformations applied last first, first last
 			for index := len(tt.args) - 1; index >= 0; index-- {

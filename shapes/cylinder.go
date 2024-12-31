@@ -29,23 +29,23 @@ func NewCylinder() *Cylinder {
 }
 
 func checkCap(ray Ray, t float64) bool {
-	x := ray.origin.X + t*ray.direction.X
-	z := ray.origin.Z + t*ray.direction.Z
+	x := ray.origin.X + t*ray.Direction.X
+	z := ray.origin.Z + t*ray.Direction.Z
 
 	return ((x * x) + (z * z)) <= 1
 }
 
 func intersectCaps(cylinder *Cylinder, ray Ray, xs *Intersections) {
-	if !cylinder.Closed || pm.AreFloatsEqual(ray.direction.Y, 0.0) {
+	if !cylinder.Closed || pm.AreFloatsEqual(ray.Direction.Y, 0.0) {
 		return
 	}
 
-	t := (cylinder.Minimum - ray.origin.Y) / ray.direction.Y
+	t := (cylinder.Minimum - ray.origin.Y) / ray.Direction.Y
 	if checkCap(ray, t) {
 		xs.Add(NewIntersection(t, cylinder))
 	}
 
-	t = (cylinder.Maximum - ray.origin.Y) / ray.direction.Y
+	t = (cylinder.Maximum - ray.origin.Y) / ray.Direction.Y
 	if checkCap(ray, t) {
 		xs.Add(NewIntersection(t, cylinder))
 	}
@@ -53,15 +53,15 @@ func intersectCaps(cylinder *Cylinder, ray Ray, xs *Intersections) {
 
 func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 
-	intersections := Intersections{intersections: []Intersection{}}
-	a := (ray.direction.X * ray.direction.X) + (ray.direction.Z * ray.direction.Z)
+	intersections := Intersections{Intersections: []Intersection{}}
+	a := (ray.Direction.X * ray.Direction.X) + (ray.Direction.Z * ray.Direction.Z)
 
 	intersectCaps(cylinder, ray, &intersections)
 	if pm.AreFloatsEqual(a, 0.0) {
 		return intersections
 	}
 
-	b := 2 * ((ray.origin.X * ray.direction.X) + (ray.origin.Z * ray.direction.Z))
+	b := 2 * ((ray.origin.X * ray.Direction.X) + (ray.origin.Z * ray.Direction.Z))
 
 	c := (ray.origin.X * ray.origin.X) + (ray.origin.Z * ray.origin.Z) - 1
 
@@ -80,12 +80,12 @@ func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 		t1 = tempt0
 	}
 
-	y0 := ray.origin.Y + t0*ray.direction.Y
+	y0 := ray.origin.Y + t0*ray.Direction.Y
 	if cylinder.Minimum < y0 && y0 < cylinder.Maximum {
 		intersections.Add(NewIntersection(t0, cylinder))
 	}
 
-	y1 := ray.origin.Y + t1*ray.direction.Y
+	y1 := ray.origin.Y + t1*ray.Direction.Y
 	if cylinder.Minimum < y1 && y1 < cylinder.Maximum {
 		intersections.Add(NewIntersection(t1, cylinder))
 	}

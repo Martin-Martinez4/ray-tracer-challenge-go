@@ -48,8 +48,8 @@ func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
 
 	sphereToRay := ray.origin.Subtract(pm.Point(0, 0, 0))
 
-	a := pm.Dot(ray.direction, ray.direction)
-	b := 2 * pm.Dot(ray.direction, sphereToRay)
+	a := pm.Dot(ray.Direction, ray.Direction)
+	b := 2 * pm.Dot(ray.Direction, sphereToRay)
 	c := pm.Dot(sphereToRay, sphereToRay) - 1
 
 	discriminant := (b * b) - (4*a)*c

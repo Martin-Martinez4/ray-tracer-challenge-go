@@ -1,4 +1,4 @@
-package main
+package world
 
 import (
 	"bufio"
@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
@@ -17,11 +18,11 @@ import (
 */
 
 type ParserOBJ struct {
-	Vertices   []Tuple
+	Vertices   []pm.Tuple
 	Triangles  []shapes.Triangle
 	STriangles []shapes.SmoothTriangle
-	Normals    []Tuple
-	Groups     []Group
+	Normals    []pm.Tuple
+	Groups     []shapes.Group
 }
 
 func parserVertices(contents string, parser *ParserOBJ) {
@@ -50,7 +51,7 @@ func parserVertices(contents string, parser *ParserOBJ) {
 		panic("failed to convert to float64")
 	}
 
-	vertex := Point(numbs00, numbs01, numbs02)
+	vertex := pm.Point(numbs00, numbs01, numbs02)
 
 	if contents[1] == 'n' {
 
@@ -225,7 +226,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 
 // func ParseObj(contents string) *ParserOBJ {
 
-// 	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}}
+// 	parser := ParserOBJ{Vertices: []pm.Tuple{}, Triangles: []shapes.Triangle{}}
 
 // 	parserVertices(contents, &parser)
 // 	parseFanTris(contents, &parser)
@@ -235,7 +236,7 @@ func parseFanTris(contents string, parser *ParserOBJ, gIndex int) {
 
 func ParseObjFile(filePath string) *ParserOBJ {
 
-	parser := ParserOBJ{Vertices: []Tuple{}, Triangles: []shapes.Triangle{}, Groups: []Group{}}
+	parser := ParserOBJ{Vertices: []pm.Tuple{}, Triangles: []shapes.Triangle{}, Groups: []shapes.Group{}}
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -258,7 +259,7 @@ func ParseObjFile(filePath string) *ParserOBJ {
 			continue
 		}
 		if line[0] == 'g' {
-			parser.Groups = append(parser.Groups, *NewGroup())
+			parser.Groups = append(parser.Groups, *shapes.NewGroup())
 			gIndex++
 
 		} else if line[0] == 'v' {
@@ -275,8 +276,8 @@ func ParseObjFile(filePath string) *ParserOBJ {
 	return &parser
 }
 
-func (pO *ParserOBJ) parserToGroup() *Group {
-	group := NewGroup()
+func (pO *ParserOBJ) ParserToGroup() *shapes.Group {
+	group := shapes.NewGroup()
 
 	for _, tri := range pO.Triangles {
 		group.AddChild(&tri)

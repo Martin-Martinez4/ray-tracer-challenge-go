@@ -5,6 +5,8 @@ import (
 	"math"
 	"testing"
 
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
 	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
 )
 
@@ -14,14 +16,14 @@ func TestIntersectWorld(T *testing.T) {
 
 	tests := []struct {
 		name string
-		ray  Ray
-		want Intersections
+		ray  shapes.Ray
+		want shapes.Intersections
 	}{
 		{
 			name: "a ray intersecting a default world should return an intersection struct with four members",
-			ray:  NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			want: Intersections{
-				intersections: []Intersection{
+			ray:  shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			want: shapes.Intersections{
+				Intersections: []shapes.Intersection{
 					{S: theWorld.Shapes[0], T: 4},
 					{S: theWorld.Shapes[0], T: 4.5},
 					{S: theWorld.Shapes[1], T: 5.5},
@@ -36,13 +38,13 @@ func TestIntersectWorld(T *testing.T) {
 
 			got := RayWorldIntersect(tt.ray, theWorld)
 
-			if len(tt.want.intersections) != len(got.intersections) {
+			if len(tt.want.Intersections) != len(got.Intersections) {
 				t.Errorf("Lengths did not match for test %d: %s", i, tt.name)
 			}
 
-			for k := 0; k < len(got.intersections); k++ {
-				if !AreFloatsEqual(tt.want.intersections[k].T, got.intersections[k].T) {
-					t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", k, tt.want.intersections, got.intersections)
+			for k := 0; k < len(got.Intersections); k++ {
+				if !pm.AreFloatsEqual(tt.want.Intersections[k].T, got.Intersections[k].T) {
+					t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", k, tt.want.Intersections, got.Intersections)
 				}
 			}
 
@@ -58,34 +60,34 @@ func TestShadeHit(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		sphere       shapes.Shape
 		world        World
-		intersection Intersection
-		want         Color
+		intersection shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "shading an intersection",
-			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			ray:          shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere:       theWorld.Shapes[0],
 			world:        theWorld,
-			intersection: NewIntersection(4, theWorld.Shapes[0]),
-			want:         NewColor(0.38066, 0.47583, 0.2855),
+			intersection: shapes.NewIntersection(4, theWorld.Shapes[0]),
+			want:         mat.NewColor(0.38066, 0.47583, 0.2855),
 		},
 		{
 			name:         "shading an intersection from the inside",
-			ray:          NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
+			ray:          shapes.NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
 			sphere:       theOtherWorld.Shapes[1],
 			world:        theOtherWorld,
-			intersection: NewIntersection(0.5, theOtherWorld.Shapes[1]),
-			want:         NewColor(0.90498, 0.90498, 0.90498),
+			intersection: shapes.NewIntersection(0.5, theOtherWorld.Shapes[1]),
+			want:         mat.NewColor(0.90498, 0.90498, 0.90498),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputations(tt.ray, tt.sphere, tt.intersection)
+			comps := shapes.PrepareComputations(tt.ray, tt.sphere, tt.intersection)
 
 			got := ShadeHit(tt.world, comps, 1)
 
@@ -103,21 +105,21 @@ func TestColorAt(T *testing.T) {
 
 	tests := []struct {
 		name  string
-		ray   Ray
+		ray   shapes.Ray
 		world World
-		want  Color
+		want  mat.Color
 	}{
 		{
 			name:  "the color when a ray misses should be black (0,0,0)",
-			ray:   NewRay([3]float64{0, 0, -5}, [3]float64{0, 1, 0}),
+			ray:   shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 1, 0}),
 			world: theWorld,
-			want:  NewColor(0, 0, 0),
+			want:  mat.NewColor(0, 0, 0),
 		},
 		{
 			name:  "the color when a ray hits",
-			ray:   NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			ray:   shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			world: theWorld,
-			want:  NewColor(0.38066, 0.47583, 0.2855),
+			want:  mat.NewColor(0.38066, 0.47583, 0.2855),
 		},
 	}
 
@@ -148,13 +150,13 @@ func TestColorAtInner(T *testing.T) {
 
 	tests := []struct {
 		name  string
-		ray   Ray
+		ray   shapes.Ray
 		world World
-		want  Color
+		want  mat.Color
 	}{
 		{
 			name:  "the color with an intersection behind the ray",
-			ray:   NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
+			ray:   shapes.NewRay([3]float64{0, 0, 0.75}, [3]float64{0, 0, -1}),
 			world: theWorld,
 			want:  inner.GetMaterial().Color,
 		},
@@ -178,31 +180,31 @@ func TestIsShadowed(T *testing.T) {
 	tests := []struct {
 		name  string
 		world World
-		point Tuple
+		point pm.Tuple
 		want  bool
 	}{
 		{
 			name:  "there is no shadow when nothing is collinear with point and light",
 			world: NewDefaultWorld(),
-			point: Point(0, 10, 0),
+			point: pm.Point(0, 10, 0),
 			want:  false,
 		},
 		{
 			name:  "there is no shadow when an object is behind the light",
 			world: NewDefaultWorld(),
-			point: Point(-20, 20, -20),
+			point: pm.Point(-20, 20, -20),
 			want:  false,
 		},
 		{
 			name:  "the shadow exists when an object is between the point and the light",
 			world: NewDefaultWorld(),
-			point: Point(10, -10, 10),
+			point: pm.Point(10, -10, 10),
 			want:  true,
 		},
 		{
 			name:  "there is no shadow when an object is behind the point",
 			world: NewDefaultWorld(),
-			point: Point(-22, 2, -2),
+			point: pm.Point(-22, 2, -2),
 			want:  false,
 		},
 	}
@@ -224,28 +226,28 @@ func TestRender(T *testing.T) {
 		name        string
 		world       World
 		camera      Camera
-		from        Tuple
-		to          Tuple
-		up          Tuple
-		transform   Matrix4x4
+		from        pm.Tuple
+		to          pm.Tuple
+		up          pm.Tuple
+		transform   pm.Matrix4x4
 		pixelCoords [2]float64
-		want        Color
+		want        mat.Color
 	}{
 		{
 			name:        "rendering a world with a camera",
 			world:       NewDefaultWorld(),
 			camera:      NewCamera(11, 11, math.Pi/2),
-			from:        Point(0, 0, -5),
-			to:          Point(0, 0, 0),
-			up:          Vector(0, 1, 0),
+			from:        pm.Point(0, 0, -5),
+			to:          pm.Point(0, 0, 0),
+			up:          pm.Vector(0, 1, 0),
 			pixelCoords: [2]float64{5, 5},
-			want:        NewColor(0.38066, 0.47583, 0.2855),
+			want:        mat.NewColor(0.38066, 0.47583, 0.2855),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
-			tt.camera.Transform = ViewTransformation(tt.from, tt.to, tt.up)
+			tt.camera.Transform = pm.ViewTransformation(tt.from, tt.to, tt.up)
 
 			render := Render(tt.camera, tt.world)
 			got := render.GetPixel(int32(tt.pixelCoords[0]), int32(tt.pixelCoords[1]))
@@ -270,24 +272,24 @@ func TestShadeHitWithShadow(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection Intersection
-		want         Color
+		intersection shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "shading an intersection",
-			ray:          NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
+			ray:          shapes.NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
 			world:        theWorld,
-			intersection: NewIntersection(4, s2),
-			want:         NewColor(0.1, 0.1, 0.1),
+			intersection: shapes.NewIntersection(4, s2),
+			want:         mat.NewColor(0.1, 0.1, 0.1),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputations(tt.ray, s2, tt.intersection)
+			comps := shapes.PrepareComputations(tt.ray, s2, tt.intersection)
 
 			got := ShadeHit(tt.world, comps, 1)
 
@@ -306,24 +308,24 @@ func TestRefractedColorOpaque(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection []Intersection
-		want         Color
+		intersection []shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "shading an intersection",
 			world:        theWorld,
-			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			intersection: []Intersection{NewIntersection(4, shape), NewIntersection(6, shape)},
-			want:         BLACK,
+			ray:          shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			intersection: []shapes.Intersection{shapes.NewIntersection(4, shape), shapes.NewIntersection(6, shape)},
+			want:         mat.BLACK,
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+			comps := shapes.PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
 
 			got := RefreactedColor(tt.world, *comps, 5)
 
@@ -344,24 +346,24 @@ func TestRefractedColorMax0(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection []Intersection
-		want         Color
+		intersection []shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "shading an intersection",
 			world:        theWorld,
-			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			intersection: []Intersection{NewIntersection(4, shape), NewIntersection(6, shape)},
-			want:         BLACK,
+			ray:          shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			intersection: []shapes.Intersection{shapes.NewIntersection(4, shape), shapes.NewIntersection(6, shape)},
+			want:         mat.BLACK,
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+			comps := shapes.PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
 
 			got := RefreactedColor(tt.world, *comps, 0)
 
@@ -382,24 +384,24 @@ func TestRefractedColorSnellLaw(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection []Intersection
-		want         Color
+		intersection []shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "the refracted color under total internal relfection",
 			world:        theWorld,
-			ray:          NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0}),
-			intersection: []Intersection{NewIntersection(-math.Sqrt(2)/2, shape), NewIntersection(math.Sqrt(2)/2, shape)},
-			want:         BLACK,
+			ray:          shapes.NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0}),
+			intersection: []shapes.Intersection{shapes.NewIntersection(-math.Sqrt(2)/2, shape), shapes.NewIntersection(math.Sqrt(2)/2, shape)},
+			want:         mat.BLACK,
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
 
-			comps := PrepareComputationsWithHit(tt.intersection[1], tt.ray, tt.intersection)
+			comps := shapes.PrepareComputationsWithHit(tt.intersection[1], tt.ray, tt.intersection)
 
 			got := RefreactedColor(tt.world, *comps, 5)
 
@@ -417,7 +419,7 @@ func TestRefractedColorRefractedRay(T *testing.T) {
 
 	shapeA := theWorld.Shapes[0]
 	shapeA.GetMaterial().Ambient = 1.0
-	shapeA.GetMaterial().Pattern = NewTestPattern(BLACK, WHITE)
+	shapeA.GetMaterial().Pattern = mat.NewTestPattern(mat.BLACK, mat.WHITE)
 
 	shapeB := theWorld.Shapes[1]
 	shapeB.GetMaterial().Transparency = 1.0
@@ -425,23 +427,23 @@ func TestRefractedColorRefractedRay(T *testing.T) {
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection []Intersection
-		want         Color
+		intersection []shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "the refracted color under total internal relfection",
 			world:        theWorld,
-			ray:          NewRay([3]float64{0, 0, 0.1}, [3]float64{0, 1, 0}),
-			intersection: []Intersection{NewIntersection(-0.9899, shapeA), NewIntersection(-0.4899, shapeB), NewIntersection(0.4899, shapeB), NewIntersection(0.9899, shapeA)},
-			want:         NewColor(0, 0.99888, 0.04725),
+			ray:          shapes.NewRay([3]float64{0, 0, 0.1}, [3]float64{0, 1, 0}),
+			intersection: []shapes.Intersection{shapes.NewIntersection(-0.9899, shapeA), shapes.NewIntersection(-0.4899, shapeB), shapes.NewIntersection(0.4899, shapeB), shapes.NewIntersection(0.9899, shapeA)},
+			want:         mat.NewColor(0, 0.99888, 0.04725),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
-			comps := PrepareComputationsWithHit(tt.intersection[2], tt.ray, tt.intersection)
+			comps := shapes.PrepareComputationsWithHit(tt.intersection[2], tt.ray, tt.intersection)
 
 			got := RefreactedColor(tt.world, *comps, 5)
 
@@ -457,37 +459,37 @@ func TestRefractorShadeHit(T *testing.T) {
 
 	theWorld := NewDefaultWorld()
 
-	floor := NewPlane()
+	floor := shapes.NewPlane()
 	floor.GetMaterial().Transparency = 0.5
 	floor.GetMaterial().RefractiveIndex = 1.5
-	floor.SetTransform(Translate(0, -1, 0))
+	floor.SetTransform(pm.Translate(0, -1, 0))
 
 	ball := shapes.NewSphere()
-	ball.GetMaterial().Color = NewColor(1, 0, 0)
+	ball.GetMaterial().Color = mat.NewColor(1, 0, 0)
 	ball.GetMaterial().Ambient = 0.5
-	ball.SetTransform(Translate(0, -3.5, -0.5))
+	ball.SetTransform(pm.Translate(0, -3.5, -0.5))
 
 	theWorld.Shapes = append(theWorld.Shapes, floor, ball)
 
 	tests := []struct {
 		name         string
-		ray          Ray
+		ray          shapes.Ray
 		world        World
-		intersection []Intersection
-		want         Color
+		intersection []shapes.Intersection
+		want         mat.Color
 	}{
 		{
 			name:         "ShadeHit with a transparent material",
 			world:        theWorld,
-			ray:          NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
-			intersection: []Intersection{NewIntersection(math.Sqrt(2), floor)},
-			want:         NewColor(0.93642, 0.68642, 0.68642),
+			ray:          shapes.NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2}),
+			intersection: []shapes.Intersection{shapes.NewIntersection(math.Sqrt(2), floor)},
+			want:         mat.NewColor(0.93642, 0.68642, 0.68642),
 		},
 	}
 
 	for i, tt := range tests {
 		T.Run(fmt.Sprintf("%d: %s", i, tt.name), func(t *testing.T) {
-			comps := PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
+			comps := shapes.PrepareComputationsWithHit(tt.intersection[0], tt.ray, tt.intersection)
 
 			got := ShadeHit(theWorld, *comps, 5)
 
@@ -504,16 +506,16 @@ func TestSchlickInternalReflection(T *testing.T) {
 	shape := shapes.NewGlassSphere()
 
 	name := "ShadeHit with a transparent material"
-	ray := NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0})
-	intersection := []Intersection{NewIntersection(-math.Sqrt(2)/2, shape), NewIntersection(math.Sqrt(2)/2, shape)}
+	ray := shapes.NewRay([3]float64{0, 0, math.Sqrt(2) / 2}, [3]float64{0, 1, 0})
+	intersection := []shapes.Intersection{shapes.NewIntersection(-math.Sqrt(2)/2, shape), shapes.NewIntersection(math.Sqrt(2)/2, shape)}
 	want := 1.0
 
 	T.Run(name, func(t *testing.T) {
-		comps := PrepareComputationsWithHit(intersection[1], ray, intersection)
+		comps := shapes.PrepareComputationsWithHit(intersection[1], ray, intersection)
 
 		got := Schlick(comps)
 
-		if !AreFloatsEqual(got, want) {
+		if !pm.AreFloatsEqual(got, want) {
 			t.Errorf("\nwant: %v \ngot: %v \ndo not match", want, got)
 		}
 
@@ -525,16 +527,16 @@ func TestSchlickPerpendicular(T *testing.T) {
 	shape := shapes.NewGlassSphere()
 
 	name := "schilick with perpendicular viewing angle"
-	ray := NewRay([3]float64{0, 0, 0}, [3]float64{0, 1, 0})
-	intersection := []Intersection{NewIntersection(-1, shape), NewIntersection(1, shape)}
+	ray := shapes.NewRay([3]float64{0, 0, 0}, [3]float64{0, 1, 0})
+	intersection := []shapes.Intersection{shapes.NewIntersection(-1, shape), shapes.NewIntersection(1, shape)}
 	want := 0.04
 
 	T.Run(name, func(t *testing.T) {
-		comps := PrepareComputationsWithHit(intersection[1], ray, intersection)
+		comps := shapes.PrepareComputationsWithHit(intersection[1], ray, intersection)
 
 		got := Schlick(comps)
 
-		if !AreFloatsEqual(got, want) {
+		if !pm.AreFloatsEqual(got, want) {
 			t.Errorf("\nwant: %v \ngot: %v \ndo not match", want, got)
 		}
 
@@ -546,16 +548,16 @@ func TestSchlickSmallAngle(T *testing.T) {
 	shape := shapes.NewGlassSphere()
 
 	name := "schilick with small viewing angle, where n2 > n1"
-	ray := NewRay([3]float64{0, 0.99, -2}, [3]float64{0, 0, 1})
-	intersection := []Intersection{NewIntersection(1.8589, shape)}
+	ray := shapes.NewRay([3]float64{0, 0.99, -2}, [3]float64{0, 0, 1})
+	intersection := []shapes.Intersection{shapes.NewIntersection(1.8589, shape)}
 	want := 0.48873
 
 	T.Run(name, func(t *testing.T) {
-		comps := PrepareComputationsWithHit(intersection[0], ray, intersection)
+		comps := shapes.PrepareComputationsWithHit(intersection[0], ray, intersection)
 
 		got := Schlick(comps)
 
-		if !AreFloatsEqual(got, want) {
+		if !pm.AreFloatsEqual(got, want) {
 			t.Errorf("\nwant: %v \ngot: %v \ndo not match", want, got)
 		}
 
@@ -565,27 +567,27 @@ func TestSchlickSmallAngle(T *testing.T) {
 func TestSchlickReflectionAndRefraction(T *testing.T) {
 
 	name := "schilick with reflection and refraction"
-	ray := NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2})
+	ray := shapes.NewRay([3]float64{0, 0, -3}, [3]float64{0, -math.Sqrt(2) / 2, math.Sqrt(2) / 2})
 	world := NewDefaultWorld()
 
-	floor := NewPlane()
-	floor.SetTransform(Translate(0, -1, 0))
+	floor := shapes.NewPlane()
+	floor.SetTransform(pm.Translate(0, -1, 0))
 	floor.GetMaterial().Reflective = 0.5
 	floor.GetMaterial().Transparency = 0.5
 	floor.GetMaterial().RefractiveIndex = 1.5
 
 	ball := shapes.NewSphere()
-	ball.GetMaterial().Color = NewColor(1, 0, 0)
+	ball.GetMaterial().Color = mat.NewColor(1, 0, 0)
 	ball.GetMaterial().Ambient = 0.5
-	ball.SetTransform(Translate(0, -3.5, -0.5))
+	ball.SetTransform(pm.Translate(0, -3.5, -0.5))
 
 	world.Shapes = append(world.Shapes, floor, ball)
 
-	intersection := []Intersection{NewIntersection(math.Sqrt(2), floor)}
-	want := NewColor(0.93391, 0.69643, 0.69243)
+	intersection := []shapes.Intersection{shapes.NewIntersection(math.Sqrt(2), floor)}
+	want := mat.NewColor(0.93391, 0.69643, 0.69243)
 
 	T.Run(name, func(t *testing.T) {
-		comps := PrepareComputationsWithHit(intersection[0], ray, intersection)
+		comps := shapes.PrepareComputationsWithHit(intersection[0], ray, intersection)
 
 		got := ShadeHit(world, *comps, 5)
 

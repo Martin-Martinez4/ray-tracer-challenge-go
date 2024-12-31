@@ -17,8 +17,8 @@ func TestUVIntersect(t *testing.T) {
 	t.Run(name, func(t *testing.T) {
 		got := sTri.LocalIntersect(ray)
 
-		U := got.intersections[0].U
-		V := got.intersections[0].V
+		U := got.Intersections[0].U
+		V := got.Intersections[0].V
 		if !pm.AreFloatsEqual(*U, 0.45) || !pm.AreFloatsEqual(*V, 0.25) {
 			t.Errorf("got U: %f V: %f, wanted U: 0.45 V: 0.25", *U, *V)
 
@@ -61,10 +61,10 @@ func TestSmoothTriCompsNormalV(t *testing.T) {
 		i := NewIntersectionWithUV(1, sTri, &f1, &f2)
 		ray := NewRay([3]float64{-0.2, 0.3, -2}, [3]float64{0, 0, 1})
 
-		xs := Intersections{intersections: []Intersection{{}}}
+		xs := Intersections{Intersections: []Intersection{{}}}
 		xs.Add(i)
 
-		comps := PrepareComputationsWithHit(i, ray, xs.intersections)
+		comps := PrepareComputationsWithHit(i, ray, xs.Intersections)
 
 		want := pm.Vector(-0.5547, 0.83205, 0)
 		if !comps.Normalv.Equal(want) {

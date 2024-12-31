@@ -9,32 +9,32 @@ import (
 
 type Ray struct {
 	origin    pm.Tuple
-	direction pm.Tuple
+	Direction pm.Tuple
 }
 
-func NewRay(origin, direction [3]float64) Ray {
+func NewRay(origin, Direction [3]float64) Ray {
 
-	return Ray{origin: pm.Point(origin[0], origin[1], origin[2]), direction: pm.Vector(direction[0], direction[1], direction[2])}
+	return Ray{origin: pm.Point(origin[0], origin[1], origin[2]), Direction: pm.Vector(Direction[0], Direction[1], Direction[2])}
 
 }
 
 /*
-Multiply direction by t then add the origin
+Multiply Direction by t then add the origin
 */
 func (ray Ray) Position(t float64) pm.Tuple {
-	dt := ray.direction.SMultiply(t)
+	dt := ray.Direction.SMultiply(t)
 	return ray.origin.Add(dt)
 }
 
 func (ray Ray) Equal(other Ray) bool {
-	return ray.origin.Equal(other.origin) && ray.direction.Equal(other.direction)
+	return ray.origin.Equal(other.origin) && ray.Direction.Equal(other.Direction)
 }
 
 func (ray Ray) Print() string {
 	var sb strings.Builder
 
 	sb.WriteString("\nOrigin: " + ray.origin.Print())
-	sb.WriteString("\nDirection: " + ray.direction.Print() + "\n")
+	sb.WriteString("\nDirection: " + ray.Direction.Print() + "\n")
 
 	return sb.String()
 
@@ -46,7 +46,7 @@ func (ray Ray) Translate(x, y, z float64) Ray {
 
 	newPoint := translationMatrix.TupleMultiply(ray.origin)
 
-	rayDirection := ray.direction
+	rayDirection := ray.Direction
 
 	return NewRay([3]float64{newPoint.X, newPoint.Y, newPoint.Z}, [3]float64{rayDirection.X, rayDirection.Y, rayDirection.Z})
 
@@ -56,7 +56,7 @@ func (ray Ray) Scale(x, y, z float64) Ray {
 	scaleMatrix := pm.NewMatrix4x4([16]float64{x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1})
 
 	newOrigin := scaleMatrix.TupleMultiply(ray.origin)
-	newDirection := scaleMatrix.TupleMultiply(ray.direction)
+	newDirection := scaleMatrix.TupleMultiply(ray.Direction)
 
 	return NewRay([3]float64{newOrigin.X, newOrigin.Y, newOrigin.Z}, [3]float64{newDirection.X, newDirection.Y, newDirection.Z})
 }
@@ -64,7 +64,7 @@ func (ray Ray) Scale(x, y, z float64) Ray {
 func (ray Ray) Transform(m44 pm.Matrix4x4) Ray {
 	return Ray{
 		origin:    m44.TupleMultiply(ray.origin),
-		direction: m44.TupleMultiply(ray.direction),
+		Direction: m44.TupleMultiply(ray.Direction),
 	}
 }
 

@@ -110,11 +110,11 @@ func (smoothTriangle *SmoothTriangle) NormalAt(localPoint pm.Tuple, hitPoint *pm
 }
 
 func (smoothTriangle *SmoothTriangle) LocalIntersect(ray Ray) Intersections {
-	dirCrossE2 := pm.Cross(ray.direction, smoothTriangle.E2)
+	dirCrossE2 := pm.Cross(ray.Direction, smoothTriangle.E2)
 	det := pm.Dot(smoothTriangle.E1, dirCrossE2)
 
 	if math.Abs(det) < pm.Epsilon {
-		return Intersections{intersections: []Intersection{}}
+		return Intersections{Intersections: []Intersection{}}
 	}
 
 	f := 1.0 / det
@@ -123,19 +123,19 @@ func (smoothTriangle *SmoothTriangle) LocalIntersect(ray Ray) Intersections {
 	u := f * pm.Dot(p1ToOrigin, dirCrossE2)
 
 	if u < 0 || u > 1 {
-		return Intersections{intersections: []Intersection{}}
+		return Intersections{Intersections: []Intersection{}}
 	}
 
 	originCrossE1 := pm.Cross(p1ToOrigin, smoothTriangle.E1)
-	v := f * pm.Dot(ray.direction, originCrossE1)
+	v := f * pm.Dot(ray.Direction, originCrossE1)
 
 	if v < 0 || (u+v) > 1 {
-		return Intersections{intersections: []Intersection{}}
+		return Intersections{Intersections: []Intersection{}}
 	}
 
 	t := f * pm.Dot(smoothTriangle.E2, originCrossE1)
 	// will change later
-	return Intersections{intersections: []Intersection{NewIntersectionWithUV(t, smoothTriangle, &u, &v)}}
+	return Intersections{Intersections: []Intersection{NewIntersectionWithUV(t, smoothTriangle, &u, &v)}}
 }
 
 func (smoothTriangle *SmoothTriangle) Intersect(ray *Ray) Intersections {

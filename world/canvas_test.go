@@ -4,6 +4,8 @@ import (
 	"fmt"
 	strings "strings"
 	"testing"
+
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 )
 
 func TestNewCanvas(t *testing.T) {
@@ -29,7 +31,7 @@ func TestNewCanvas(t *testing.T) {
 		},
 	}
 
-	black := NewColor(0, 0, 0)
+	black := mat.NewColor(0, 0, 0)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,16 +60,16 @@ func TestNewCanvas(t *testing.T) {
 func TestColorPixel(t *testing.T) {
 
 	canvas1 := NewCanvas(2, 3)
-	red := NewColor(1, 0, 0)
-	blue := NewColor(0, 0, 1)
-	black := NewColor(0, 0, 0)
+	red := mat.NewColor(1, 0, 0)
+	blue := mat.NewColor(0, 0, 1)
+	black := mat.NewColor(0, 0, 0)
 
 	tests := []struct {
 		name   string
 		canvas Canvas
 		y      int32
 		x      int32
-		color  Color
+		color  mat.Color
 	}{
 		{
 			name:   "(0,0) should be set to red (1,0,0)",
@@ -146,7 +148,7 @@ func TestPpmbody(t *testing.T) {
 	type colorchanges struct {
 		x     int32
 		y     int32
-		color Color
+		color mat.Color
 	}
 
 	tests := []struct {
@@ -174,21 +176,21 @@ func TestPpmbody(t *testing.T) {
 			name:         "print ppm body data no color changes width 5 height 3 pixel (0,0) should be green",
 			width:        5,
 			height:       3,
-			colorchanges: []colorchanges{{0, 0, NewColor(0, 1, 0)}},
+			colorchanges: []colorchanges{{0, 0, mat.NewColor(0, 1, 0)}},
 			want:         strings.TrimSpace("0 255 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"),
 		},
 		{
 			name:         "print ppm body data no color changes width 5 height 3 pixel (0,0) should be green (3,1) should be red",
 			width:        5,
 			height:       3,
-			colorchanges: []colorchanges{{0, 0, NewColor(0, 1, 0)}, {3, 1, NewColor(1, 0, 0)}},
+			colorchanges: []colorchanges{{0, 0, mat.NewColor(0, 1, 0)}, {3, 1, mat.NewColor(1, 0, 0)}},
 			want:         strings.TrimSpace("0 255 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 255 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"),
 		},
 		{
 			name:         "print ppm body data no color changes width 5 height 3 pixel (0,0) should be (0, 255, 0), values should be clamped",
 			width:        5,
 			height:       3,
-			colorchanges: []colorchanges{{0, 0, NewColor(-0.5, 5, -10)}},
+			colorchanges: []colorchanges{{0, 0, mat.NewColor(-0.5, 5, -10)}},
 			want:         strings.TrimSpace("0 255 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"),
 		},
 	}

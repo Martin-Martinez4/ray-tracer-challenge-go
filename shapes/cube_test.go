@@ -90,7 +90,7 @@ func TestRayCubeIntersect(T *testing.T) {
 
 			got := cube.LocalIntersect(tt.ray)
 
-			if !got.Equal(Intersections{intersections: tt.want}) {
+			if !got.Equal(Intersections{Intersections: tt.want}) {
 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 

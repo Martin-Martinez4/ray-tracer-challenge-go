@@ -1,12 +1,17 @@
 package world
 
-import "math"
+import (
+	"math"
+
+	pm "github.com/Martin-Martinez4/ray-tracer-challenge-go/primitive_math"
+	"github.com/Martin-Martinez4/ray-tracer-challenge-go/shapes"
+)
 
 type Camera struct {
 	HSize       float64
 	VSize       float64
 	FieldOfView float64
-	Transform   Matrix4x4
+	Transform   pm.Matrix4x4
 	HalfWidth   float64
 	HalfHeight  float64
 	PixelSize   float64
@@ -30,13 +35,13 @@ func PixelSize(camera *Camera) {
 
 func NewCamera(hsize float64, vsize float64, fieldOfView float64) Camera {
 
-	tempCamera := Camera{HSize: hsize, VSize: vsize, FieldOfView: fieldOfView, Transform: IdentitiyMatrix4x4()}
+	tempCamera := Camera{HSize: hsize, VSize: vsize, FieldOfView: fieldOfView, Transform: pm.IdentitiyMatrix4x4()}
 	PixelSize(&tempCamera)
 	return tempCamera
 
 }
 
-func RayForPixel(camera Camera, px, py float64) Ray {
+func RayForPixel(camera Camera, px, py float64) shapes.Ray {
 	xoffset := (px + 0.5) * camera.PixelSize
 	yoffset := (py + 0.5) * camera.PixelSize
 
@@ -44,9 +49,9 @@ func RayForPixel(camera Camera, px, py float64) Ray {
 	worldY := camera.HalfHeight - yoffset
 
 	cameraTransformInv := camera.Transform.Inverse()
-	pixel := cameraTransformInv.TupleMultiply(Point(worldX, worldY, -1))
-	origin := cameraTransformInv.TupleMultiply(Point(0, 0, 0))
-	direction := Normalize(pixel.Subtract(origin))
+	pixel := cameraTransformInv.TupleMultiply(pm.Point(worldX, worldY, -1))
+	origin := cameraTransformInv.TupleMultiply(pm.Point(0, 0, 0))
+	direction := pm.Normalize(pixel.Subtract(origin))
 
-	return NewRay([3]float64{origin.x, origin.y, origin.z}, [3]float64{direction.x, direction.y, direction.z})
+	return shapes.NewRay([3]float64{origin.X, origin.Y, origin.Z}, [3]float64{direction.X, direction.Y, direction.Z})
 }

@@ -3,22 +3,24 @@ package world
 import (
 	"fmt"
 	"strings"
+
+	mat "github.com/Martin-Martinez4/ray-tracer-challenge-go/materials"
 )
 
 type Canvas struct {
 	width  int32
 	height int32
-	canvas [][]Color
+	canvas [][]mat.Color
 }
 
 func NewCanvas(width, height int32) Canvas {
 
-	c := make([][]Color, height)
+	c := make([][]mat.Color, height)
 
 	for h := int32(0); h < height; h++ {
-		c[h] = make([]Color, width)
+		c[h] = make([]mat.Color, width)
 		for w := int32(0); w < width; w++ {
-			c[h][w] = NewColor(0, 0, 0)
+			c[h][w] = mat.NewColor(0, 0, 0)
 		}
 	}
 
@@ -26,12 +28,12 @@ func NewCanvas(width, height int32) Canvas {
 
 }
 
-func (c *Canvas) ColorPixel(x int32, y int32, color Color) {
+func (c *Canvas) ColorPixel(x int32, y int32, color mat.Color) {
 	c.canvas[y][x] = color
 
 }
 
-func (c *Canvas) GetPixel(x int32, y int32) Color {
+func (c *Canvas) GetPixel(x int32, y int32) mat.Color {
 	return c.canvas[y][x]
 }
 
@@ -66,9 +68,9 @@ func (c *Canvas) ppmbody() string {
 				sb.WriteString("\n")
 			}
 			sb.WriteString(fmt.Sprintf("%d %d %d ",
-				clamp(int(currentColor.r*255), 0, 255),
-				clamp(int(currentColor.g*255), 0, 255),
-				clamp(int(currentColor.b*255), 0, 255)),
+				clamp(int(currentColor.R*255), 0, 255),
+				clamp(int(currentColor.G*255), 0, 255),
+				clamp(int(currentColor.B*255), 0, 255)),
 			)
 		}
 	}

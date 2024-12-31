@@ -43,7 +43,7 @@ func (stripe *Stripes) GetTransforms() pm.Matrix4x4 {
 	return stripe.Transforms
 }
 
-func (stripe *Stripes) StripeAt(point pm.Tuple) Color {
+func (stripe *Stripes) PatternAt(point pm.Tuple) Color {
 
 	if int(math.Floor(point.X))%2 == 0 {
 		return stripe.Color2
