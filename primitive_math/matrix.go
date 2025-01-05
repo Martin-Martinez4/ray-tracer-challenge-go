@@ -414,17 +414,13 @@ func (m44 Matrix4x4) Inverse() Matrix4x4 {
 
 	if determinate == 0 {
 		return nil
-	}
+	} else {
 
-	factor := 1 / determinate
-
-	if m44.IsInvertible() {
+		factor := 1 / determinate
 
 		transposeCofactor := m44.cofactorMatrix().Transpose()
 
 		return transposeCofactor.ScalarMultiply(factor)
-	} else {
-		return nil
 	}
 
 }
