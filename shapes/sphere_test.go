@@ -82,13 +82,13 @@ func TestNormalAt(t *testing.T) {
 
 				if tt.transforms[i] == "scale" {
 
-					tt.sphere.Scale(tt.args[i][0], tt.args[i][1], tt.args[i][2])
+					tt.sphere.SetTransform(pm.Scale(tt.args[i][0], tt.args[i][1], tt.args[i][2]))
 
 				} else if tt.transforms[i] == "translate" {
-					tt.sphere.Translate(tt.args[i][0], tt.args[i][1], tt.args[i][2])
+					tt.sphere.SetTransform(pm.Translate(tt.args[i][0], tt.args[i][1], tt.args[i][2]))
 
 				} else if tt.transforms[i] == "rotateZ" {
-					tt.sphere.RotationAlongZ(tt.args[i][0])
+					tt.sphere.SetTransform(pm.RotationAlongZ(tt.args[i][0]))
 				} else {
 					t.Errorf("%s is not a vaild transformation option", tt.transforms[i])
 					return

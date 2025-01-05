@@ -126,10 +126,10 @@ func TestRayIntersectWithTransform(t *testing.T) {
 
 			if tt.transform == "scale" {
 
-				theSphere.Scale(tt.args[0], tt.args[1], tt.args[2])
+				theSphere.SetTransform(pm.Scale(tt.args[0], tt.args[1], tt.args[2]))
 
 			} else if tt.transform == "translate" {
-				theSphere.Translate(tt.args[0], tt.args[1], tt.args[2])
+				theSphere.SetTransform(pm.Translate(tt.args[0], tt.args[1], tt.args[2]))
 
 			} else {
 				t.Errorf("%s is not a vaild transformation option", tt.transform)
