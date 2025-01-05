@@ -48,7 +48,7 @@ func Ch6() string {
 			// intersect
 			xs := shapes.RaySphereInteresect(ray, sphere)
 			if xs != nil {
-				intersection, found := shapes.Hit(xs.Intersections)
+				intersection, found := shapes.Hit(*xs)
 				if found {
 
 					point := shapes.Position(ray, intersection.T)

@@ -74,22 +74,22 @@ func (csg *CSG) FilterIntersection(xs []Intersection) []Intersection {
 	return result
 }
 
-func (csg *CSG) LocalIntersect(ray Ray) Intersections {
+func (csg *CSG) LocalIntersect(ray Ray) *Intersections {
 	ray = ray.Transform(csg.Transforms.Inverse())
 
 	leftxs := csg.LeftShape.Intersect(&ray)
 	rightxs := csg.RightShape.Intersect(&ray)
 
-	xs := append(leftxs.Intersections, rightxs.Intersections...)
+	xs := append(*leftxs, *rightxs...)
 
 	sort.Slice(xs, func(i, j int) bool {
 		return xs[i].T < xs[j].T
 	})
-	return Intersections{Intersections: xs}
+	return &xs
 
 }
 
-func (csg *CSG) Intersect(ray *Ray) Intersections {
+func (csg *CSG) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(csg.Transforms.Inverse())
 	return csg.LocalIntersect(tray)
 }

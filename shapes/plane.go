@@ -36,17 +36,17 @@ func NewPlane() *Plane {
 	}
 }
 
-func (plane *Plane) LocalIntersect(ray Ray) Intersections {
+func (plane *Plane) LocalIntersect(ray Ray) *Intersections {
 	if math.Abs(ray.Direction.Y) < pm.Epsilon {
-		return Intersections{Intersections: []Intersection{}}
+		return &Intersections{}
 	}
 
 	t := (-ray.origin.Y / ray.Direction.Y)
 
-	return Intersections{Intersections: []Intersection{{T: t, S: plane}}}
+	return &Intersections{{T: t, S: plane}}
 }
 
-func (plane *Plane) Intersect(ray *Ray) Intersections {
+func (plane *Plane) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(plane.GetInverseTransforms())
 	return plane.LocalIntersect(tray)
 }

@@ -15,9 +15,11 @@ type Intersection struct {
 	V *float64
 }
 
-type Intersections struct {
-	Intersections []Intersection
-}
+// type Intersections struct {
+// 	Intersections []Intersection
+// }
+
+type Intersections []Intersection
 
 type Computations struct {
 	T          float64
@@ -53,15 +55,14 @@ func NewIntersectionWithUV(T float64, S Shape, U, V *float64) Intersection {
 
 func (inters *Intersections) Add(inter Intersection) {
 
-	Intersections := append(inters.Intersections, inter)
-	inters.Intersections = Intersections
+	*inters = append(*inters, inter)
 
-	sort.Slice(inters.Intersections, func(i, j int) bool {
-		return inters.Intersections[i].T < inters.Intersections[j].T
+	sort.Slice(*inters, func(i, j int) bool {
+		return (*inters)[i].T < (*inters)[j].T
 	})
 	// remove default values intersection {0 <nil> <nil> <nil>} if present
-	if inters.Intersections[0].S == nil {
-		inters.Intersections = append(inters.Intersections[:0], inters.Intersections[1:]...)
+	if (*inters)[0].S == nil {
+		*inters = append((*inters)[:0], (*inters)[1:]...)
 	}
 }
 
@@ -98,21 +99,21 @@ func (inters *Intersections) RaySphereInteresect(ray Ray, s *Sphere) {
 
 func (inters *Intersections) RayShapeInteresect(ray Ray, s Shape) {
 
-	Intersections := s.Intersect(&ray).Intersections
+	Intersections := s.Intersect(&ray)
 
 	if Intersections == nil {
 		return
 	}
 
-	for _, intersection := range Intersections {
+	for _, intersection := range *Intersections {
 		inters.Add(intersection)
 	}
 }
 
 func (inters Intersections) Equal(other Intersections) bool {
 
-	oriInters := inters.Intersections
-	otherInters := other.Intersections
+	oriInters := inters
+	otherInters := other
 
 	if len(oriInters) != len(otherInters) {
 		return false
@@ -130,18 +131,18 @@ func (inters Intersections) Equal(other Intersections) bool {
 
 func (inters *Intersections) Hit() *Intersection {
 
-	if inters == nil || inters.Intersections == nil || len(inters.Intersections) < 1 {
+	if inters == nil || len(*inters) < 1 {
 		return nil
 	}
 
-	if inters.Intersections[0].T < 0 && inters.Intersections[len(inters.Intersections)-1].T < 0 {
+	if (*inters)[0].T < 0 && (*inters)[len(*inters)-1].T < 0 {
 		return nil
 	}
 
-	for i := 0; i < len(inters.Intersections); i++ {
+	for i := 0; i < len(*inters); i++ {
 
-		if inters.Intersections[i].T >= 0 {
-			return &inters.Intersections[i]
+		if (*inters)[i].T >= 0 {
+			return &(*inters)[i]
 		}
 
 	}
@@ -174,17 +175,17 @@ func RaySphereInteresect(ray Ray, s *Sphere) *Intersections {
 
 		if !pm.AreFloatsEqual(d1, d2) {
 
-			return &Intersections{[]Intersection{NewIntersection(d1, s), NewIntersection(d2, s)}}
+			return &Intersections{NewIntersection(d1, s), NewIntersection(d2, s)}
 
 		} else {
 
-			return &Intersections{[]Intersection{NewIntersection(d1, s)}}
+			return &Intersections{NewIntersection(d1, s)}
 
 		}
 	}
 }
 
-func PrepareComputationsWithHit(i Intersection, r Ray, xs []Intersection) *Computations {
+func PrepareComputationsWithHit(i Intersection, r Ray, xs Intersections) *Computations {
 	comps := PrepareComputations(r, i.S, i)
 
 	containers := make([]Shape, 0)

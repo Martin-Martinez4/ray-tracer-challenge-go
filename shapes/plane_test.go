@@ -57,17 +57,17 @@ func TestPlaneLIntersect(t *testing.T) {
 		{
 			name: "intersect with a ray parallel to the plane",
 			ray:  NewRay([3]float64{0, 10, 0}, [3]float64{0, 0, 1}),
-			want: Intersections{Intersections: nil},
+			want: nil,
 		},
 		{
 			name: "a ray intersecting a plane from above",
 			ray:  NewRay([3]float64{0, 1, 0}, [3]float64{0, -1, 0}),
-			want: Intersections{Intersections: []Intersection{{T: 1, S: plane}}},
+			want: Intersections{{T: 1, S: plane}},
 		},
 		{
 			name: "a ray intersecting a plane from below",
 			ray:  NewRay([3]float64{0, -1, 0}, [3]float64{0, 1, 0}),
-			want: Intersections{Intersections: []Intersection{{T: 1, S: plane}}},
+			want: Intersections{{T: 1, S: plane}},
 		},
 	}
 
@@ -76,8 +76,8 @@ func TestPlaneLIntersect(t *testing.T) {
 
 			got := plane.LocalIntersect(tt.ray)
 
-			if len(got.Intersections) != len(tt.want.Intersections) {
-				t.Errorf("%d: %s did not pass, not the same length\ngot: %v\nwanted: %v", i, tt.name, got.Intersections, tt.want.Intersections)
+			if len(*got) != len(tt.want) {
+				t.Errorf("%d: %s did not pass, not the same length\ngot: %v\nwanted: %v", i, tt.name, got, tt.want)
 
 			}
 

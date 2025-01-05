@@ -48,10 +48,10 @@ func intersectConeCaps(cone *Cone, ray Ray, xs *Intersections) {
 	}
 }
 
-func (cone *Cone) LocalIntersect(ray Ray) Intersections {
+func (cone *Cone) LocalIntersect(ray Ray) *Intersections {
 	ray = ray.Transform(cone.Transforms.Inverse())
 
-	intersections := Intersections{Intersections: []Intersection{}}
+	intersections := Intersections{}
 	a := (ray.Direction.X * ray.Direction.X) - (ray.Direction.Y * ray.Direction.Y) + (ray.Direction.Z * ray.Direction.Z)
 
 	b := 2 * ((ray.origin.X * ray.Direction.X) - (ray.origin.Y * ray.Direction.Y) + (ray.origin.Z * ray.Direction.Z))
@@ -59,7 +59,7 @@ func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 	c := (ray.origin.X * ray.origin.X) - (ray.origin.Y * ray.origin.Y) + (ray.origin.Z * ray.origin.Z)
 	if pm.AreFloatsEqual(a, 0.0) {
 		if pm.AreFloatsEqual(b, 0.0) {
-			return intersections
+			return &intersections
 		}
 
 		intersections.Add(Intersection{T: -c / (2 * b), S: cone})
@@ -69,7 +69,7 @@ func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 	disc := ((b * b) - (4 * a * c))
 
 	if disc < 0.0 {
-		return intersections
+		return &intersections
 	}
 
 	t0 := (-b - math.Sqrt(disc)) / (2 * a)
@@ -91,11 +91,11 @@ func (cone *Cone) LocalIntersect(ray Ray) Intersections {
 		intersections.Add(NewIntersection(t1, cone))
 	}
 
-	return intersections
+	return &intersections
 
 }
 
-func (cone *Cone) Intersect(ray *Ray) Intersections {
+func (cone *Cone) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(cone.Transforms.Inverse())
 	return cone.LocalIntersect(tray)
 }

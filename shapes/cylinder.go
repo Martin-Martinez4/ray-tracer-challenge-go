@@ -48,14 +48,14 @@ func intersectCaps(cylinder *Cylinder, ray Ray, xs *Intersections) {
 	}
 }
 
-func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
+func (cylinder *Cylinder) LocalIntersect(ray Ray) *Intersections {
 
-	intersections := Intersections{Intersections: []Intersection{}}
+	intersections := Intersections{}
 	a := (ray.Direction.X * ray.Direction.X) + (ray.Direction.Z * ray.Direction.Z)
 
 	intersectCaps(cylinder, ray, &intersections)
 	if pm.AreFloatsEqual(a, 0.0) {
-		return intersections
+		return &intersections
 	}
 
 	b := 2 * ((ray.origin.X * ray.Direction.X) + (ray.origin.Z * ray.Direction.Z))
@@ -65,7 +65,7 @@ func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 	disc := (b * b) - (4 * a * c)
 
 	if disc < 0.0 {
-		return intersections
+		return &intersections
 	}
 
 	t0 := (-b - math.Sqrt(disc)) / (2 * a)
@@ -87,11 +87,11 @@ func (cylinder *Cylinder) LocalIntersect(ray Ray) Intersections {
 		intersections.Add(NewIntersection(t1, cylinder))
 	}
 
-	return intersections
+	return &intersections
 
 }
 
-func (cylinder *Cylinder) Intersect(ray *Ray) Intersections {
+func (cylinder *Cylinder) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(cylinder.GetInverseTransforms())
 	return cylinder.LocalIntersect(tray)
 }

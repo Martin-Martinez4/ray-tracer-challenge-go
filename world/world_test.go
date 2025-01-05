@@ -23,12 +23,10 @@ func TestIntersectWorld(T *testing.T) {
 			name: "a ray intersecting a default world should return an intersection struct with four members",
 			ray:  shapes.NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			want: shapes.Intersections{
-				Intersections: []shapes.Intersection{
-					{S: theWorld.Shapes[0], T: 4},
-					{S: theWorld.Shapes[0], T: 4.5},
-					{S: theWorld.Shapes[1], T: 5.5},
-					{S: theWorld.Shapes[1], T: 6},
-				},
+				{S: theWorld.Shapes[0], T: 4},
+				{S: theWorld.Shapes[0], T: 4.5},
+				{S: theWorld.Shapes[1], T: 5.5},
+				{S: theWorld.Shapes[1], T: 6},
 			},
 		},
 	}
@@ -38,13 +36,13 @@ func TestIntersectWorld(T *testing.T) {
 
 			got := RayWorldIntersect(tt.ray, theWorld)
 
-			if len(tt.want.Intersections) != len(got.Intersections) {
+			if len(tt.want) != len(got) {
 				t.Errorf("Lengths did not match for test %d: %s", i, tt.name)
 			}
 
-			for k := 0; k < len(got.Intersections); k++ {
-				if !pm.AreFloatsEqual(tt.want.Intersections[k].T, got.Intersections[k].T) {
-					t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", k, tt.want.Intersections, got.Intersections)
+			for k := 0; k < len(got); k++ {
+				if !pm.AreFloatsEqual(tt.want[k].T, got[k].T) {
+					t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", k, tt.want, got)
 				}
 			}
 

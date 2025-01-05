@@ -27,7 +27,7 @@ func NewSphere() *Sphere {
 	}
 }
 
-func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
+func (sphere *Sphere) LocalIntersect(ray Ray) *Intersections {
 
 	inters := Intersections{}
 
@@ -57,10 +57,10 @@ func (sphere *Sphere) LocalIntersect(ray Ray) Intersections {
 		}
 	}
 
-	return inters
+	return &inters
 }
 
-func (sphere *Sphere) Intersect(ray *Ray) Intersections {
+func (sphere *Sphere) Intersect(ray *Ray) *Intersections {
 
 	sphere.SetSavedRay(ray.Transform(sphere.Transforms.Inverse()))
 	return sphere.LocalIntersect(sphere.GetSavedRay())

@@ -22,7 +22,7 @@ func TestIntersectingAnEmptyGroup(t *testing.T) {
 
 	got := group.LocalIntersect(ray)
 
-	if !got.Equal(Intersections{Intersections: want}) {
+	if !got.Equal(want) {
 		t.Errorf("%s: \nwant: %v \ngot: %v \ndo not match", name, want, got)
 	}
 
@@ -56,7 +56,7 @@ func TestIntersectingAGroup(t *testing.T) {
 
 	got := group.LocalIntersect(ray)
 
-	if !got.Equal(Intersections{Intersections: want}) {
+	if !got.Equal(want) {
 		t.Errorf("%s: \nwant: %v \ngot: %v \ndo not match", name, want, got)
 	}
 
@@ -85,7 +85,7 @@ func TestIntersectingATransfomredGroup(t *testing.T) {
 
 	got := group.Intersect(&ray)
 
-	if !got.Equal(Intersections{Intersections: want}) {
+	if !got.Equal(want) {
 		t.Errorf("%s: \nwant: %v \ngot: %v \ndo not match", name, want, got)
 	}
 

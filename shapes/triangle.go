@@ -71,12 +71,12 @@ func (triangle *Triangle) NormalAt(worldPoint pm.Tuple) pm.Tuple {
 	return triangle.Normal
 }
 
-func (triangle *Triangle) LocalIntersect(ray Ray) Intersections {
+func (triangle *Triangle) LocalIntersect(ray Ray) *Intersections {
 	dirCrossE2 := pm.Cross(ray.Direction, triangle.E2)
 	det := pm.Dot(triangle.E1, dirCrossE2)
 
 	if math.Abs(det) < pm.Epsilon {
-		return Intersections{Intersections: []Intersection{}}
+		return &Intersections{}
 	}
 
 	f := 1.0 / det
@@ -85,22 +85,22 @@ func (triangle *Triangle) LocalIntersect(ray Ray) Intersections {
 	u := f * pm.Dot(p1ToOrigin, dirCrossE2)
 
 	if u < 0 || u > 1 {
-		return Intersections{Intersections: []Intersection{}}
+		return &Intersections{}
 	}
 
 	originCrossE1 := pm.Cross(p1ToOrigin, triangle.E1)
 	v := f * pm.Dot(ray.Direction, originCrossE1)
 
 	if v < 0 || (u+v) > 1 {
-		return Intersections{Intersections: []Intersection{}}
+		return &Intersections{}
 	}
 
 	t := f * pm.Dot(triangle.E2, originCrossE1)
 	// will change later
-	return Intersections{Intersections: []Intersection{NewIntersection(t, triangle)}}
+	return &Intersections{NewIntersection(t, triangle)}
 }
 
-func (triangle *Triangle) Intersect(ray *Ray) Intersections {
+func (triangle *Triangle) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(triangle.GetInverseTransforms())
 	return triangle.LocalIntersect(tray)
 }

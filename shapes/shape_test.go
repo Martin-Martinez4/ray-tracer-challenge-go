@@ -23,7 +23,7 @@ func NewTestShape() *TestShape {
 	}
 }
 
-func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
+func (shape *TestShape) LocalIntersect(ray Ray) *Intersections {
 
 	inters := Intersections{}
 
@@ -53,10 +53,10 @@ func (shape *TestShape) LocalIntersect(ray Ray) Intersections {
 		}
 	}
 
-	return inters
+	return &inters
 }
 
-func (shape *TestShape) Intersect(ray *Ray) Intersections {
+func (shape *TestShape) Intersect(ray *Ray) *Intersections {
 
 	shape.SetSavedRay(ray.Transform(shape.Transforms.Inverse()))
 	return shape.LocalIntersect(shape.GetSavedRay())

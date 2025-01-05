@@ -29,7 +29,7 @@ type Shape interface {
 	GetMaterial() *mat.Material
 	SetMaterial(material mat.Material)
 
-	Intersect(ray *Ray) Intersections
+	Intersect(ray *Ray) *Intersections
 
 	// NormalAt(point pm.Tuple) pm.Tuple
 	LocalNormalAt(point pm.Tuple, hitPoint *pm.Tuple, intersection *Intersection) pm.Tuple

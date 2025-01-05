@@ -54,7 +54,7 @@ func NewWorld(s *[]shapes.Shape, light *Light) World {
 
 func RayWorldIntersect(ray shapes.Ray, world World) shapes.Intersections {
 
-	inters := shapes.Intersections{Intersections: []shapes.Intersection{}}
+	inters := shapes.Intersections{}
 
 	for i := 0; i < len(world.Shapes); i++ {
 
@@ -88,14 +88,14 @@ func ColorAt(ray shapes.Ray, world World, reflectionsLeft int) mat.Color {
 	inters := RayWorldIntersect(ray, world)
 
 	// intersection := inters.Hit()
-	intersection, hit := shapes.Hit(inters.Intersections)
+	intersection, hit := shapes.Hit(inters)
 
 	if !hit {
 		return mat.NewColor(0, 0, 0)
 	}
 
 	// comps := PrepareComputations(*ray, intersection.S, *intersection)
-	comps := shapes.PrepareComputationsWithHit(intersection, ray, inters.Intersections)
+	comps := shapes.PrepareComputationsWithHit(intersection, ray, inters)
 
 	return ShadeHit(world, *comps, reflectionsLeft)
 
@@ -158,7 +158,7 @@ func IsShadowed(world World, point pm.Tuple) bool {
 
 	intersections := RayWorldIntersect(ray, world)
 
-	intersection, hit := shapes.Hit(intersections.Intersections)
+	intersection, hit := shapes.Hit(intersections)
 	if hit && intersection.T < distance {
 		return true
 	} else {

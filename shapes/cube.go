@@ -58,7 +58,7 @@ func CheckAxis(origin, Direction float64) (float64, float64) {
 	return tmin, tmax
 }
 
-func (cube *Cube) LocalIntersect(ray Ray) Intersections {
+func (cube *Cube) LocalIntersect(ray Ray) *Intersections {
 	xtmin, xtmax := CheckAxis(ray.origin.X, ray.Direction.X)
 	ytmin, ytmax := CheckAxis(ray.origin.Y, ray.Direction.Y)
 	ztmin, ztmax := CheckAxis(ray.origin.Z, ray.Direction.Z)
@@ -67,14 +67,14 @@ func (cube *Cube) LocalIntersect(ray Ray) Intersections {
 	tmax := math.Min(math.Min(xtmax, ytmax), ztmax)
 
 	if tmin > tmax {
-		return Intersections{Intersections: []Intersection{}}
+		return &Intersections{}
 
 	}
 
-	return Intersections{Intersections: []Intersection{NewIntersection(tmin, cube), NewIntersection(tmax, cube)}}
+	return &Intersections{NewIntersection(tmin, cube), NewIntersection(tmax, cube)}
 }
 
-func (cube *Cube) Intersect(ray *Ray) Intersections {
+func (cube *Cube) Intersect(ray *Ray) *Intersections {
 	tray := ray.Transform(cube.GetInverseTransforms())
 	return cube.LocalIntersect(tray)
 }

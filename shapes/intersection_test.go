@@ -22,10 +22,8 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(4, theSphere),
-					NewIntersection(6, theSphere),
-				},
+				NewIntersection(4, theSphere),
+				NewIntersection(6, theSphere),
 			},
 		},
 		{
@@ -33,28 +31,22 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 1, -5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(5, theSphere),
-				},
+				NewIntersection(5, theSphere),
 			},
 		},
 		{
-			name:   "Ray misses should return an empty array",
-			ray:    NewRay([3]float64{0, 2, -5}, [3]float64{0, 0, 1}),
-			sphere: theSphere,
-			intersection: Intersections{
-				Intersections: []Intersection{},
-			},
+			name:         "Ray misses should return an empty array",
+			ray:          NewRay([3]float64{0, 2, -5}, [3]float64{0, 0, 1}),
+			sphere:       theSphere,
+			intersection: Intersections{},
 		},
 		{
 			name:   "Ray intersects, should return two values",
 			ray:    NewRay([3]float64{0, 0, 0}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(-1, theSphere),
-					NewIntersection(1, theSphere),
-				},
+				NewIntersection(-1, theSphere),
+				NewIntersection(1, theSphere),
 			},
 		},
 		{
@@ -62,10 +54,8 @@ func TestRayIntersect(t *testing.T) {
 			ray:    NewRay([3]float64{0, 0, 5}, [3]float64{0, 0, 1}),
 			sphere: theSphere,
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(-6, theSphere),
-					NewIntersection(-4, theSphere),
-				},
+				NewIntersection(-6, theSphere),
+				NewIntersection(-4, theSphere),
 			},
 		},
 	}
@@ -78,7 +68,7 @@ func TestRayIntersect(t *testing.T) {
 			ints.RaySphereInteresect(tt.ray, tt.sphere)
 
 			if !ints.Equal(tt.intersection) {
-				t.Errorf("%s did not pass, lengths are not equal: \nGot: %v \nWanted: %v", tt.name, ints.Intersections, tt.intersection)
+				t.Errorf("%s did not pass, lengths are not equal: \nGot: %v \nWanted: %v", tt.name, ints, tt.intersection)
 			}
 
 		})
@@ -105,10 +95,8 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			transform: "scale",
 			args:      []float64{2, 2, 2},
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(3, theSphere),
-					NewIntersection(7, theSphere),
-				},
+				NewIntersection(3, theSphere),
+				NewIntersection(7, theSphere),
 			},
 		},
 		{
@@ -118,22 +106,18 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			transform: "scale",
 			args:      []float64{0.5, 0.5, 0.5},
 			intersection: Intersections{
-				Intersections: []Intersection{
-					NewIntersection(4.5, theSphere),
-					NewIntersection(5.5, theSphere),
-				},
+				NewIntersection(4.5, theSphere),
+				NewIntersection(5.5, theSphere),
 			},
 		},
 
 		{
-			name:      "Ray intersects, should return two values",
-			ray:       NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
-			sphere:    theSphere,
-			transform: "translate",
-			args:      []float64{5, 0, 0},
-			intersection: Intersections{
-				Intersections: nil,
-			},
+			name:         "Ray intersects, should return two values",
+			ray:          NewRay([3]float64{0, 0, -5}, [3]float64{0, 0, 1}),
+			sphere:       theSphere,
+			transform:    "translate",
+			args:         []float64{5, 0, 0},
+			intersection: nil,
 		},
 	}
 
@@ -157,7 +141,7 @@ func TestRayIntersectWithTransform(t *testing.T) {
 			ints.RaySphereInteresect(tt.ray, tt.sphere)
 
 			if !ints.Equal(tt.intersection) {
-				t.Errorf("%s did not pass, lengths are not equal: \n\nGot: %v \n\nWanted: %v", tt.name, ints.Intersections, tt.intersection)
+				t.Errorf("%s did not pass, lengths are not equal: \n\nGot: %v \n\nWanted: %v", tt.name, ints, tt.intersection)
 			}
 
 			tt.sphere.Transforms = pm.NewMatrix4x4([16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})

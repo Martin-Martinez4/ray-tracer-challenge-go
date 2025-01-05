@@ -47,18 +47,18 @@ func (group *Group) AddChild(shape Shape) {
 }
 
 // Could really be improved
-func (group *Group) LocalIntersect(ray Ray) Intersections {
+func (group *Group) LocalIntersect(ray Ray) *Intersections {
 	// Def need to change this
-	overAllIntersections := Intersections{Intersections: []Intersection{}}
+	overAllIntersections := Intersections{}
 	for _, shape := range group.Children {
 		inters := shape.Intersect(&ray)
-		overAllIntersections.Intersections = append(overAllIntersections.Intersections, inters.Intersections...)
+		overAllIntersections = append(overAllIntersections, *inters...)
 	}
-	sort.Slice(overAllIntersections.Intersections, func(i, j int) bool {
-		return overAllIntersections.Intersections[i].T < overAllIntersections.Intersections[j].T
+	sort.Slice(overAllIntersections, func(i, j int) bool {
+		return overAllIntersections[i].T < overAllIntersections[j].T
 	})
 
-	return overAllIntersections
+	return &overAllIntersections
 }
 
 func CheckGroupAxis(origin, direction, min, max float64) (float64, float64) {
@@ -95,7 +95,7 @@ func CheckGroupAxis(origin, direction, min, max float64) (float64, float64) {
 	return tmin, tmax
 }
 
-func (group *Group) Intersect(ray *Ray) Intersections {
+func (group *Group) Intersect(ray *Ray) *Intersections {
 	// Check if bounding box is intersected
 	tray := ray.Transform(group.GetInverseTransforms())
 

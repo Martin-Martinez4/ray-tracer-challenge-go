@@ -17,35 +17,35 @@ func TestRayConeIntersect(T *testing.T) {
 		origin    pm.Tuple
 		direction pm.Tuple
 		cone      *Cone
-		want      []Intersection
+		want      Intersections
 	}{
 		{
 			name:      "the ray hits the cone 1",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -5),
 			direction: pm.Vector(0, 0, 1),
-			want:      []Intersection{NewIntersection(5, cone), NewIntersection(5, cone)},
+			want:      Intersections{NewIntersection(5, cone), NewIntersection(5, cone)},
 		},
 		{
 			name:      "the ray hits the cone 2",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -5),
 			direction: pm.Vector(1, 1, 1),
-			want:      []Intersection{NewIntersection(8.66025, cone), NewIntersection(8.66025, cone)},
+			want:      Intersections{NewIntersection(8.66025, cone), NewIntersection(8.66025, cone)},
 		},
 		{
 			name:      "the ray hits the cone 3",
 			cone:      cone,
 			origin:    pm.Point(1, 1, -5),
 			direction: pm.Vector(-0.5, -1, 1),
-			want:      []Intersection{NewIntersection(4.55006, cone), NewIntersection(49.44994, cone)},
+			want:      Intersections{NewIntersection(4.55006, cone), NewIntersection(49.44994, cone)},
 		},
 		{
 			name:      "the ray hits the cone once 1",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -1),
 			direction: pm.Vector(0, 1, 1),
-			want:      []Intersection{NewIntersection(0.35355, cone)},
+			want:      Intersections{NewIntersection(0.35355, cone)},
 		},
 	}
 
@@ -58,7 +58,7 @@ func TestRayConeIntersect(T *testing.T) {
 
 			got := tt.cone.LocalIntersect(ray)
 
-			if !got.Equal(Intersections{Intersections: tt.want}) {
+			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 
@@ -78,28 +78,28 @@ func TestRayConeCapIntersect(T *testing.T) {
 		origin    pm.Tuple
 		direction pm.Tuple
 		cone      *Cone
-		want      []Intersection
+		want      Intersections
 	}{
 		{
 			name:      "the ray intersects the truncated cone cap 1",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -5),
 			direction: pm.Vector(0, 1, 0),
-			want:      []Intersection{},
+			want:      Intersections{},
 		},
 		{
 			name:      "the ray intersects the truncated cone cap 2",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -0.25),
 			direction: pm.Vector(0, 1, 1),
-			want:      []Intersection{NewIntersection(0.08838834764831845, cone), NewIntersection(0.7071067811865476, cone)},
+			want:      Intersections{NewIntersection(0.08838834764831845, cone), NewIntersection(0.7071067811865476, cone)},
 		},
 		{
 			name:      "the ray intersects the truncated cone cap 3",
 			cone:      cone,
 			origin:    pm.Point(0, 0, -0.25),
 			direction: pm.Vector(0, 1, 0),
-			want:      []Intersection{NewIntersection(-0.5, cone), NewIntersection(-0.25, cone), NewIntersection(0.25, cone), NewIntersection(0.5, cone)},
+			want:      Intersections{NewIntersection(-0.5, cone), NewIntersection(-0.25, cone), NewIntersection(0.25, cone), NewIntersection(0.5, cone)},
 		},
 	}
 
@@ -112,7 +112,7 @@ func TestRayConeCapIntersect(T *testing.T) {
 
 			got := tt.cone.LocalIntersect(ray)
 
-			if !got.Equal(Intersections{Intersections: tt.want}) {
+			if !got.Equal(tt.want) {
 				t.Errorf("\ntest %d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 

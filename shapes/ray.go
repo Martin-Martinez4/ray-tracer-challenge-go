@@ -69,7 +69,7 @@ func (ray Ray) Transform(m44 pm.Matrix4x4) Ray {
 }
 
 // Hit finds the first intersection with a positive T (the passed intersections are assumed to have been sorted already)
-func Hit(intersections []Intersection) (Intersection, bool) {
+func Hit(intersections Intersections) (Intersection, bool) {
 
 	lowestNonNegative := Intersection{T: math.MaxFloat64, S: nil}
 	for _, intersection := range intersections {

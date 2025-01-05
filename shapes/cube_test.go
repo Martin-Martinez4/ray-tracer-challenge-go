@@ -15,73 +15,73 @@ func TestRayCubeIntersect(T *testing.T) {
 		name string
 		ray  Ray
 		cube Cube
-		want []Intersection
+		want Intersections
 	}{
 		{
 			name: "the cube intersect +x direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{5, 0.5, 0}, [3]float64{-1, 0, 0}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -x direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{-5, 0.5, 0}, [3]float64{1, 0, 0}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect +y direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 5, 0}, [3]float64{0, -1, 0}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -y direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, -5, 0}, [3]float64{0, 1, 0}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect +z direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 0, 5}, [3]float64{0, 0, -1}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect -z direction",
 			cube: *cube,
 			ray:  NewRay([3]float64{0.5, 0, -5}, [3]float64{0, 0, 1}),
-			want: []Intersection{NewIntersection(4, cube), NewIntersection(6, cube)},
+			want: Intersections{NewIntersection(4, cube), NewIntersection(6, cube)},
 		},
 		{
 			name: "the cube intersect inside",
 			cube: *cube,
 			ray:  NewRay([3]float64{0, 0.5, 0}, [3]float64{0, 0, 1}),
-			want: []Intersection{NewIntersection(-1, cube), NewIntersection(1, cube)},
+			want: Intersections{NewIntersection(-1, cube), NewIntersection(1, cube)},
 		},
 		{
 			name: "a ray misses a cube 1",
 			cube: *cube,
 			ray:  NewRay([3]float64{-2, 0, 0}, [3]float64{0.2673, 0.5345, 0.8018}),
-			want: []Intersection{},
+			want: Intersections{},
 		},
 		{
 			name: "a ray misses a cube 2",
 			cube: *cube,
 			ray:  NewRay([3]float64{0, -2, 0}, [3]float64{0.8018, 0.2673, 0.5345}),
-			want: []Intersection{},
+			want: Intersections{},
 		},
 		{
 			name: "a ray misses a cube 3",
 			cube: *cube,
 			ray:  NewRay([3]float64{0, 0, -2}, [3]float64{0.5345, 0.8018, 0.2673}),
-			want: []Intersection{},
+			want: Intersections{},
 		},
 		{
 			name: "a ray misses a cube 4",
 			cube: *cube,
 			ray:  NewRay([3]float64{2, 2, 0}, [3]float64{-1, 0, 0}),
-			want: []Intersection{},
+			want: Intersections{},
 		},
 	}
 
@@ -90,7 +90,7 @@ func TestRayCubeIntersect(T *testing.T) {
 
 			got := cube.LocalIntersect(tt.ray)
 
-			if !got.Equal(Intersections{Intersections: tt.want}) {
+			if !got.Equal(tt.want) {
 				t.Errorf("%d: \nwant: %v \ngot: %v \ndo not match", i, tt.want, got)
 			}
 
