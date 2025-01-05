@@ -83,7 +83,6 @@ func (sphere *Sphere) RotationAlongZ(rads float64) {
 }
 
 func (sphere *Sphere) LocalNormalAt(localPoint pm.Tuple, hitPoint *pm.Tuple, intersection *Intersection) pm.Tuple {
-	// return localPoint.Subtract(pm.Point(0, 0, 0))
 
 	invTransf := sphere.GetInverseTransforms()
 	objectPoint := invTransf.TupleMultiply(localPoint)

@@ -258,7 +258,7 @@ func TestPrepareComputations(t *testing.T) {
 func TestPrepareComputationsWithinRange(t *testing.T) {
 
 	theSphere := NewSphere()
-	theSphere.Translate(0, 0, 1)
+	theSphere.SetTransform(pm.Translate(0, 0, 1))
 
 	tests := []struct {
 		name         string
