@@ -40,7 +40,7 @@ func main() {
 
 	// in ./output/chapter11ARefac having a inverse transform of identity matrix caused cel shading look, maybe because the shadows were all or nothing?
 
-	printToFile(exercises.Ch11A(), "./output/chapte11AShapes.ppm")
+	printToFile(exercises.Ch5(), "./output/chapter5_1.ppm")
 	// printToFile(ch15B(), "chapter15B.ppm")
 	// ParseObjFile("test.obj")
 

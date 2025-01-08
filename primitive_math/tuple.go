@@ -108,5 +108,5 @@ func (t Tuple) Print() string {
 }
 
 func (t Tuple) Reflect(normal Tuple) Tuple {
-	return t.Subtract(normal.SMultiply(Dot(normal, t) * 2))
+	return t.Subtract(normal.SMultiply(Dot(t, normal) * 2))
 }

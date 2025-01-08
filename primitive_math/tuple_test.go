@@ -548,3 +548,36 @@ func TestCross(t *testing.T) {
 		})
 	}
 }
+
+func TestReflect(t *testing.T) {
+	tests := []struct {
+		name   string
+		vector Tuple
+		normal Tuple
+		want   Tuple
+	}{
+		{
+			name:   "reflecting a vector approaching at 45deg",
+			vector: Vector(1, -1, 0),
+			normal: Vector(0, 1, 0),
+			want:   Vector(1, 1, 0),
+		},
+		{
+			name:   "reflecting a vector off a slanted surface",
+			vector: Vector(0, -1, 0),
+			normal: Vector(math.Sqrt(2)/2, math.Sqrt(2)/2, 0),
+			want:   Vector(1, 0, 0),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.vector.Reflect(tt.normal)
+
+			if !got.Equal(tt.want) {
+				t.Errorf("Reflect check returned %v, wanted %v", got, tt.want)
+
+			}
+		})
+	}
+}
